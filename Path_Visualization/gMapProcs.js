@@ -2,29 +2,49 @@
     var directionsDisplay = new google.maps.DirectionsRenderer;
     var directionsService = new google.maps.DirectionsService;
     var gMapBase = new google.maps.Map(document.getElementById('map-canvas'), {
-        zoom: 14,
+        zoom: 10,
         center: { lat: 37.77, lng: -122.447 }
     });
     directionsDisplay.setMap(gMapBase);
 
-    calculateAndDisplayRoute(directionsService, directionsDisplay);
-    document.getElementById('mode').addEventListener('change', function () {
+    document.getElementById('submit').addEventListener('click', function () {
         calculateAndDisplayRoute(directionsService, directionsDisplay);
     });
 }
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-    var selectedMode = document.getElementById('mode').value;
+    var waypts = [];
+    var checkboxArray = document.getElementById('waypoints');
+    for (var i = 0; i < checkboxArray.length; i++) {
+        if (checkboxArray.options[i].selected) {
+            waypts.push({
+                location: checkboxArray[i].value,
+                stopover: true
+            });
+        }
+    }
+
     directionsService.route({
-        origin: { lat: -37.815148, lng: 145.004500 },  // Haight.
-        destination: { lat: -37.790077, lng: 144.975652 },  // Ocean Beach.
-        // Note that Javascript allows us to access the constant
-        // using square brackets and a string value as its
-        // "property."
-        travelMode: google.maps.TravelMode[selectedMode]
+        origin: document.getElementById('start').value,
+        destination: document.getElementById('end').value,
+        waypoints: waypts,
+        optimizeWaypoints: true,
+        travelMode: google.maps.TravelMode.DRIVING
     }, function (response, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
+        if (status === google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
+            var route = response.routes[0];
+            var summaryPanel = document.getElementById('directions-panel');
+            summaryPanel.innerHTML = '';
+            // For each route, display summary information.
+            for (var i = 0; i < route.legs.length; i++) {
+                var routeSegment = i + 1;
+                summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
+                    '</b><br>';
+                summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
+                summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+                summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+            }
         } else {
             window.alert('Directions request failed due to ' + status);
         }
