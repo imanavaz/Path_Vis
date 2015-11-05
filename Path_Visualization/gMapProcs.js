@@ -1,4 +1,18 @@
-﻿function initMap() {
+﻿//Data works
+var statsFile = '//Data/trajectory_stats.csv';
+var reader = new FileReader();
+reader.readAsText(stateFile);
+var trajStatsData = $.csv.toObjects(reader);
+
+
+
+
+
+
+
+//Map works
+
+function initMap() {
     var directionsDisplay = new google.maps.DirectionsRenderer;
     var directionsService = new google.maps.DirectionsService;
     var gMapBase = new google.maps.Map(document.getElementById('map-canvas'), {
@@ -11,6 +25,8 @@
         calculateAndDisplayRoute(directionsService, directionsDisplay);
     });
 }
+
+
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     var waypts = [];
