@@ -1,32 +1,32 @@
-﻿var gMapBase;
-var trajCanvasLayer;
+﻿function initMap() {
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+    var directionsService = new google.maps.DirectionsService;
+    var gMapBase = new google.maps.Map(document.getElementById('map-canvas'), {
+        zoom: 14,
+        center: { lat: 37.77, lng: -122.447 }
+    });
+    directionsDisplay.setMap(gMapBase);
 
-function initMap() {
-    var mapOptions = {
-        zoom: 8,
-        center: new google.maps.LatLng(-36.911568, 144.929646)
-    };
-    gMapBase = new google.maps.Map(document.getElementById('map-canvas'), 
-        mapOptions);
-
-    //map canvas layer
-    trajCanvasLayer = new CanvasLayer({
-        map: gMapBase,
-        update: trajCanvasUpdate()
-    })
+    calculateAndDisplayRoute(directionsService, directionsDisplay);
+    document.getElementById('mode').addEventListener('change', function () {
+        calculateAndDisplayRoute(directionsService, directionsDisplay);
+    });
 }
 
-google.maps.event.addDomListener(window, 'load', initialize);
-
-
-//in case usign a canvas layer
-function trajCanvasUpdate() {
-    var scale = Math.pow(2, gMapBase.getZoom());
-    var offset = projection.fromLatLngToPoint(
-        trajCanvasLayer.getTopLeft());
-
-    context.scale(scale, scale);
-    context.traslate(-offset.x, -offset.y);
+function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+    var selectedMode = document.getElementById('mode').value;
+    directionsService.route({
+        origin: { lat: 37.77, lng: -122.447 },  // Haight.
+        destination: { lat: 37.768, lng: -122.511 },  // Ocean Beach.
+        // Note that Javascript allows us to access the constant
+        // using square brackets and a string value as its
+        // "property."
+        travelMode: google.maps.TravelMode[selectedMode]
+    }, function (response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+        } else {
+            window.alert('Directions request failed due to ' + status);
+        }
+    });
 }
-
-

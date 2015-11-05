@@ -21,17 +21,35 @@
             height: 100%;
             width: 20%;
             float: left;
+            background-color: #fff;
+            text-align: center;
         }
+
+        #mode {
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+
     </style>
 
-    <script type="text/javascript" src="MapProcs.js" ></script>
+    <script type="text/javascript" src="gMapProcs.js" ></script>
 </head>
 <body>
-    <div id="control-panel"></div>
+    <div id="control-panel">
+        <label>Travel mode: </label>
+        <select id="mode">
+            <option value="DRIVING">Driving</option>
+            <option value="WALKING">Walking</option>
+            <option value="BICYCLING">Bicycling</option>
+            <option value="TRANSIT">Transit</option>
+        </select>
+    </div>
+    
     <div id="map-canvas"></div>
-    <script>
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&callback=initMap"
+    
+    <script></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&signed_in=true&callback=initMap"
             async defer></script>
 </body>
 </html>
