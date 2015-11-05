@@ -29,7 +29,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         destination: document.getElementById('end').value,
         waypoints: waypts,
         optimizeWaypoints: true,
-        travelMode: google.maps.TravelMode.DRIVING
+        travelMode: document.getElementById('mode').value,
     }, function (response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
