@@ -1,5 +1,7 @@
 ﻿//Data works
 var statsFile = 'http://localhost:26648/Data/trajectory_stats.csv';
+var trajectoryFile = 'http://localhost:26648/Data/trajectory_photos.csv';
+
 var reader = new FileReader();
 reader.readAsText(statsFile);
 var trajStatsData = $.csv.toObjects(reader);
