@@ -8,6 +8,12 @@ function initMap() {
     });
     directionsDisplay.setMap(gMapBase);
 
+    var trajectoryList = document.getElementById("trajectory-list");
+
+    trajectoryList.addEventListener("change", function () {
+        alert(trajectoryList.value + " was selected");
+    });
+
     document.getElementById('submit').addEventListener('click', function () {
         calculateAndDisplayRoute(directionsService, directionsDisplay);
     });
