@@ -42,7 +42,7 @@
     </style>
 
     <script type="text/javascript" src="gMapProcs.js" ></script>
-    <script type="text/javascript" src="Lib/jquery.csv-0.71.js" ></script>
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     
 </head>
 <body>
@@ -55,57 +55,29 @@
                 <option value="New York, NY">New York, NY</option>
                 <option value="Miami, FL">Miami, FL</option>
             </select>
-            <br>
-
+            <br /><br/>
+            
             <b>Trajecctories:</b><br/>
             <select multiple id="trajectory-list"></select>
-            <br /><br />
-
-            <script>
+            
+            <script type="text/javascript">
                 //Data works
                 var statsFile = 'http://localhost:26648/Data/trajectory_stats.csv';
                 var trajectoryFile = 'http://localhost:26648/Data/trajectory_photos.csv';
 
-                var statsArr;
-                var trajectoryArr;
-
-
-                $.ajax({
-                    url: "http://localhost:26648/Data/trajectory_stats.csv",
-                    dataType: "text",
-                    data: {
-                        html: csv
-                    },
-                    success: function (csvd) {
-                        data = $.csv2Array(csvd);
-                    },
-                    complete: function () {
-                        createTrajectoryList(data);
-                    }
+                var trajList = document.getElementById('trajectory-list');
+                d3.csv(statsFile, function (data) {
+                    data.forEach(function (d) {
+                        var opt = document.createElement('option');
+                        opt.innerHTML = d.Trajectory_ID + ': '+ d.Start_Time;
+                        opt.value = d.Trajectory_ID;
+                        trajList.appendChild(opt);
+                    });
                 });
-
-
-
-                function createTrajectoryList(arr) {
-                    var trajList = document.getElementById('trajectory-list');
-                    var out = "";
-                    var i;
-                    alert(arr.length);
-                    for (i = 0; i < arr.length; i++) {
-                        //alert(arr[i]);
-                        //trajList.appendChild('<option value="" >' + arr[i] + '</option>');
-                        trajList.appendChild('<option value="" >' + arr[i] + '</option>');
-
-                    }
-
-                }
-
-
-
             </script>
 
 
-
+            <br /><br />
             <b>Waypoints:</b> <br>
             <i>(Ctrl-Click for multiple selection)</i> <br>
             <select multiple id="waypoints">
