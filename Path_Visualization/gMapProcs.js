@@ -3,56 +3,68 @@ function initMap() {
     var directionsDisplay = new google.maps.DirectionsRenderer;
     var directionsService = new google.maps.DirectionsService;
     var gMapBase = new google.maps.Map(document.getElementById('map-canvas'), {
-        zoom: 10,
-        center: { lat: 37.77, lng: -122.447 }
+        zoom: 8,
+        center: { lat: -37.811106, lng: 144.962160 }
     });
     directionsDisplay.setMap(gMapBase);
 
     var trajectoryList = document.getElementById("trajectory-list");
-
     trajectoryList.addEventListener("change", function () {
-        alert(trajectoryList.value + " was selected");
+        processData(trajectoryList, directionsService,directionsDisplay);
     });
 
-    document.getElementById('submit').addEventListener('click', function () {
-        calculateAndDisplayRoute(directionsService, directionsDisplay);
+    var modeList = document.getElementById("mode");
+    modeList.addEventListener("change", function () {
+        processData(trajectoryList, directionsService, directionsDisplay);
     });
 }
 
 
+function processData(trajectoryList, directionsService, directionsDisplay) {
+    var trajectoryFile = 'http://localhost:26648/Data/trajectory_photos.csv';
+    var locations = [];
+    
+    d3.csv(trajectoryFile, function (data) {
+        data.forEach(function (d) {
+            if (d.Trajectory_ID == trajectoryList.value)
+                locations.push(d);
+        });
+        if (locations.length > 0)
+            calculateAndDisplayRoute(directionsService, directionsDisplay, locations);
+        else
+            alert("No trajectories found!");
+    });
+}
 
-function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+
+function calculateAndDisplayRoute(directionsService, directionsDisplay, locations) {
     var waypts = [];
-    var checkboxArray = document.getElementById('waypoints');
-    for (var i = 0; i < checkboxArray.length; i++) {
-        if (checkboxArray.options[i].selected) {
-            waypts.push({
-                location: checkboxArray[i].value,
-                stopover: true
-            });
-        }
+    //var checkboxArray = document.getElementById('waypoints');
+    for (var i = 1; i < locations.length-1; i++) {
+        waypts.push({
+            location: locations[i].Latitude + ',' + locations[i].Longitude,
+            stopover: true
+        });
     }
 
     directionsService.route({
-        origin: document.getElementById('start').value,
-        destination: document.getElementById('end').value,
+        origin: locations[0].Latitude + ',' + locations[0].Longitude,
+        destination: locations[locations.length - 1].Latitude + ',' + locations[locations.length - 1].Longitude,
         waypoints: waypts,
-        optimizeWaypoints: true,
+        optimizeWaypoints: false,
         travelMode: document.getElementById('mode').value,
     }, function (response, status) {
         if (status === google.maps.DirectionsStatus.OK) {
             directionsDisplay.setDirections(response);
             var route = response.routes[0];
+
             var summaryPanel = document.getElementById('directions-panel');
-            summaryPanel.innerHTML = '';
+            summaryPanel.innerHTML = '<br/>';
             // For each route, display summary information.
-            for (var i = 0; i < route.legs.length; i++) {
+            for (var i = 0; i < locations.length; i++) {
                 var routeSegment = i + 1;
-                summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
-                    '</b><br>';
-                summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
-                summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
-                summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+                summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Route Segment: ' + routeSegment + '</a>';
+                summaryPanel.innerHTML += '<br/><br/>';
             }
         } else {
             window.alert('Directions request failed due to ' + status);
