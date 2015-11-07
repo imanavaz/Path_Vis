@@ -68,6 +68,7 @@
   <ItemGroup>
     <Content Include="index.html" />
     <Content Include="gMapProcs.js" />
+    <Content Include="Lib\jquery.csv-0.71.js" />
     <Content Include="packages.config" />
     <Content Include="Data\trajectory_photos.csv" />
     <Content Include="Data\trajectory_stats.csv" />

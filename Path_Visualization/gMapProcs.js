@@ -1,43 +1,4 @@
-﻿//Data works
-var statsFile = 'http://localhost:26648/Data/trajectory_stats.csv';
-var trajectoryFile = 'http://localhost:26648/Data/trajectory_photos.csv';
-
-var statsArr;
-var trajectoryArr;
-
-var xmlhttp = new XMLHttpRequest();
-
-xmlhttp.onreadystatechange = function () {
-    //if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-        var reader = new FileReader();
-        reader.readAsText(statsFile);
-        statsArr = $.csv.toObjects(xmlhttp.responseText);
-        alert("t");
-        createTrajectoryList(statsArr);
-    //}
-}
-xmlhttp.open("GET", statsFile, true);
-xmlhttp.send();
-
-
-function createTrajectoryList(arr) {
-    var trajList = document.getElementById('trajectory-list');
-    var out = "";
-    var i;
-    alert(arr.length);
-    for (i = 0; i < arr.length; i++) {
-        //alert(arr[i]);
-        //trajList.appendChild('<option value="" >' + arr[i] + '</option>');
-        trajList.appendChild('<option value="" >' + arr[i] + '</option>');
-
-    }
-    
-}
-
-
-
-
-//Map works
+﻿//Map works
 
 function initMap() {
     var directionsDisplay = new google.maps.DirectionsRenderer;
