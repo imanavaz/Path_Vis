@@ -62,7 +62,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, location
             summaryPanel.innerHTML = '<br/>';
             // For each route, display summary information.
             for (var i = 0; i < locations.length; i++) {
-                var routeSegment = i + 1;
+                var routeSegment = numberToAlphabetConverter(i);//i + 1;
                 summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Route Segment: ' + routeSegment + '</a>';
                 summaryPanel.innerHTML += '<br/><br/>';
             }
@@ -70,4 +70,19 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, location
             window.alert('Directions request failed due to ' + status);
         }
     });
+}
+
+
+//Convert Numbers to Alphabet
+function numberToAlphabetConverter(n) {
+    var ordA = 'A'.charCodeAt(0);
+    var ordZ = 'Z'.charCodeAt(0);
+    var len = ordZ - ordA + 1;
+
+    var s = "";
+    while (n >= 0) {
+        s = String.fromCharCode(n % len + ordA) + s;
+        n = Math.floor(n / len) - 1;
+    }
+    return s;
 }
