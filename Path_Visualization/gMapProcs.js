@@ -58,9 +58,19 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
             itemsCounter--;
         }
 
-        if (locations.length > 0)
+        if (locations.length > 0) {
             //calculateAndDisplayRoute(directionsService, directionsDisplay, locations);
             calcRoute(batches, directionsService, directionsDisplay);
+
+            var summaryPanel = document.getElementById('directions-panel');
+            summaryPanel.innerHTML = '<br/>';
+            // For each route, display summary information.
+            for (var i = 0; i < locations.length; i++) {
+                var routeSegment = numberToAlphabetConverter(i);//i + 1;
+                summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Photo at Marker ' + routeSegment + '</a>';
+                summaryPanel.innerHTML += '<br/><br/>';
+            }
+        }
         else
             alert("No trajectories found!");
     });
@@ -132,49 +142,6 @@ function calcRoute (batches, directionsService, directionsDisplay) {
             });
         })(k);
     }
-}
-
-
-
-
-
-
-
-
-
-function calculateAndDisplayRoute(directionsService, directionsDisplay, locations) {
-    var waypts = [];
-    //var checkboxArray = document.getElementById('waypoints');
-    for (var i = 1; i < locations.length-1; i++) {
-        waypts.push({
-            location: locations[i].Latitude + ',' + locations[i].Longitude,
-            stopover: true
-        });
-    }
-
-    directionsService.route({
-        origin: locations[0].Latitude + ',' + locations[0].Longitude,
-        destination: locations[locations.length - 1].Latitude + ',' + locations[locations.length - 1].Longitude,
-        waypoints: waypts,
-        optimizeWaypoints: false,
-        travelMode: document.getElementById('mode').value,
-    }, function (response, status) {
-        if (status === google.maps.DirectionsStatus.OK) {
-            directionsDisplay.setDirections(response);
-            var route = response.routes[0];
-
-            var summaryPanel = document.getElementById('directions-panel');
-            summaryPanel.innerHTML = '<br/>';
-            // For each route, display summary information.
-            for (var i = 0; i < locations.length; i++) {
-                var routeSegment = numberToAlphabetConverter(i);//i + 1;
-                summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Photo at Marker ' + routeSegment + '</a>';
-                summaryPanel.innerHTML += '<br/><br/>';
-            }
-        } else {
-            window.alert('Directions request failed due to ' + status);
-        }
-    });
 }
 
 
