@@ -63,7 +63,7 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay, location
             // For each route, display summary information.
             for (var i = 0; i < locations.length; i++) {
                 var routeSegment = numberToAlphabetConverter(i);//i + 1;
-                summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Route Segment: ' + routeSegment + '</a>';
+                summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Photo at Marker ' + routeSegment + '</a>';
                 summaryPanel.innerHTML += '<br/><br/>';
             }
         } else {
