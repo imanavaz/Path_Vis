@@ -67,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="index.html" />
-    <Content Include="gMapProcs.js" />
+    <Content Include="Scripts\gMapProcs.js" />
     <Content Include="packages.config" />
     <Content Include="Data\trajectory_photos.csv" />
     <Content Include="Data\trajectory_stats.csv" />

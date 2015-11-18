@@ -21,7 +21,7 @@ function initMap() {
 
 
 function processData(trajectoryList, directionsService, directionsDisplay) {
-    var trajectoryFile = 'http://localhost:26648/Data/trajectory_photos.csv';
+    var trajectoryFile = 'Data/trajectory_photos.csv';
     var locations = [];
     
     d3.csv(trajectoryFile, function (data) {
