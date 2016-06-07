@@ -39,33 +39,53 @@
 
     <script type="text/javascript" src="Scripts/gMapProcs.js" ></script>
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    
+    <script type="text/javascript" src="Lib/papaparse.min.js"></script>
+
 </head>
 <body>
     <div id="control-panel">
         <div>
             <br /><br/>
-            
+
             <b>Trajecctories:</b><br/>
             <select id="trajectory-list">
                 <option selected disabled>Choose ...</option>
             </select>
-            
+
             <script type="text/javascript">
                 //Data works
-                var statsFile = 'Data/trajectory_stats.csv';
-                var trajectoryFile = 'Data/trajectory_photos.csv';
+                var trajectoryFile = 'Data/Melb_recommendations.csv';
+
+                var dsv = d3.dsv(";", "text/plain");
 
                 var trajList = document.getElementById('trajectory-list');
-                d3.csv(statsFile, function (data) {
+
+                dsv(trajectoryFile, function (data) {
                     data.forEach(function (d) {
                         var opt = document.createElement('option');
-                        opt.innerHTML = d.Trajectory_ID + ': '+ d.Start_Time;
-                        opt.value = d.Trajectory_ID;
+                        opt.innerHTML = d.trajID;
+                        opt.value = d.trajID;
                         trajList.appendChild(opt);
                     });
                 });
             </script>
+
+            <br /><br />
+
+            <b>Algorithm : </b>
+            <select id="alg">
+                <option value="1">Real</option>
+                <option value="2">POI Popularity</option>
+                <option value="3">POI Rank</option>
+                <option value="4">Markov</option>
+                <option value="5">Markov Path</option>
+                <option value="6">Rank + Markov</option>
+                <option value="7">Rank + MarkovPath</option>
+                <option value="8">StructuredSVM</option>
+                <option value="9">PersTour</option>
+                <option value="10">Pers Tour - L</option>
+
+            </select>
 
             <br /><br />
 
@@ -78,14 +98,14 @@
             </select>
 
             <br/>
-            
+
             <div id="directions-panel"></div>
-        
+
         </div>
     </div>
-    
+
     <div id="map-canvas"></div>
-    
+
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&signed_in=true&callback=initMap"
             async defer></script>
 </body>
