@@ -17,63 +17,122 @@ function initMap() {
     modeList.addEventListener("change", function () {
         processData(trajectoryList, directionsService, directionsDisplay);
     });
+
+    var algList = document.getElementById("alg-list");
+    algList.addEventListener("change", function () {
+        processData(trajectoryList, directionsService, directionsDisplay);
+    });
 }
 
 
 function processData(trajectoryList, directionsService, directionsDisplay) {
-    //var trajectoryFile = 'Data/trajectory_photos.csv';
     var trajectoryFile = 'Data/Melb_recommendations.csv';
+    var trajectoryRow = [];//only one will be used
+    var poiFile = 'Data/poi-Melb-all.csv';
     var locations = [];
 
-    d3.csv(trajectoryFile, function (data) {
+    var algList = document.getElementById("alg-list");
+    var algorithm = algList.value;
+
+    var dsv = d3.dsv(";", "text/plain");
+
+    dsv(trajectoryFile, function (data) {
         data.forEach(function (d) {
-            if (d.trajID == trajectoryList.value)
-                locations.push(d);
+          if (d.trajID == trajectoryList.value)
+            //fetch data for the assigned algorithm
+            if (algorithm == 1)
+                trajectoryRow = d.REAL;
+            else if (algorithm == 2)
+                trajectoryRow = d.PoiPopularity;
+            else if (algorithm == 3)
+                trajectoryRow = d.PoiRank;
+            else if (algorithm == 4)
+                trajectoryRow = d.Markov;
+            else if (algorithm == 5)
+                trajectoryRow = d.MarkovPath;
+            else if (algorithm == 6)
+                trajectoryRow = d.RankMarkov;
+            else if (algorithm == 7)
+                trajectoryRow = d.RankMarkovPath;
+            else if (algorithm == 8)
+                trajectoryRow = d.StructuredSVM;
+            else if (algorithm == 9)
+                trajectoryRow = d.PersTour;
+            else if (algorithm == 10)
+                trajectoryRow = d.PersTourL;
         });
 
-        //imported code
-        var batches = [];
-        var itemsPerBatch = 10; // google API max - 1 start, 1 stop, and 8 waypoints
-        var itemsCounter = 0;
-        var wayptsExist = locations.length > 0;
+        if (trajectoryRow != 'NA')
+        {
+          console.log(trajectoryRow.length);
 
-        while (wayptsExist) {
-            var subBatch = [];
-            var subitemsCounter = 0;
+          //bad way to work, but for now it should work
+          trajectoryRow = trajectoryRow.replace("[","");
+          trajectoryRow = trajectoryRow.replace("]","");
 
-            for (var j = itemsCounter; j < locations.length; j++) {
-                subitemsCounter++;
-                subBatch.push({
-                    location: new window.google.maps.LatLng(locations[j].Latitude, locations[j].Longitude),
-                    stopover: true
-                });
-                if (subitemsCounter == itemsPerBatch)
-                    break;
-            }
+          var trajectoryPOIs = trajectoryRow.split(' ');
+          for (i = 0; i< trajectoryPOIs.length; i++)
+            trajectoryPOIs[i] = parseInt(trajectoryPOIs[i]);
 
-            itemsCounter += subitemsCounter;
-            batches.push(subBatch);
-            wayptsExist = itemsCounter < locations.length;
-            // If it runs again there are still points. Minus 1 before continuing to
-            // start up with end of previous tour leg
-            itemsCounter--;
-        }
+          var POIs;
 
-        if (locations.length > 0) {
-            //calculateAndDisplayRoute(directionsService, directionsDisplay, locations);
-            calcRoute(batches, directionsService, directionsDisplay);
+          d3.csv(poiFile, function (data) {
+              data.forEach(function (d) {
+                  if (d.trajID == trajectoryList.value)
+                      locations.push(d);
+              });
 
-            var summaryPanel = document.getElementById('directions-panel');
-            summaryPanel.innerHTML = '<br/>';
-            // For each route, display summary information.
-            for (var i = 0; i < locations.length; i++) {
-                var routeSegment = numberToAlphabetConverter(i);//i + 1;
-                summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Photo at Marker ' + routeSegment + '</a>';
-                summaryPanel.innerHTML += '<br/><br/>';
-            }
+              //imported code
+              var batches = [];
+              var itemsPerBatch = 10; // google API max - 1 start, 1 stop, and 8 waypoints
+              var itemsCounter = 0;
+              var wayptsExist = locations.length > 0;
+
+              while (wayptsExist) {
+                  var subBatch = [];
+                  var subitemsCounter = 0;
+
+                  for (var j = itemsCounter; j < locations.length; j++) {
+                      subitemsCounter++;
+                      subBatch.push({
+                          location: new window.google.maps.LatLng(locations[j].Latitude, locations[j].Longitude),
+                          stopover: true
+                      });
+                      if (subitemsCounter == itemsPerBatch)
+                          break;
+                  }
+
+                  itemsCounter += subitemsCounter;
+                  batches.push(subBatch);
+                  wayptsExist = itemsCounter < locations.length;
+                  // If it runs again there are still points. Minus 1 before continuing to
+                  // start up with end of previous tour leg
+                  itemsCounter--;
+              }
+
+              if (locations.length > 0) {
+                  //calculateAndDisplayRoute(directionsService, directionsDisplay, locations);
+                  calcRoute(batches, directionsService, directionsDisplay);
+
+                  var summaryPanel = document.getElementById('directions-panel');
+                  summaryPanel.innerHTML = '<br/>';
+                  // For each route, display summary information.
+                  for (var i = 0; i < locations.length; i++) {
+                      var routeSegment = numberToAlphabetConverter(i);//i + 1;
+                      summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Photo at Marker ' + routeSegment + '</a>';
+                      summaryPanel.innerHTML += '<br/><br/>';
+                  }
+              }
+              //else
+                //  alert("No trajectories found!");
+          });
+
         }
         else
-            alert("No trajectories found!");
+        {
+          console.log("Trajectory does not exists");
+        }
+
     });
 }
 
