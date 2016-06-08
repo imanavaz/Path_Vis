@@ -64,9 +64,7 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
 
         if (trajectoryRow != 'NA')
         {
-          console.log(trajectoryRow.length);
-
-          //bad way to work, but for now it should work
+          //bad way, but for now it should work
           trajectoryRow = trajectoryRow.replace("[","");
           trajectoryRow = trajectoryRow.replace("]","");
 
@@ -74,28 +72,41 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
           for (i = 0; i< trajectoryPOIs.length; i++)
             trajectoryPOIs[i] = parseInt(trajectoryPOIs[i]);
 
-          var POIs;
+//console.log(trajectoryPOIs);
+
+          var POIs = [];
 
           d3.csv(poiFile, function (data) {
               data.forEach(function (d) {
-                  if (d.trajID == trajectoryList.value)
-                      locations.push(d);
+                  if (trajectoryPOIs.indexOf(parseInt(d.poiID)) != -1)
+                  {
+                    var poiData = [];
+                    poiData["poiID"] = d.poiID;
+                    poiData["poiName"] = d.poiName;
+                    poiData["poiTheme"] = d.poiTheme;
+                    poiData["poiLat"] = d.poiLat;
+                    poiData["poiLon"] = d.poiLon;
+                    poiData["poiURL"] = d.poiURL;
+
+                    POIs[trajectoryPOIs.indexOf(parseInt(d.poiID))] = poiData;
+                  }
               });
+//console.log(POIs);
 
               //imported code
               var batches = [];
               var itemsPerBatch = 10; // google API max - 1 start, 1 stop, and 8 waypoints
               var itemsCounter = 0;
-              var wayptsExist = locations.length > 0;
+              var wayptsExist = POIs.length > 0;
 
               while (wayptsExist) {
                   var subBatch = [];
                   var subitemsCounter = 0;
 
-                  for (var j = itemsCounter; j < locations.length; j++) {
+                  for (var j = itemsCounter; j < POIs.length; j++) {
                       subitemsCounter++;
                       subBatch.push({
-                          location: new window.google.maps.LatLng(locations[j].Latitude, locations[j].Longitude),
+                          location: new window.google.maps.LatLng(POIs[j].poiLat, POIs[j].poiLon),
                           stopover: true
                       });
                       if (subitemsCounter == itemsPerBatch)
@@ -104,22 +115,22 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
 
                   itemsCounter += subitemsCounter;
                   batches.push(subBatch);
-                  wayptsExist = itemsCounter < locations.length;
+                  wayptsExist = itemsCounter < POIs.length;
                   // If it runs again there are still points. Minus 1 before continuing to
                   // start up with end of previous tour leg
                   itemsCounter--;
               }
 
-              if (locations.length > 0) {
+              if (POIs.length > 0) {
                   //calculateAndDisplayRoute(directionsService, directionsDisplay, locations);
                   calcRoute(batches, directionsService, directionsDisplay);
 
                   var summaryPanel = document.getElementById('directions-panel');
                   summaryPanel.innerHTML = '<br/>';
                   // For each route, display summary information.
-                  for (var i = 0; i < locations.length; i++) {
+                  for (var i = 0; i < POIs.length; i++) {
                       var routeSegment = numberToAlphabetConverter(i);//i + 1;
-                      summaryPanel.innerHTML += '<a href="' + locations[i].URL + '" target="_blank">' + 'Photo at Marker ' + routeSegment + '</a>';
+                      summaryPanel.innerHTML += '<a href="' + POIs[i].poiURL + '" target="_blank">' + routeSegment + ' - ' + POIs[i].poiName + '</a>';
                       summaryPanel.innerHTML += '<br/><br/>';
                   }
               }
