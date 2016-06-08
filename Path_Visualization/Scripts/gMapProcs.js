@@ -1,12 +1,22 @@
+var markerArray = [];
+var gMapBase;
+var icons;
+
 ﻿//Map works
 function initMap() {
-    var directionsDisplay = new google.maps.DirectionsRenderer;
+    var directionsDisplay = new google.maps.DirectionsRenderer({
+      suppressMarkers: true
+    });
     var directionsService = new google.maps.DirectionsService;
-    var gMapBase = new google.maps.Map(document.getElementById('map-canvas'), {
+    gMapBase = new google.maps.Map(document.getElementById('map-canvas'), {
         zoom: 8,
         center: { lat: -37.811106, lng: 144.962160 }
     });
     directionsDisplay.setMap(gMapBase);
+
+    // Instantiate an info window to hold step text.
+    markerInfoDisplay = new google.maps.InfoWindow();
+
 
     var trajectoryList = document.getElementById("trajectory-list");
     trajectoryList.addEventListener("change", function () {
@@ -22,6 +32,48 @@ function initMap() {
     algList.addEventListener("change", function () {
         processData(trajectoryList, directionsService, directionsDisplay);
     });
+
+    //prepare markers
+    var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+    icons = {
+      parking: {
+        icon: iconBase + 'parking_lot_maps.png'
+      },
+      library: {
+        icon: iconBase + 'library_maps.png'
+      },
+      info: {
+        icon: iconBase + 'info.png'
+      },
+      sport: {
+        icon: iconBase + 'play.png'
+      },
+      transport:{
+        icon: iconBase + 'rail.png'
+      },
+      park:{
+        icon: iconBase + 'parks.png'
+      },
+      shopping:{
+        icon: iconBase + 'shopping.png'
+      },
+      city: {
+        icon: iconBase + 'museum.png'
+      },
+      entertainment: {
+        icon: iconBase + 'movies.png'
+      },
+      art: {
+        icon: iconBase + 'arts.png'
+      },
+      structure: {
+        icon: iconBase + 'landmark.png'
+      },
+      institution: {
+        icon: iconBase + 'govtbldgs.png'
+      }
+    };
+
 }
 
 
@@ -91,9 +143,50 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
                     POIs[trajectoryPOIs.indexOf(parseInt(d.poiID))] = poiData;
                   }
               });
-//console.log(POIs);
 
-              //imported code
+              // First, clear out any existing markerArray
+              // from previous calculations.
+              for (i = 0; i < markerArray.length; i++) {
+                  markerArray[i].setMap(null);
+              }
+
+              for (var i = 0; i < POIs.length; i++) {
+                  var markerPosition = {lat: parseFloat(POIs[i].poiLat), lng: parseFloat(POIs[i].poiLon)};
+
+                  var markerIcon;
+                  if (POIs[i].poiTheme == "Sports stadiums")
+                    markerIcon = icons["sport"].icon;
+                  else if (POIs[i].poiTheme == "Parks and spaces")
+                    markerIcon = icons["park"].icon;
+                  else if (POIs[i].poiTheme == "Transport")
+                    markerIcon = icons["transport"].icon;
+                  else if (POIs[i].poiTheme == "City precincts")
+                    markerIcon = icons["city"].icon;
+                  else if (POIs[i].poiTheme == "Shopping")
+                    markerIcon = icons["shopping"].icon;
+                  else if (POIs[i].poiTheme == "Entertainment")
+                    markerIcon = icons["entertainment"].icon;
+                  else if (POIs[i].poiTheme == "Public galleries")
+                    markerIcon = icons["art"].icon;
+                  else if (POIs[i].poiTheme == "Institutions")
+                    markerIcon = icons["institution"].icon;
+                  else if (POIs[i].poiTheme == "Structures")
+                    markerIcon = icons["structure"].icon;
+                  else
+                    markerIcon = icons["info"].icon;
+
+
+                  var marker = new google.maps.Marker({
+                    position: markerPosition,
+                    map: gMapBase,
+                    icon: markerIcon
+                  });
+                  attachInstructionText(marker, POIs[i]);
+                  markerArray[i] = marker;
+              }
+
+
+              //imported code - prepare waypoints
               var batches = [];
               var itemsPerBatch = 10; // google API max - 1 start, 1 stop, and 8 waypoints
               var itemsCounter = 0;
@@ -107,7 +200,7 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
                       subitemsCounter++;
                       subBatch.push({
                           location: new window.google.maps.LatLng(POIs[j].poiLat, POIs[j].poiLon),
-                          stopover: true
+                          stopover: true,
                       });
                       if (subitemsCounter == itemsPerBatch)
                           break;
@@ -134,8 +227,8 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
                       summaryPanel.innerHTML += '<br/><br/>';
                   }
               }
-              //else
-                //  alert("No trajectories found!");
+              else
+                  alert("No trajectories found!");
           });
 
         }
@@ -213,6 +306,24 @@ function calcRoute (batches, directionsService, directionsDisplay) {
             });
         })(k);
     }
+}
+
+
+
+function attachInstructionText(marker, poi) {
+
+  var infoContentString = '<p>'+
+       poi.poiName+
+      '<p>Theme: '+poi.poiTheme+'</p>'+
+      '<p><a href="'+poi.poiURL+'"> on Wikipedia ...</a> '+'</p>'+
+      '</p>';
+
+  var markerInfoDisplay = new google.maps.InfoWindow({
+          content: infoContentString
+        });
+  google.maps.event.addListener(marker, 'click', function() {
+    markerInfoDisplay.open(gMapBase, marker);
+  });
 }
 
 
