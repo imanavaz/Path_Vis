@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Trajectory Display</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto','sans-serif';
+        }
+
+        #map-canvas {
+            height: 100%;
+            width: 80%;
+            float: right;
+            foreground: black;
+        }
+
+        #control-panel {
+            height: 100%;
+            width: 18%;
+            float: left;
+            padding-left: 15px;
+            margin-top: 10px;
+            background-color: #fff;
+            text-align: left;
+            font-family: 'Roboto','sans-serif';
+        }
+
+        #mode {
+            margin-top: 10px;
+            width: 80px;
+            font-family: 'Roboto','sans-serif';
+        }
+
+    </style>
+
+    <script type="text/javascript" src="Scripts/gMapProcs.js" ></script>
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <!--script type="text/javascript" src="Lib/papaparse.min.js"></script-->
+
+</head>
+<body>
+    <div id="control-panel">
+        <div>
+            <br /><br/>
+
+            <b>Trajecctories:</b>
+            <select id="trajectory-list">
+                <option selected disabled>Choose ...</option>
+            </select>
+
+            <script type="text/javascript">
+                //Data works
+                var trajectoryFile = 'Data/Melb_recommendations.csv';
+
+                var dsv = d3.dsv(";", "text/plain");
+
+                var trajList = document.getElementById('trajectory-list');
+
+                dsv(trajectoryFile, function (data) {
+                    data.forEach(function (d) {
+                        var opt = document.createElement('option');
+                        opt.innerHTML = d.trajID;
+                        opt.value = d.trajID;
+                        trajList.appendChild(opt);
+                    });
+                });
+            </script>
+
+            <br /><br />
+
+            <b>Algorithm : </b>
+            <select id="alg-list">
+                <option value="1">Real</option>
+                <option value="2">POI Popularity</option>
+                <option value="3">POI Rank</option>
+                <option value="4">Markov</option>
+                <option value="5">Markov Path</option>
+                <option value="6">Rank + Markov</option>
+                <option value="7">Rank + MarkovPath</option>
+                <option value="8">StructuredSVM</option>
+                <option value="9">PersTour</option>
+                <option value="10">Pers Tour - L</option>
+
+            </select>
+
+            <br /><br />
+
+            <b>Travel mode: </b>
+            <select id="mode">
+                <option value="DRIVING">Driving</option>
+                <option value="WALKING">Walking</option>
+                <option value="BICYCLING">Bicycling</option>
+                <option value="TRANSIT">Transit</option>
+            </select>
+
+            <br/><br />
+
+            <div id="directions-panel"></div>
+
+        </div>
+    </div>
+
+    <div id="map-canvas"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&signed_in=true&callback=initMap"
+            async defer></script>
+</body>
+</html>
