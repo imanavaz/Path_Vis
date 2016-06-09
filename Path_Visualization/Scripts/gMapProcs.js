@@ -218,14 +218,15 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
                   //calculateAndDisplayRoute(directionsService, directionsDisplay, locations);
                   calcRoute(batches, directionsService, directionsDisplay);
 
-                  var summaryPanel = document.getElementById('directions-panel');
+                  //removing cummary panel, to use the space for legend.
+                  /*var summaryPanel = document.getElementById('directions-panel');
                   summaryPanel.innerHTML = '<br/>';
                   // For each route, display summary information.
                   for (var i = 0; i < POIs.length; i++) {
                       var routeSegment = numberToAlphabetConverter(i);//i + 1;
                       summaryPanel.innerHTML += '<a href="' + POIs[i].poiURL + '" target="_blank">' + routeSegment + ' - ' + POIs[i].poiName + '</a>';
                       summaryPanel.innerHTML += '<br/><br/>';
-                  }
+                  }*/
               }
               else
                   alert("No trajectories found!");
