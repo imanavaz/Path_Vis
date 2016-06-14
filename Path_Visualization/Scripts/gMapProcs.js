@@ -139,6 +139,7 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
                     poiData["poiLat"] = d.poiLat;
                     poiData["poiLon"] = d.poiLon;
                     poiData["poiURL"] = d.poiURL;
+                    poiData["poiPopularity"] = d.poiPopularity;
 
                     POIs[trajectoryPOIs.indexOf(parseInt(d.poiID))] = poiData;
                   }
@@ -317,6 +318,7 @@ function attachInstructionText(marker, poi) {
        poi.poiName+
       '<p>Theme: '+poi.poiTheme+'</p>'+
       '<p><a href="'+poi.poiURL+'"> on Wikipedia ...</a> '+'</p>'+
+      '<p>Popularity: '+poi.poiPopularity+'</p>' +
       '</p>';
 
   var markerInfoDisplay = new google.maps.InfoWindow({
