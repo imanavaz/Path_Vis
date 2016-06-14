@@ -127,8 +127,6 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
           for (i = 0; i< trajectoryPOIs.length; i++)
             trajectoryPOIs[i] = parseInt(trajectoryPOIs[i]);
 
-//console.log(trajectoryPOIs);
-
           var POIs = [];
 
           d3.csv(poiFile, function (data) {
@@ -153,7 +151,6 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
               for (i = 0; i < markerArray.length; i++) {
                   markerArray[i].setMap(null);
               }
-
               for (var i = 0; i < POIs.length; i++) {
                   var markerPosition = {lat: parseFloat(POIs[i].poiLat), lng: parseFloat(POIs[i].poiLon)};
 
@@ -217,6 +214,7 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
                   // start up with end of previous tour leg
                   itemsCounter--;
               }
+
 
               if (POIs.length > 0) {
                   //calculateAndDisplayRoute(directionsService, directionsDisplay, locations);
@@ -306,13 +304,24 @@ function calcRoute (batches, directionsService, directionsDisplay) {
                             }
                         }
                         directionsDisplay.setDirections(combinedResults);
+
+                        //calculate total duration and distance of trip
+                        var totalDistance = 0.0;
+                        var totalDuration = 0.0;
+                        for (var i=0; i < combinedResults.routes[0].legs.length; i++) {
+                          totalDistance += combinedResults.routes[0].legs[i].distance.value;
+                          totalDuration += combinedResults.routes[0].legs[i].duration.value;
+                        }
+
+                        console.log(parseFloat(totalDistance / 1000) +" km");
+                        console.log(parseInt(totalDuration / 60) +" minutes");
+
                     }
                 }
             });
         })(k);
     }
 }
-
 
 
 function attachInstructionText(marker, poi) {
