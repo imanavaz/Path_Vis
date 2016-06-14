@@ -17,6 +17,9 @@ function initMap() {
     // Instantiate an info window to hold step text.
     markerInfoDisplay = new google.maps.InfoWindow();
 
+    gMapBase.controls[google.maps.ControlPosition.RIGHT_TOP].push(
+      document.getElementById('legend-panel'));
+
 
     var trajectoryList = document.getElementById("trajectory-list");
     trajectoryList.addEventListener("change", function () {

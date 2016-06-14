@@ -1,15 +1,27 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html>
+
 <head>
     <title>Trajectory Display</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
             padding: 0;
-            font-family: 'Roboto','sans-serif';
+            font-family: 'Roboto', 'sans-serif';
+        }
+
+        #legend {
+            background: white;
+            padding: 5px;
         }
 
         #map-canvas {
@@ -27,26 +39,27 @@
             margin-top: 10px;
             background-color: #fff;
             text-align: left;
-            font-family: 'Roboto','sans-serif';
+            font-family: 'Roboto', 'sans-serif';
         }
 
         #mode {
             margin-top: 10px;
             width: 80px;
-            font-family: 'Roboto','sans-serif';
+            font-family: 'Roboto', 'sans-serif';
         }
-
     </style>
 
-    <script type="text/javascript" src="Scripts/gMapProcs.js" ></script>
+    <script type="text/javascript" src="Scripts/gMapProcs.js"></script>
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <!--script type="text/javascript" src="Lib/papaparse.min.js"></script-->
 
 </head>
+
 <body>
     <div id="control-panel">
         <div>
-            <br /><br/>
+            <br />
+            <br/>
 
             <b>Trajecctories:</b>
             <select id="trajectory-list">
@@ -61,8 +74,8 @@
 
                 var trajList = document.getElementById('trajectory-list');
 
-                dsv(trajectoryFile, function (data) {
-                    data.forEach(function (d) {
+                dsv(trajectoryFile, function(data) {
+                    data.forEach(function(d) {
                         var opt = document.createElement('option');
                         opt.innerHTML = d.trajID;
                         opt.value = d.trajID;
@@ -71,7 +84,8 @@
                 });
             </script>
 
-            <br /><br />
+            <br />
+            <br />
 
             <b>Algorithm : </b>
             <select id="alg-list">
@@ -88,7 +102,8 @@
 
             </select>
 
-            <br /><br />
+            <br />
+            <br />
 
             <b>Travel mode: </b>
             <select id="mode">
@@ -98,64 +113,69 @@
                 <option value="TRANSIT">Transit</option>
             </select>
 
-            <br/><br />
+            <br/>
+            <br />
 
             <!--div id="directions-panel"></div-->
-
-            <div id="legend-panel">
-              <table style="width:100%">
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/play.png" height="42" width="42"></td>
-                  <td>Sports stadiums</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/rail.png" height="42" width="42"></td>
-                  <td>Transport</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/parks.png" height="42" width="42"></td>
-                  <td>Parks and spaces</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/shopping.png" height="42" width="42"></td>
-                  <td>Shopping</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/museum.png" height="42" width="42"></td>
-                  <td>City precincts</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/movies.png" height="42" width="42"></td>
-                  <td>Entertainment</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/arts.png" height="42" width="42"></td>
-                  <td>Public galleries</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/landmark.png" height="42" width="42"></td>
-                  <td>Structure</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/govtbldgs.png" height="42" width="42"></td>
-                  <td>Institutions</td>
-                </tr>
-                <tr>
-                  <td><img src="https://maps.google.com/mapfiles/kml/shapes/info.png" height="42" width="42"></td>
-                  <td>Undefined Category</td>
-                </tr>
-              </table>
-
-
-
-            </div>
 
         </div>
     </div>
 
+    <div id="legend-panel">
+      <button type="button" style="float: right;" data-toggle="collapse" data-target="#legend">Marker Legend</button>
+      <br/>
+      <div id="legend" class="collapse">
+        <table style="width:100%">
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/play.png" height="30" width="30"></td>
+                <td>Sports stadiums</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/rail.png" height="30" width="30"></td>
+                <td>Transport</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/parks.png" height="30" width="30"></td>
+                <td>Parks and spaces</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/shopping.png" height="30" width="30"></td>
+                <td>Shopping</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/museum.png" height="30" width="30"></td>
+                <td>City precincts</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/movies.png" height="30" width="30"></td>
+                <td>Entertainment</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/arts.png" height="30" width="30"></td>
+                <td>Public galleries</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/landmark.png" height="42" width="42"></td>
+                <td>Structure</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/govtbldgs.png" height="42" width="42"></td>
+                <td>Institutions</td>
+            </tr>
+            <tr>
+                <td><img src="https://maps.google.com/mapfiles/kml/shapes/info.png" height="42" width="42"></td>
+                <td>Undefined Category</td>
+            </tr>
+        </table>
+      </div>
+    </div>
+
     <div id="map-canvas"></div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&signed_in=true&callback=initMap"
-            async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&signed_in=true&callback=initMap" async defer></script>
+
+
+
 </body>
+
 </html>
