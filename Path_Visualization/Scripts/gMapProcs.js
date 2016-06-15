@@ -94,32 +94,12 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
     dsv(trajectoryFile, function (data) {
         data.forEach(function (d) {
           if (d.trajID == trajectoryList.value)
-            //fetch data for the assigned algorithm
-            if (algorithm == 1)
-                trajectoryRow = d.REAL;
-            else if (algorithm == 2)
-                trajectoryRow = d.PoiPopularity;
-            else if (algorithm == 3)
-                trajectoryRow = d.PoiRank;
-            else if (algorithm == 4)
-                trajectoryRow = d.Markov;
-            else if (algorithm == 5)
-                trajectoryRow = d.MarkovPath;
-            else if (algorithm == 6)
-                trajectoryRow = d.RankMarkov;
-            else if (algorithm == 7)
-                trajectoryRow = d.RankMarkovPath;
-            else if (algorithm == 8)
-                trajectoryRow = d.StructuredSVM;
-            else if (algorithm == 9)
-                trajectoryRow = d.PersTour;
-            else if (algorithm == 10)
-                trajectoryRow = d.PersTourL;
+            trajectoryRow = d[algorithm];//fetch data for the assigned algorithm
         });
 
         if (trajectoryRow != 'NA')
         {
-          //bad way, but for now it should work
+          //bad method, would have been better if data was JSON 
           trajectoryRow = trajectoryRow.replace("[","");
           trajectoryRow = trajectoryRow.replace("]","");
 
