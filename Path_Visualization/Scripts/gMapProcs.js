@@ -1,9 +1,12 @@
 var markerArray = [];
+var allMelbournePOIs = [];
 var gMapBase;
 var icons;
+var trajectories = []; //to keep trajectories calcualted by all algorithms
 
 ﻿//Map works
 function initMap() {
+
     var directionsDisplay = new google.maps.DirectionsRenderer({
       suppressMarkers: true
     });
@@ -82,9 +85,36 @@ function initMap() {
 
 function processData(trajectoryList, directionsService, directionsDisplay) {
     var trajectoryFile = 'Data/Melb_recommendations.csv';
-    var trajectoryRow = [];//only one will be used
-    var poiFile = 'Data/poi-Melb-all.csv';
-    var locations = [];
+    var selectedTrajectory = [];//only one will be used
+
+    for (var i = 0; i < 10; i++){//initialize trajecotires array
+      trajectories[i] = new Array(4);//algorithm name, POIs, Time, Distance
+      trajectories[i]["Name"] = undefined;
+      trajectories[i]["POIs"] = [];
+      trajectories[i]["Duration"] = undefined;
+      trajectories[i]["Distance"] = undefined;
+    }
+
+//read Melbourne POIs
+var poiFile = 'Data/poi-Melb-all.csv';
+    var poiCount = 0;
+    d3.csv(poiFile, function (data) {
+        data.forEach(function (d) {
+          var poiData = [];
+          poiData["poiID"] = d.poiID;
+          poiData["poiName"] = d.poiName;
+          poiData["poiTheme"] = d.poiTheme;
+          poiData["poiLat"] = d.poiLat;
+          poiData["poiLon"] = d.poiLon;
+          poiData["poiURL"] = d.poiURL;
+          poiData["poiPopularity"] = d.poiPopularity;
+
+          allMelbournePOIs[poiCount] = new Array (7);
+          allMelbournePOIs[poiCount] = poiData;
+          poiCount++;
+      });
+
+    var trajCount;
 
     var algList = document.getElementById("alg-list");
     var algorithm = algList.value;
@@ -94,140 +124,152 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
     dsv(trajectoryFile, function (data) {
         data.forEach(function (d) {
           if (d.trajID == trajectoryList.value)
-            trajectoryRow = d[algorithm];//fetch data for the assigned algorithm
-        });
+          {
+            trajectories[0]["Name"] = "REAL";
+            trajectories[0]["POIs"] = arrayStringToArrayNumberConverter(d["REAL"]);
+            trajectories[1]["Name"] = "PoiPopularity";
+            trajectories[1]["POIs"] = arrayStringToArrayNumberConverter(d["PoiPopularity"]);
+            trajectories[2]["Name"] = "PoiRank";
+            trajectories[2]["POIs"] = arrayStringToArrayNumberConverter(d["PoiRank"]);
+            trajectories[3]["Name"] = "Markov";
+            trajectories[3]["POIs"] = arrayStringToArrayNumberConverter(d["Markov"]);
+            trajectories[4]["Name"] = "MarkovPath";
+            trajectories[4]["POIs"] = arrayStringToArrayNumberConverter(d["MarkovPath"]);
+            trajectories[5]["Name"] = "RankMarkov";
+            trajectories[5]["POIs"] = arrayStringToArrayNumberConverter(d["RankMarkov"]);
+            trajectories[6]["Name"] = "RankMarkovPath";
+            trajectories[6]["POIs"] = arrayStringToArrayNumberConverter(d["RankMarkovPath"]);
+            trajectories[7]["Name"] = "StructuredSVM";
+            trajectories[7]["POIs"] = arrayStringToArrayNumberConverter(d["StructuredSVM"]);
+            trajectories[8]["Name"] = "PersTour";
+            trajectories[8]["POIs"] = arrayStringToArrayNumberConverter(d["PersTour"]);
+            trajectories[9]["Name"] = "PersTourL";
+            trajectories[9]["POIs"] = arrayStringToArrayNumberConverter(d["PersTourL"]);
 
-        if (trajectoryRow != 'NA')
-        {
-          //bad method, would have been better if data was JSON 
-          trajectoryRow = trajectoryRow.replace("[","");
-          trajectoryRow = trajectoryRow.replace("]","");
+            for (trajCount = 0; trajCount < 10; trajCount++)//10 algorithms
+            {
+              var trajectoryPOIs = trajectories[trajCount].POIs;
 
-          var trajectoryPOIs = trajectoryRow.split(' ');
-          for (i = 0; i< trajectoryPOIs.length; i++)
-            trajectoryPOIs[i] = parseInt(trajectoryPOIs[i]);
+              if (trajectoryPOIs.length > 1)
+              {
+                var POIs = [];//to fetch POI details from the file
 
-          var POIs = [];
+                for (var c=0; c < trajectoryPOIs.length; c ++)
+                {
+                  POIs[c] = grabPOI(trajectoryPOIs[c]);
+                }
 
-          d3.csv(poiFile, function (data) {
-              data.forEach(function (d) {
-                  if (trajectoryPOIs.indexOf(parseInt(d.poiID)) != -1)
+                //imported code - prepare waypoints
+                var batches = [];
+                var itemsPerBatch = 10; // google API max - 1 start, 1 stop, and 8 waypoints
+                var itemsCounter = 0;
+                var wayptsExist = POIs.length > 0;
+
+                while (wayptsExist) {
+                    var subBatch = [];
+                    var subitemsCounter = 0;
+
+                    for (var j = itemsCounter; j < POIs.length; j++) {
+                        subitemsCounter++;
+                        subBatch.push({
+                            location: new window.google.maps.LatLng(POIs[j].poiLat, POIs[j].poiLon),
+                            stopover: true,
+                        });
+                        if (subitemsCounter == itemsPerBatch)
+                            break;
+                    }
+
+                    itemsCounter += subitemsCounter;
+                    batches.push(subBatch);
+                    wayptsExist = itemsCounter < POIs.length;
+                    // If it runs again there are still points. Minus 1 before continuing to
+                    // start up with end of previous tour leg
+                    itemsCounter--;
+                }
+
+
+                if (POIs.length > 0) {
+                  var calculationResults = [];
+
+                  if (algorithm == trajectories[trajCount].Name)
                   {
-                    var poiData = [];
-                    poiData["poiID"] = d.poiID;
-                    poiData["poiName"] = d.poiName;
-                    poiData["poiTheme"] = d.poiTheme;
-                    poiData["poiLat"] = d.poiLat;
-                    poiData["poiLon"] = d.poiLon;
-                    poiData["poiURL"] = d.poiURL;
-                    poiData["poiPopularity"] = d.poiPopularity;
+                    //sortout the markers
+                    // First, clear out any existing markerArray
+                    // from previous calculations.
+                    for (i = 0; i < markerArray.length; i++) {
+                        markerArray[i].setMap(null);
+                    }
+                    for (var i = 0; i < POIs.length; i++) {
+                        var markerPosition = {lat: parseFloat(POIs[i].poiLat), lng: parseFloat(POIs[i].poiLon)};
 
-                    POIs[trajectoryPOIs.indexOf(parseInt(d.poiID))] = poiData;
+                        var markerIcon;
+                        if (POIs[i].poiTheme == "Sports stadiums")
+                          markerIcon = icons["sport"].icon;
+                        else if (POIs[i].poiTheme == "Parks and spaces")
+                          markerIcon = icons["park"].icon;
+                        else if (POIs[i].poiTheme == "Transport")
+                          markerIcon = icons["transport"].icon;
+                        else if (POIs[i].poiTheme == "City precincts")
+                          markerIcon = icons["city"].icon;
+                        else if (POIs[i].poiTheme == "Shopping")
+                          markerIcon = icons["shopping"].icon;
+                        else if (POIs[i].poiTheme == "Entertainment")
+                          markerIcon = icons["entertainment"].icon;
+                        else if (POIs[i].poiTheme == "Public galleries")
+                          markerIcon = icons["art"].icon;
+                        else if (POIs[i].poiTheme == "Institutions")
+                          markerIcon = icons["institution"].icon;
+                        else if (POIs[i].poiTheme == "Structures")
+                          markerIcon = icons["structure"].icon;
+                        else
+                          markerIcon = icons["info"].icon;
+
+
+                        var marker = new google.maps.Marker({
+                          position: markerPosition,
+                          map: gMapBase,
+                          icon: markerIcon
+                        });
+                        attachInstructionText(marker, POIs[i]);
+                        markerArray[i] = marker;
+                    }
+
+                    calcRoute(batches, directionsService, directionsDisplay, true, trajCount);
+
                   }
-              });
-
-              // First, clear out any existing markerArray
-              // from previous calculations.
-              for (i = 0; i < markerArray.length; i++) {
-                  markerArray[i].setMap(null);
-              }
-              for (var i = 0; i < POIs.length; i++) {
-                  var markerPosition = {lat: parseFloat(POIs[i].poiLat), lng: parseFloat(POIs[i].poiLon)};
-
-                  var markerIcon;
-                  if (POIs[i].poiTheme == "Sports stadiums")
-                    markerIcon = icons["sport"].icon;
-                  else if (POIs[i].poiTheme == "Parks and spaces")
-                    markerIcon = icons["park"].icon;
-                  else if (POIs[i].poiTheme == "Transport")
-                    markerIcon = icons["transport"].icon;
-                  else if (POIs[i].poiTheme == "City precincts")
-                    markerIcon = icons["city"].icon;
-                  else if (POIs[i].poiTheme == "Shopping")
-                    markerIcon = icons["shopping"].icon;
-                  else if (POIs[i].poiTheme == "Entertainment")
-                    markerIcon = icons["entertainment"].icon;
-                  else if (POIs[i].poiTheme == "Public galleries")
-                    markerIcon = icons["art"].icon;
-                  else if (POIs[i].poiTheme == "Institutions")
-                    markerIcon = icons["institution"].icon;
-                  else if (POIs[i].poiTheme == "Structures")
-                    markerIcon = icons["structure"].icon;
-                  else
-                    markerIcon = icons["info"].icon;
-
-
-                  var marker = new google.maps.Marker({
-                    position: markerPosition,
-                    map: gMapBase,
-                    icon: markerIcon
-                  });
-                  attachInstructionText(marker, POIs[i]);
-                  markerArray[i] = marker;
-              }
-
-
-              //imported code - prepare waypoints
-              var batches = [];
-              var itemsPerBatch = 10; // google API max - 1 start, 1 stop, and 8 waypoints
-              var itemsCounter = 0;
-              var wayptsExist = POIs.length > 0;
-
-              while (wayptsExist) {
-                  var subBatch = [];
-                  var subitemsCounter = 0;
-
-                  for (var j = itemsCounter; j < POIs.length; j++) {
-                      subitemsCounter++;
-                      subBatch.push({
-                          location: new window.google.maps.LatLng(POIs[j].poiLat, POIs[j].poiLon),
-                          stopover: true,
-                      });
-                      if (subitemsCounter == itemsPerBatch)
-                          break;
+                  else{
+                    calcRoute(batches, directionsService, directionsDisplay, false, trajCount);
                   }
 
-                  itemsCounter += subitemsCounter;
-                  batches.push(subBatch);
-                  wayptsExist = itemsCounter < POIs.length;
-                  // If it runs again there are still points. Minus 1 before continuing to
-                  // start up with end of previous tour leg
-                  itemsCounter--;
-              }
+                  if (calculationResults != null){
+                    trajectories[trajCount]["Distance"] = calculationResults.distance;
+                    trajectories[trajCount]["Duration"] = calculationResults.duration;
+                  }
 
-
-              if (POIs.length > 0) {
-                  //calculateAndDisplayRoute(directionsService, directionsDisplay, locations);
-                  calcRoute(batches, directionsService, directionsDisplay);
-
-                  //removing cummary panel, to use the space for legend.
-                  /*var summaryPanel = document.getElementById('directions-panel');
-                  summaryPanel.innerHTML = '<br/>';
-                  // For each route, display summary information.
-                  for (var i = 0; i < POIs.length; i++) {
-                      var routeSegment = numberToAlphabetConverter(i);//i + 1;
-                      summaryPanel.innerHTML += '<a href="' + POIs[i].poiURL + '" target="_blank">' + routeSegment + ' - ' + POIs[i].poiName + '</a>';
-                      summaryPanel.innerHTML += '<br/><br/>';
-                  }*/
-              }
-              else
-                  alert("No trajectories found!");
-          });
-
-        }
-        else
-        {
-          console.log("Trajectory does not exists");
-        }
-
-    });
+                }
+                else
+                    console.log("No trajectories found!");
+            }
+            else
+            {
+              console.log("Trajectory does not exists");
+            }
+          }//end of for loop for algorithms
+          console.log(trajectories);
+          return; //break out of foreach loop
+        }//end if trajectory id is found
+      });//end data foreach
+    })//end dsv
+  });
 }
 
 
-function calcRoute (batches, directionsService, directionsDisplay) {
+function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay, trajIndex) {
     var combinedResults;
     var unsortedResults = [{}]; // to hold the counter and the results themselves as they come back, to later sort
     var directionsResultsReturned = 0;
+    var totalDistance = 0.0;
+    var totalDuration = 0.0;
 
     for (var k = 0; k < batches.length; k++) {
         var lastIndex = batches[k].length - 1;
@@ -283,24 +325,59 @@ function calcRoute (batches, directionsService, directionsDisplay) {
                                 }
                             }
                         }
-                        directionsDisplay.setDirections(combinedResults);
+
+                        if (shouldDisplay){
+                          directionsDisplay.setDirections(combinedResults);
+                          console.log(combinedResults);
+                        }
 
                         //calculate total duration and distance of trip
-                        var totalDistance = 0.0;
-                        var totalDuration = 0.0;
                         for (var i=0; i < combinedResults.routes[0].legs.length; i++) {
                           totalDistance += combinedResults.routes[0].legs[i].distance.value;
                           totalDuration += combinedResults.routes[0].legs[i].duration.value;
                         }
 
-                        console.log(parseFloat(totalDistance / 1000) +" km");
-                        console.log(parseInt(totalDuration / 60) +" minutes");
-
+                        trajectories[trajIndex].Distance = (totalDistance / 1000);
+                        trajectories[trajIndex].Duration = parseInt(totalDuration / 60);
                     }
                 }
             });
         })(k);
+        return null;
     }
+}
+
+
+function loadPOIs(){
+  //read Melbourne POIs
+  var poiFile = 'Data/poi-Melb-all.csv';
+
+  var poiCount = 0;
+  d3.csv(poiFile, function (data) {
+      data.forEach(function (d) {
+        var poiData = [];
+        poiData["poiID"] = d.poiID;
+        poiData["poiName"] = d.poiName;
+        poiData["poiTheme"] = d.poiTheme;
+        poiData["poiLat"] = d.poiLat;
+        poiData["poiLon"] = d.poiLon;
+        poiData["poiURL"] = d.poiURL;
+        poiData["poiPopularity"] = d.poiPopularity;
+
+        allMelbournePOIs[poiCount] = new Array (7);
+        allMelbournePOIs[poiCount] = jQuery.extend(true, {}, poiData);
+        poiCount++;
+    });
+  });
+}
+
+function grabPOI (poiID){
+  for(var i = 0; i < allMelbournePOIs.length; i++)
+  {
+    if (allMelbournePOIs[i].poiID == poiID){
+      return allMelbournePOIs[i];
+    }
+  }
 }
 
 
@@ -321,7 +398,6 @@ function attachInstructionText(marker, poi) {
   });
 }
 
-
 //Convert Numbers to Alphabet
 function numberToAlphabetConverter(n) {
     var ordA = 'A'.charCodeAt(0);
@@ -335,6 +411,26 @@ function numberToAlphabetConverter(n) {
     }
     return s;
 }
+
+//just works for this application due to bad encoding of numbers in csv file
+function arrayStringToArrayNumberConverter (str){
+  str = str.replace("[","");
+  str = str.replace("]","");
+  str = str.replace(",","");
+
+  var result = [];
+
+  result = str.split(' ');
+
+  for (i = 0; i< result.length; i++)
+    result[i] = parseInt(result[i]);
+
+  return result;
+}
+
+
+
+
 
 
 /****** Previous Process Data, works for first batch of datafiles ******/
