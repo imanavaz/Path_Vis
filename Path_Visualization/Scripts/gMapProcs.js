@@ -88,11 +88,12 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
     var selectedTrajectory = [];//only one will be used
 
     for (var i = 0; i < 10; i++){//initialize trajecotires array
-      trajectories[i] = new Array(4);//algorithm name, POIs, Time, Distance
+      trajectories[i] = new Array(5);//algorithm name, POIs, Time, Distance
       trajectories[i]["Name"] = undefined;
       trajectories[i]["POIs"] = [];
       trajectories[i]["Duration"] = undefined;
       trajectories[i]["Distance"] = undefined;
+      trajectories[i]["Path"] = undefined;
     }
 
 //read Melbourne POIs
@@ -241,11 +242,6 @@ var poiFile = 'Data/poi-Melb-all.csv';
                     calcRoute(batches, directionsService, directionsDisplay, false, trajCount);
                   }
 
-                  if (calculationResults != null){
-                    trajectories[trajCount]["Distance"] = calculationResults.distance;
-                    trajectories[trajCount]["Duration"] = calculationResults.duration;
-                  }
-
                 }
                 else
                     console.log("No trajectories found!");
@@ -339,6 +335,8 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
 
                         trajectories[trajIndex].Distance = (totalDistance / 1000);
                         trajectories[trajIndex].Duration = parseInt(totalDuration / 60);
+
+                        trajectories[trajIndex].Path = combinedResults;
                     }
                 }
             });
