@@ -85,7 +85,7 @@ function initMap() {
 }
 
 
-function processData(trajectoryList, directionsService, directionsDisplay) {
+function processData(trajectoryCombo, directionsService, directionsDisplay) {
     var trajectoryFile = 'Data/Melb_recommendations.csv';
     var selectedTrajectory = [];//only one will be used
 
@@ -93,8 +93,8 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
       trajectories[i] = new Array(6);//algorithm name, POIs, Time, Distance, Path, Markers
       trajectories[i]["Name"] = undefined;
       trajectories[i]["POIs"] = [];
-      trajectories[i]["Duration"] = undefined;
-      trajectories[i]["Distance"] = undefined;
+      trajectories[i]["Duration"] = 0;
+      trajectories[i]["Distance"] = 0;
       trajectories[i]["Path"] = undefined;
       trajectories[i]["Markers"] = undefined;
     }
@@ -127,12 +127,10 @@ var poiFile = 'Data/poi-Melb-all.csv';
 
     dsv(trajectoryFile, function (data) {
         data.forEach(function (d) {
-          if (d.trajID == trajectoryList.value)
+          if (d.trajID == trajectoryCombo.value)
           {
             trajectories[0]["Name"] = "REAL";
             trajectories[0]["POIs"] = arrayStringToArrayNumberConverter(d["REAL"]);
-            trajectories[0]["Distance"] = 0;
-            trajectories[0]["Duration"] = 0;
             trajectories[1]["Name"] = "PoiPopularity";
             trajectories[1]["POIs"] = arrayStringToArrayNumberConverter(d["PoiPopularity"]);
             trajectories[2]["Name"] = "PoiRank";
@@ -289,13 +287,13 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
             travelMode: document.getElementById('mode').value
         };
 
-        (function (kk)
-        {
+        //(function (kk)
+        //{
             directionsService.route(request, function (result, status) {
                 if (status == window.google.maps.DirectionsStatus.OK) {
 
                     var unsortedResult = {
-                        order : kk,
+                        order : 0,//kk,
                         result : result
                     };
                     unsortedResults.push(unsortedResult);
@@ -340,70 +338,34 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                       totalDistance += combinedResults.routes[0].legs[i].distance.value;
                       totalDuration += combinedResults.routes[0].legs[i].duration.value;
                     }
-
-                    trajectories[trajIndex].Distance = (totalDistance / 1000);
-                    trajectories[trajIndex].Duration = parseInt(totalDuration / 60);
+                    trajectories[trajIndex].Distance = JSON.parse(JSON.stringify(totalDistance / 1000));
+                    trajectories[trajIndex].Duration = JSON.parse(JSON.stringify(parseInt(totalDuration / 60)));
 
                     trajectories[trajIndex].Path = combinedResults;
-
+console.log(trajectories[trajIndex].Distance);
                 }
             });
-        })(k);
+        //})(k);
 
         return;
     }
 }
 
-function generateTrajectoryListVis(trajectoryList){
-  console.log(trajectoryList);
+function generateTrajectoryListVis(tList){
+  console.log(tList);
 
-  console.log(trajectoryList[0].Distance);
+  var myChart = document.getElementById("chart");
+  //console.log(tList[0].Distance);
+  for (var c = 0; c < tList.length; c++){
 
-  var chartWidth       = 300,
-    barHeight        = 20,
-    groupHeight      = barHeight * 3,
-    gapBetweenGroups = 10,
-    spaceForLabels   = 150,
-    spaceForLegend   = 150;
+    var listElement = document.createElement('li');
+    listElement.appendChild(document.createTextNode(tList[c].Name
+      +" Distance is : "+tList[c].Distance
+      +" Duration is : "+tList[c].Duration));
 
-  var zippedData = [];
-  for (var j=0; j<trajectoryList.length; j++) {
-    //for (var j=0; j<data.series.length; j++) {
-    zippedData.push(trajectoryList[j].Distance);
-    zippedData.push(trajectoryList[j].Duration);
-    //console.log(trajectoryList[j]);
-    //}
+    myChart.appendChild(listElement);
+
   }
-
-  //console.log(zippedData);
-
-
-  // Color scale
-  var color = d3.scale.category20();
-
-  var chartHeight = barHeight * trajectoryList.length + gapBetweenGroups * trajectoryList.length;
-
-  // Specify the chart area and dimensions
-  var chart = d3.select(".chart")
-    .attr("width", spaceForLabels + chartWidth + spaceForLegend)
-    .attr("height", chartHeight);
-
-  // Create bars
-  var bar = chart.selectAll("g")
-      .data(trajectoryList)
-      .enter().append("g")
-      .attr("transform", function(d, i) {
-        return "translate(" + spaceForLabels + "," + (i * barHeight + gapBetweenGroups * (0.5 + Math.floor(i/trajectoryList.length))) + ")";
-      });
-
-  // Create rectangles of the correct width
-  bar.append("rect")
-      .attr("fill", function(d,i) { return color(i % trajectoryList.length); })
-      .attr("class", "bar")
-      .attr("width", x)
-      .attr("height", barHeight - 1);
-
-
 
 }
 
