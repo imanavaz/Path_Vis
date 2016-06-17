@@ -1,3 +1,5 @@
+"use strict";
+
 var markerArray = [];
 var allMelbournePOIs = [];
 var gMapBase;
@@ -18,7 +20,7 @@ function initMap() {
     directionsDisplay.setMap(gMapBase);
 
     // Instantiate an info window to hold step text.
-    markerInfoDisplay = new google.maps.InfoWindow();
+    //markerInfoDisplay = new google.maps.InfoWindow();
 
     gMapBase.controls[google.maps.ControlPosition.RIGHT_TOP].push(
       document.getElementById('legend-panel'));
@@ -88,12 +90,13 @@ function processData(trajectoryList, directionsService, directionsDisplay) {
     var selectedTrajectory = [];//only one will be used
 
     for (var i = 0; i < 10; i++){//initialize trajecotires array
-      trajectories[i] = new Array(5);//algorithm name, POIs, Time, Distance
+      trajectories[i] = new Array(6);//algorithm name, POIs, Time, Distance, Path, Markers
       trajectories[i]["Name"] = undefined;
       trajectories[i]["POIs"] = [];
       trajectories[i]["Duration"] = undefined;
       trajectories[i]["Distance"] = undefined;
       trajectories[i]["Path"] = undefined;
+      trajectories[i]["Markers"] = undefined;
     }
 
 //read Melbourne POIs
@@ -128,6 +131,8 @@ var poiFile = 'Data/poi-Melb-all.csv';
           {
             trajectories[0]["Name"] = "REAL";
             trajectories[0]["POIs"] = arrayStringToArrayNumberConverter(d["REAL"]);
+            trajectories[0]["Distance"] = 0;
+            trajectories[0]["Duration"] = 0;
             trajectories[1]["Name"] = "PoiPopularity";
             trajectories[1]["POIs"] = arrayStringToArrayNumberConverter(d["PoiPopularity"]);
             trajectories[2]["Name"] = "PoiRank";
@@ -251,7 +256,7 @@ var poiFile = 'Data/poi-Melb-all.csv';
               console.log("Trajectory does not exists");
             }
           }//end of for loop for algorithms
-          console.log(trajectories);
+          generateTrajectoryListVis(trajectories);
           return; //break out of foreach loop
         }//end if trajectory id is found
       });//end data foreach
@@ -264,8 +269,7 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
     var combinedResults;
     var unsortedResults = [{}]; // to hold the counter and the results themselves as they come back, to later sort
     var directionsResultsReturned = 0;
-    var totalDistance = 0.0;
-    var totalDuration = 0.0;
+
 
     for (var k = 0; k < batches.length; k++) {
         var lastIndex = batches[k].length - 1;
@@ -284,7 +288,9 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
             waypoints : waypts,
             travelMode: document.getElementById('mode').value
         };
-        (function (kk) {
+
+        (function (kk)
+        {
             directionsService.route(request, function (result, status) {
                 if (status == window.google.maps.DirectionsStatus.OK) {
 
@@ -293,7 +299,6 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                         result : result
                     };
                     unsortedResults.push(unsortedResult);
-
                     directionsResultsReturned++;
 
                     if (directionsResultsReturned == batches.length) // we've received all the results. put to map
@@ -321,31 +326,89 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                                 }
                             }
                         }
-
-                        if (shouldDisplay){
-                          directionsDisplay.setDirections(combinedResults);
-                          console.log(combinedResults);
-                        }
-
-                        //calculate total duration and distance of trip
-                        for (var i=0; i < combinedResults.routes[0].legs.length; i++) {
-                          totalDistance += combinedResults.routes[0].legs[i].distance.value;
-                          totalDuration += combinedResults.routes[0].legs[i].duration.value;
-                        }
-
-                        trajectories[trajIndex].Distance = (totalDistance / 1000);
-                        trajectories[trajIndex].Duration = parseInt(totalDuration / 60);
-
-                        trajectories[trajIndex].Path = combinedResults;
                     }
+
+                    if (shouldDisplay){
+                      directionsDisplay.setDirections(combinedResults);
+                      //console.log(combinedResults);
+                    }
+
+                    //calculate total duration and distance of trip
+                    var totalDistance = 0.0;
+                    var totalDuration = 0.0;
+                    for (var i=0; i < combinedResults.routes[0].legs.length; i++) {
+                      totalDistance += combinedResults.routes[0].legs[i].distance.value;
+                      totalDuration += combinedResults.routes[0].legs[i].duration.value;
+                    }
+
+                    trajectories[trajIndex].Distance = (totalDistance / 1000);
+                    trajectories[trajIndex].Duration = parseInt(totalDuration / 60);
+
+                    trajectories[trajIndex].Path = combinedResults;
+
                 }
             });
         })(k);
-        return null;
+
+        return;
     }
 }
 
+function generateTrajectoryListVis(trajectoryList){
+  console.log(trajectoryList);
 
+  console.log(trajectoryList[0].Distance);
+
+  var chartWidth       = 300,
+    barHeight        = 20,
+    groupHeight      = barHeight * 3,
+    gapBetweenGroups = 10,
+    spaceForLabels   = 150,
+    spaceForLegend   = 150;
+
+  var zippedData = [];
+  for (var j=0; j<trajectoryList.length; j++) {
+    //for (var j=0; j<data.series.length; j++) {
+    zippedData.push(trajectoryList[j].Distance);
+    zippedData.push(trajectoryList[j].Duration);
+    //console.log(trajectoryList[j]);
+    //}
+  }
+
+  //console.log(zippedData);
+
+
+  // Color scale
+  var color = d3.scale.category20();
+
+  var chartHeight = barHeight * trajectoryList.length + gapBetweenGroups * trajectoryList.length;
+
+  // Specify the chart area and dimensions
+  var chart = d3.select(".chart")
+    .attr("width", spaceForLabels + chartWidth + spaceForLegend)
+    .attr("height", chartHeight);
+
+  // Create bars
+  var bar = chart.selectAll("g")
+      .data(trajectoryList)
+      .enter().append("g")
+      .attr("transform", function(d, i) {
+        return "translate(" + spaceForLabels + "," + (i * barHeight + gapBetweenGroups * (0.5 + Math.floor(i/trajectoryList.length))) + ")";
+      });
+
+  // Create rectangles of the correct width
+  bar.append("rect")
+      .attr("fill", function(d,i) { return color(i % trajectoryList.length); })
+      .attr("class", "bar")
+      .attr("width", x)
+      .attr("height", barHeight - 1);
+
+
+
+}
+
+
+//this would load POIs but have not been used in the code
 function loadPOIs(){
   //read Melbourne POIs
   var poiFile = 'Data/poi-Melb-all.csv';
@@ -368,6 +431,7 @@ function loadPOIs(){
     });
   });
 }
+
 
 function grabPOI (poiID){
   for(var i = 0; i < allMelbournePOIs.length; i++)
@@ -420,7 +484,7 @@ function arrayStringToArrayNumberConverter (str){
 
   result = str.split(' ');
 
-  for (i = 0; i< result.length; i++)
+  for (var i = 0; i< result.length; i++)
     result[i] = parseInt(result[i]);
 
   return result;
