@@ -150,6 +150,9 @@ var poiFile = 'Data/poi-Melb-all.csv';
             trajectories[9]["Name"] = "PersTourL";
             trajectories[9]["POIs"] = arrayStringToArrayNumberConverter(d["PersTourL"]);
 
+            document.getElementById("chart").innerHTML="";
+
+
             for (trajCount = 0; trajCount < 10; trajCount++)//10 algorithms
             {
               var trajectoryPOIs = trajectories[trajCount].POIs;
@@ -254,7 +257,8 @@ var poiFile = 'Data/poi-Melb-all.csv';
               console.log("Trajectory does not exists");
             }
           }//end of for loop for algorithms
-          generateTrajectoryListVis(trajectories);
+
+          //generateTrajectoryListVis(trajectories);
           return; //break out of foreach loop
         }//end if trajectory id is found
       });//end data foreach
@@ -287,8 +291,8 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
             travelMode: document.getElementById('mode').value
         };
 
-        //(function (kk)
-        //{
+        (function (kk)
+        {
             directionsService.route(request, function (result, status) {
                 if (status == window.google.maps.DirectionsStatus.OK) {
 
@@ -342,31 +346,22 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                     trajectories[trajIndex].Duration = JSON.parse(JSON.stringify(parseInt(totalDuration / 60)));
 
                     trajectories[trajIndex].Path = combinedResults;
-console.log(trajectories[trajIndex].Distance);
+
+                    //Add route info to the list
+                    var myChart = document.getElementById("chart");
+                    var listElement = document.createElement('li');
+                    listElement.appendChild(document.createTextNode(trajectories[trajIndex].Name
+                      +" Distance is : "+trajectories[trajIndex].Distance
+                      +" Duration is : "+trajectories[trajIndex].Duration));
+
+                    myChart.appendChild(listElement);
+
                 }
             });
-        //})(k);
+        })(k);
 
         return;
     }
-}
-
-function generateTrajectoryListVis(tList){
-  console.log(tList);
-
-  var myChart = document.getElementById("chart");
-  //console.log(tList[0].Distance);
-  for (var c = 0; c < tList.length; c++){
-
-    var listElement = document.createElement('li');
-    listElement.appendChild(document.createTextNode(tList[c].Name
-      +" Distance is : "+tList[c].Distance
-      +" Duration is : "+tList[c].Duration));
-
-    myChart.appendChild(listElement);
-
-  }
-
 }
 
 
