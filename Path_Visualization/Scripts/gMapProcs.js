@@ -350,10 +350,19 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                     //Add route info to the list
                     var myChart = document.getElementById("chart");
                     var listElement = document.createElement('li');
-                    listElement.appendChild(document.createTextNode(trajectories[trajIndex].Name
-                      +" Distance is : "+trajectories[trajIndex].Distance
-                      +" Duration is : "+trajectories[trajIndex].Duration));
+                    listElement.appendChild(document.createTextNode(trajectories[trajIndex].Name));
+                    var attributeElement = document.createElement('ul');
 
+                    var distanceElement = document.createElement('li');
+                    distanceElement.appendChild(document.createTextNode(" Distance is : "+trajectories[trajIndex].Distance));
+
+                    var durationElement = document.createElement('li');
+                    durationElement.appendChild(document.createTextNode(" Duration is : "+trajectories[trajIndex].Duration));
+
+                    attributeElement.appendChild(distanceElement);
+                    attributeElement.appendChild(durationElement);
+
+                    listElement.appendChild(attributeElement);
                     myChart.appendChild(listElement);
 
                 }
