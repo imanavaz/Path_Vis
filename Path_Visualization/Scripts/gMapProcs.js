@@ -5,7 +5,6 @@ var allMelbournePOIs = [];
 var gMapBase;
 var icons;
 var trajectories = []; //to keep trajectories calcualted by all algorithms
-var svg1;
 
 ﻿//Map works
 function initMap() {
@@ -153,10 +152,7 @@ var poiFile = 'Data/poi-Melb-all.csv';
 
             document.getElementById("alg-panel").innerHTML="";
 
-            svg1 = d3.select('#alg-panel')
-              .append('svg')
-              .attr('width', 100)
-              .attr('height', 240);
+
 
 
             for (trajCount = 0; trajCount < 10; trajCount++)//10 algorithms
@@ -248,6 +244,7 @@ var poiFile = 'Data/poi-Melb-all.csv';
                     }
 
                     calcRoute(batches, directionsService, directionsDisplay, true, trajCount);
+                    test(trajectories);
 
                   }
                   else{
@@ -344,27 +341,17 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                     //calculate total duration and distance of trip
                     var totalDistance = 0.0;
                     var totalDuration = 0.0;
+                    if (combinedResults){
                     for (var i=0; i < combinedResults.routes[0].legs.length; i++) {
                       totalDistance += combinedResults.routes[0].legs[i].distance.value;
                       totalDuration += combinedResults.routes[0].legs[i].duration.value;
-                    }
+                    }}
                     trajectories[trajIndex].Distance = JSON.parse(JSON.stringify(totalDistance / 1000));
                     trajectories[trajIndex].Duration = JSON.parse(JSON.stringify(parseInt(totalDuration / 60)));
 
                     trajectories[trajIndex].Path = combinedResults;
 
                     //Add route info to the list
-
-
-                    svg1.selectAll('svg')
-                      .data(trajectories)
-                      .enter()
-                      .append('svg')
-                        .attr('y', function(d, i) { return i * 22; })
-                        .attr('x', function(d) { return 5; })//100 - d.Distance * 20; })
-                        .attr('height', 20)
-                        .attr('width', function(d) { return d.Distance * 20; })
-                        .attr('fill', d3.rgb(0,146,146));
 
 
                     var listElement = document.createElement('svg');
@@ -391,10 +378,47 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
 
                 }
             });
+
         })(k);
 
-        return;
+
+
+
+
+      return;
     }
+}
+
+function test(data)
+{
+  var div1 = d3.select('#alg-panel');
+    //.append('div')
+  //  .attr('width', 100)
+  //  .attr('height', 240);
+  div1.selectAll('svg')
+    .data(data)
+    .enter()
+    .append('svg')
+      .attr('height',60);
+
+  var  myarray = div1.selectAll('svg')
+
+          .append('rect')
+            .attr('y', function(d, i) { return i * 22; })
+            .attr('x', function(d) { return 5; })//100 - d.Distance * 20; })
+            .attr('height', 20)
+            .attr('width', function(d,i) { return data[i].Distance * 20 + 10; })
+            .attr('fill', d3.rgb(0,146,146));
+
+       //myarray.enter()
+        //.append('rect')
+          //.attr('y', function(d, i) { return (i + 2) * 22 ; })
+          //.attr('x', function(d) { return 5; })//100 - d.Distance * 20; })
+          //.attr('height', 20)
+          //.attr('width', function(d) { return d.Duration * 20; })
+          //.attr('fill', d3.rgb(146,0,0));
+
+
 }
 
 
