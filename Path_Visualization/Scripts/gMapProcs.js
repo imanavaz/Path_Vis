@@ -1,10 +1,11 @@
-"use strict";
+
 
 var markerArray = [];
 var allMelbournePOIs = [];
 var gMapBase;
 var icons;
 var trajectories = []; //to keep trajectories calcualted by all algorithms
+var svg1;
 
 ﻿//Map works
 function initMap() {
@@ -150,7 +151,12 @@ var poiFile = 'Data/poi-Melb-all.csv';
             trajectories[9]["Name"] = "PersTourL";
             trajectories[9]["POIs"] = arrayStringToArrayNumberConverter(d["PersTourL"]);
 
-            document.getElementById("chart").innerHTML="";
+            document.getElementById("alg-panel").innerHTML="";
+
+            svg1 = d3.select('#alg-panel')
+              .append('svg')
+              .attr('width', 100)
+              .attr('height', 240);
 
 
             for (trajCount = 0; trajCount < 10; trajCount++)//10 algorithms
@@ -348,22 +354,40 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                     trajectories[trajIndex].Path = combinedResults;
 
                     //Add route info to the list
-                    var myChart = document.getElementById("chart");
-                    var listElement = document.createElement('li');
-                    listElement.appendChild(document.createTextNode(trajectories[trajIndex].Name));
-                    var attributeElement = document.createElement('ul');
 
-                    var distanceElement = document.createElement('li');
-                    distanceElement.appendChild(document.createTextNode(" Distance is : "+trajectories[trajIndex].Distance));
 
-                    var durationElement = document.createElement('li');
-                    durationElement.appendChild(document.createTextNode(" Duration is : "+trajectories[trajIndex].Duration));
+                    svg1.selectAll('svg')
+                      .data(trajectories)
+                      .enter()
+                      .append('svg')
+                        .attr('y', function(d, i) { return i * 22; })
+                        .attr('x', function(d) { return 5; })//100 - d.Distance * 20; })
+                        .attr('height', 20)
+                        .attr('width', function(d) { return d.Distance * 20; })
+                        .attr('fill', d3.rgb(0,146,146));
 
-                    attributeElement.appendChild(distanceElement);
-                    attributeElement.appendChild(durationElement);
 
-                    listElement.appendChild(attributeElement);
-                    myChart.appendChild(listElement);
+                    var listElement = document.createElement('svg');
+                    listElement.setAttribute('width',100);
+                    listElement.setAttribute('height',30);
+
+                    var nameElement = document.createElement('text');
+                    //nameElement.(trajectories[trajIndex].Name));
+                    listElement.appendChild(nameElement);
+
+                    var distanceElement = document.createElement('rect');
+                    distanceElement.setAttribute('width', trajectories[trajIndex].Distance);
+                    distanceElement.setAttribute('height', 10);
+                    distanceElement.setAttribute('style', "fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)");
+                    listElement.appendChild(distanceElement);
+
+                    var durationElement = document.createElement('rect');
+                    distanceElement.setAttribute('width', trajectories[trajIndex].Duration);
+                    distanceElement.setAttribute('height', 10);
+                    distanceElement.setAttribute('style', "fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)");
+                    listElement.appendChild(durationElement);
+
+                    //myChart.appendChild(listElement);
 
                 }
             });
