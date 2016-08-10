@@ -5,6 +5,7 @@ var allMelbournePOIs = [];
 var gMapBase;
 var icons;
 var trajectories = []; //to keep trajectories calcualted by all algorithms
+var algorithm;
 
 ﻿//Map works
 function initMap() {
@@ -28,7 +29,7 @@ function initMap() {
 
     var trajectoryList = document.getElementById("trajectory-list");
     trajectoryList.addEventListener("change", function () {
-        processData(trajectoryList, directionsService,directionsDisplay);
+        processData(trajectoryList, directionsService, directionsDisplay);
     });
 
     var modeList = document.getElementById("mode");
@@ -36,10 +37,10 @@ function initMap() {
         processData(trajectoryList, directionsService, directionsDisplay);
     });
 
-    var algList = document.getElementById("alg-list");
-    algList.addEventListener("change", function () {
-        processData(trajectoryList, directionsService, directionsDisplay);
-    });
+    //var algList = document.getElementById("alg-list");
+    //algList.addEventListener("change", function () {
+    //    processData(trajectoryList, directionsService, directionsDisplay);
+    //});
 
     //prepare markers
     var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
@@ -120,8 +121,9 @@ var poiFile = 'Data/poi-Melb-all.csv';
 
     var trajCount;
 
-    var algList = document.getElementById("alg-list");
-    var algorithm = algList.value;
+    //var algList = document.getElementById("alg-list");
+    if (algorithm == null)
+      algorithm = 0;// put first algorithm as default, before it was algList.value;
 
     var dsv = d3.dsv(";", "text/plain");
 
@@ -150,9 +152,8 @@ var poiFile = 'Data/poi-Melb-all.csv';
             trajectories[9]["Name"] = "PersTourL";
             trajectories[9]["POIs"] = arrayStringToArrayNumberConverter(d["PersTourL"]);
 
-            document.getElementById("alg-panel").innerHTML="";
 
-
+            clearAlgorithmPanel();
 
 
             for (trajCount = 0; trajCount < 10; trajCount++)//10 algorithms
@@ -200,7 +201,7 @@ var poiFile = 'Data/poi-Melb-all.csv';
                 if (POIs.length > 0) {
                   var calculationResults = [];
 
-                  if (algorithm == trajectories[trajCount].Name)
+                  if (algorithm == trajCount)//before it was rajectories[trajCount].Name)
                   {
                     //sortout the markers
                     // First, clear out any existing markerArray
@@ -244,7 +245,7 @@ var poiFile = 'Data/poi-Melb-all.csv';
                     }
 
                     calcRoute(batches, directionsService, directionsDisplay, true, trajCount);
-                    test(trajectories);
+                    //test(trajectories);
 
                   }
                   else{
@@ -353,40 +354,112 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
 
                     //Add route info to the list
 
+                    var myChart = document.getElementById("alg-panel");
 
-                    var listElement = document.createElement('svg');
-                    listElement.setAttribute('width',100);
-                    listElement.setAttribute('height',30);
+                    var listDiv = document.createElement('div');
+                    listDiv.setAttribute("style","height:55px");
+                    //listDiv.setAttribute('height',40);
 
-                    var nameElement = document.createElement('text');
-                    //nameElement.(trajectories[trajIndex].Name));
+                    var listElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+                    var nameElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
+                    //nameElement.setAttribute('height', 50);
+                    nameElement.setAttribute('y', 18);
+                    var textNode = document.createTextNode(trajectories[trajIndex].Name + ' ' +
+                              trajectories[trajIndex].Duration);
+                    nameElement.appendChild(textNode);
                     listElement.appendChild(nameElement);
 
-                    var distanceElement = document.createElement('rect');
-                    distanceElement.setAttribute('width', trajectories[trajIndex].Distance);
-                    distanceElement.setAttribute('height', 10);
-                    distanceElement.setAttribute('style', "fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)");
+                    var distanceElement = document.createElementNS("http://www.w3.org/2000/svg",'rect');
+                    distanceElement.setAttribute('width', trajectories[trajIndex].Distance*10); //This needs normalization
+                    distanceElement.setAttribute('height', 15);
+                    distanceElement.setAttribute('y', 20);
+                    distanceElement.setAttribute('style', "fill:rgb(0,146,146);");
                     listElement.appendChild(distanceElement);
 
-                    var durationElement = document.createElement('rect');
-                    distanceElement.setAttribute('width', trajectories[trajIndex].Duration);
-                    distanceElement.setAttribute('height', 10);
-                    distanceElement.setAttribute('style', "fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)");
+                    var distanceTextElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
+                    //nameElement.setAttribute('height', 50);
+                    distanceTextElement.setAttribute('x', trajectories[trajIndex].Distance*10 + 2);//this needs normaization
+                    distanceTextElement.setAttribute('y', 34);
+                    var textNode2 = document.createTextNode(trajectories[trajIndex].Distance + 'km');
+                    distanceTextElement.appendChild(textNode2);
+                    listElement.appendChild(distanceTextElement);
+
+                    var durationElement = document.createElementNS("http://www.w3.org/2000/svg","rect");
+                    durationElement.setAttribute('width', trajectories[trajIndex].Duration); //this needs normaization
+                    durationElement.setAttribute('height', 15);
+                    durationElement.setAttribute('y',35);
+                    durationElement.setAttribute('style', "fill:rgb(146,0,0);");
                     listElement.appendChild(durationElement);
 
-                    //myChart.appendChild(listElement);
+                    var durationTextElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
+                    //nameElement.setAttribute('height', 50);
+                    durationTextElement.setAttribute('x', trajectories[trajIndex].Duration + 2);//this needs normaization
+                    durationTextElement.setAttribute('y', 49);
+                    var textNode3 = document.createTextNode(trajectories[trajIndex].Duration + 'min');
+                    durationTextElement.appendChild(textNode3);
+                    listElement.appendChild(durationTextElement);
+
+                    listDiv.appendChild(listElement);
+                    myChart.appendChild(listDiv);
 
                 }
             });
 
         })(k);
 
-
-
-
-
-      return;
+        return;
     }
+}
+
+
+function clearAlgorithmPanel(){
+  //document.getElementById("alg-panel").innerHTML="";
+
+  var myChart = document.getElementById("alg-panel");
+  myChart.innerHTML="";
+
+  var chartLegend = document.createElement('div');
+  chartLegend.setAttribute("style","height:60px");
+
+  var legendContents = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+  var distanceBox = document.createElementNS("http://www.w3.org/2000/svg",'rect');
+  distanceBox.setAttribute('width', 20);
+  distanceBox.setAttribute('height', 15);
+  distanceBox.setAttribute('y', 5);
+  distanceBox.setAttribute('x', 0)
+  distanceBox.setAttribute('style', "fill:rgb(0,146,146);");
+  legendContents.appendChild(distanceBox);
+
+
+  var nameElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
+  //nameElement.setAttribute('height', 50);
+  nameElement.setAttribute('y', 19);
+  nameElement.setAttribute('x', 22)
+  var textNode = document.createTextNode("Distance");
+  nameElement.appendChild(textNode);
+  legendContents.appendChild(nameElement);
+
+  var distanceBox2 = document.createElementNS("http://www.w3.org/2000/svg",'rect');
+  distanceBox2.setAttribute('width', 20);
+  distanceBox2.setAttribute('height', 15);
+  distanceBox2.setAttribute('y', 27);
+  distanceBox2.setAttribute('x', 0)
+  distanceBox2.setAttribute('style', "fill:rgb(146,0,0);");
+  legendContents.appendChild(distanceBox2);
+
+  var nameElement2 = document.createElementNS("http://www.w3.org/2000/svg",'text');
+  //nameElement.setAttribute('height', 50);
+  nameElement2.setAttribute('y', 40);
+  nameElement2.setAttribute('x', 22)
+  var textNode2 = document.createTextNode("Duration");
+  nameElement2.appendChild(textNode2);
+  legendContents.appendChild(nameElement2);
+
+  chartLegend.appendChild(legendContents);
+  myChart.appendChild(chartLegend);
+
 }
 
 function test(data)
