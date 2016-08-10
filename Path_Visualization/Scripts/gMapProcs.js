@@ -83,6 +83,9 @@ function initMap() {
       }
     };
 
+    //generate legend for algorithm list panel vis
+    generateAlgorithmPanelLegend();
+
 }
 
 
@@ -153,7 +156,7 @@ var poiFile = 'Data/poi-Melb-all.csv';
             trajectories[9]["POIs"] = arrayStringToArrayNumberConverter(d["PersTourL"]);
 
 
-            clearAlgorithmPanel();
+            clearAlgorithmList();
 
 
             for (trajCount = 0; trajCount < 10; trajCount++)//10 algorithms
@@ -353,14 +356,12 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                     trajectories[trajIndex].Path = combinedResults;
 
                     //Add route info to the list
+                    //Would have liked to do this in D3js instead
 
-                    var myChart = document.getElementById("alg-panel");
-
-                    var listDiv = document.createElement('div');
-                    listDiv.setAttribute("style","height:55px");
-                    //listDiv.setAttribute('height',40);
+                    var listDiv = document.getElementById("alg-list");
 
                     var listElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    listElement.setAttribute('height',55);
 
                     var nameElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
                     //nameElement.setAttribute('height', 50);
@@ -401,7 +402,7 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                     listElement.appendChild(durationTextElement);
 
                     listDiv.appendChild(listElement);
-                    myChart.appendChild(listDiv);
+
 
                 }
             });
@@ -413,13 +414,17 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
 }
 
 
-function clearAlgorithmPanel(){
+function clearAlgorithmList(){
   //document.getElementById("alg-panel").innerHTML="";
 
-  var myChart = document.getElementById("alg-panel");
+  var myChart = document.getElementById("alg-list");
   myChart.innerHTML="";
+}
 
-  var chartLegend = document.createElement('div');
+function generateAlgorithmPanelLegend(){
+  var chartLegend = document.getElementById('alg-legend-panel');
+  chartLegend.innerHTML = "";
+
   chartLegend.setAttribute("style","height:60px");
 
   var legendContents = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -458,7 +463,7 @@ function clearAlgorithmPanel(){
   legendContents.appendChild(nameElement2);
 
   chartLegend.appendChild(legendContents);
-  myChart.appendChild(chartLegend);
+  //myChart.appendChild(chartLegend);
 
 }
 
