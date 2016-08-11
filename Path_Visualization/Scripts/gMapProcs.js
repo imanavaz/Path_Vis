@@ -6,11 +6,12 @@ var gMapBase;
 var icons;
 var trajectories = []; //to keep trajectories calcualted by all algorithms
 var algorithm;
+var directionsDisplay;
 
 ﻿//Map works
 function initMap() {
 
-    var directionsDisplay = new google.maps.DirectionsRenderer({
+    directionsDisplay = new google.maps.DirectionsRenderer({
       suppressMarkers: true
     });
     var directionsService = new google.maps.DirectionsService;
@@ -100,7 +101,7 @@ function processData(trajectoryCombo, directionsService, directionsDisplay) {
       trajectories[i]["Duration"] = 0;
       trajectories[i]["Distance"] = 0;
       trajectories[i]["Path"] = undefined;
-      trajectories[i]["Markers"] = undefined;
+      //trajectories[i]["Markers"] = undefined;
     }
 
 //read Melbourne POIs
@@ -202,58 +203,8 @@ var poiFile = 'Data/poi-Melb-all.csv';
 
 
                 if (POIs.length > 0) {
-                  var calculationResults = [];
 
-                  if (algorithm == trajCount)//before it was rajectories[trajCount].Name)
-                  {
-                    //sortout the markers
-                    // First, clear out any existing markerArray
-                    // from previous calculations.
-                    for (i = 0; i < markerArray.length; i++) {
-                        markerArray[i].setMap(null);
-                    }
-                    for (var i = 0; i < POIs.length; i++) {
-                        var markerPosition = {lat: parseFloat(POIs[i].poiLat), lng: parseFloat(POIs[i].poiLon)};
-
-                        var markerIcon;
-                        if (POIs[i].poiTheme == "Sports stadiums")
-                          markerIcon = icons["sport"].icon;
-                        else if (POIs[i].poiTheme == "Parks and spaces")
-                          markerIcon = icons["park"].icon;
-                        else if (POIs[i].poiTheme == "Transport")
-                          markerIcon = icons["transport"].icon;
-                        else if (POIs[i].poiTheme == "City precincts")
-                          markerIcon = icons["city"].icon;
-                        else if (POIs[i].poiTheme == "Shopping")
-                          markerIcon = icons["shopping"].icon;
-                        else if (POIs[i].poiTheme == "Entertainment")
-                          markerIcon = icons["entertainment"].icon;
-                        else if (POIs[i].poiTheme == "Public galleries")
-                          markerIcon = icons["art"].icon;
-                        else if (POIs[i].poiTheme == "Institutions")
-                          markerIcon = icons["institution"].icon;
-                        else if (POIs[i].poiTheme == "Structures")
-                          markerIcon = icons["structure"].icon;
-                        else
-                          markerIcon = icons["info"].icon;
-
-
-                        var marker = new google.maps.Marker({
-                          position: markerPosition,
-                          map: gMapBase,
-                          icon: markerIcon
-                        });
-                        attachInstructionText(marker, POIs[i]);
-                        markerArray[i] = marker;
-                    }
-
-                    calcRoute(batches, directionsService, directionsDisplay, true, trajCount);
-                    //test(trajectories);
-
-                  }
-                  else{
-                    calcRoute(batches, directionsService, directionsDisplay, false, trajCount);
-                  }
+                  calcRoute(batches, directionsService, directionsDisplay, trajCount);
 
                 }
                 else
@@ -265,7 +216,8 @@ var poiFile = 'Data/poi-Melb-all.csv';
             }
           }//end of for loop for algorithms
 
-          //generateTrajectoryListVis(trajectories);
+          //displayRout(trajectories[0].Path, trajectories[0].POIs);
+
           return; //break out of foreach loop
         }//end if trajectory id is found
       });//end data foreach
@@ -274,7 +226,7 @@ var poiFile = 'Data/poi-Melb-all.csv';
 }
 
 
-function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay, trajIndex) {
+function calcRoute (batches, directionsService, directionsDisplay, trajIndex) {
     var combinedResults;
     var unsortedResults = [{}]; // to hold the counter and the results themselves as they come back, to later sort
     var directionsResultsReturned = 0;
@@ -337,11 +289,6 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                         }
                     }
 
-                    if (shouldDisplay){
-                      directionsDisplay.setDirections(combinedResults);
-                      //console.log(combinedResults);
-                    }
-
                     //calculate total duration and distance of trip
                     var totalDistance = 0.0;
                     var totalDuration = 0.0;
@@ -355,10 +302,20 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
 
                     trajectories[trajIndex].Path = combinedResults;
 
+
                     //Add route info to the list
                     //Would have liked to do this in D3js instead
 
                     var listDiv = document.getElementById("alg-list");
+
+                    var listElementDiv = document.createElement("div");
+                    listElementDiv.setAttribute("data-internalid", trajIndex);
+
+                    //when user clicks on div showing rout characteristics
+                    listElementDiv.addEventListener('click', function (event) {
+                      var tindex = parseInt(this.getAttribute("data-internalid"));
+                      displayRout(trajectories[tindex].Path, trajectories[tindex].POIs);
+                    });
 
                     var listElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     listElement.setAttribute('height',55);
@@ -366,8 +323,7 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                     var nameElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
                     //nameElement.setAttribute('height', 50);
                     nameElement.setAttribute('y', 18);
-                    var textNode = document.createTextNode(trajectories[trajIndex].Name + ' ' +
-                              trajectories[trajIndex].Duration);
+                    var textNode = document.createTextNode(trajectories[trajIndex].Name);
                     nameElement.appendChild(textNode);
                     listElement.appendChild(nameElement);
 
@@ -401,7 +357,9 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
                     durationTextElement.appendChild(textNode3);
                     listElement.appendChild(durationTextElement);
 
-                    listDiv.appendChild(listElement);
+
+                    listElementDiv.appendChild(listElement);
+                    listDiv.appendChild(listElementDiv);
 
 
                 }
@@ -411,6 +369,62 @@ function calcRoute (batches, directionsService, directionsDisplay, shouldDisplay
 
         return;
     }
+}
+
+
+function resetMarkers(poiArray)
+{
+  //clear markers
+  for (i = 0; i < markerArray.length; i++) {
+      markerArray[i].setMap(null);
+  }
+
+  for (var i = 0; i < poiArray.length; i++) {
+
+    var tempPOI = grabPOI(poiArray[i]);
+
+    var markerPosition = {lat: parseFloat(tempPOI.poiLat), lng: parseFloat(tempPOI.poiLon)};
+
+    var markerIcon;
+    if (tempPOI.poiTheme == "Sports stadiums")
+      markerIcon = icons["sport"].icon;
+    else if (tempPOI.poiTheme == "Parks and spaces")
+      markerIcon = icons["park"].icon;
+    else if (tempPOI.poiTheme == "Transport")
+      markerIcon = icons["transport"].icon;
+    else if (tempPOI.poiTheme == "City precincts")
+      markerIcon = icons["city"].icon;
+    else if (tempPOI.poiTheme == "Shopping")
+      markerIcon = icons["shopping"].icon;
+    else if (tempPOI.poiTheme == "Entertainment")
+      markerIcon = icons["entertainment"].icon;
+    else if (tempPOI.poiTheme == "Public galleries")
+      markerIcon = icons["art"].icon;
+    else if (tempPOI.poiTheme == "Institutions")
+      markerIcon = icons["institution"].icon;
+    else if (tempPOI.poiTheme == "Structures")
+      markerIcon = icons["structure"].icon;
+    else
+      markerIcon = icons["info"].icon;
+
+
+    var marker = new google.maps.Marker({
+      position: markerPosition,
+      map: gMapBase,
+      icon: markerIcon
+    });
+    attachInstructionText(marker, tempPOI);
+    markerArray[i] = marker;
+    markerArray[i].setMap(gMapBase);
+
+  }
+
+}
+
+function displayRout(resultsToDisplay, poiA)
+{
+  directionsDisplay.setDirections(resultsToDisplay);
+  resetMarkers(poiA);
 }
 
 
