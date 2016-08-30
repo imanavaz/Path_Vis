@@ -7,6 +7,7 @@ var icons;
 var trajectories = []; //to keep trajectories calcualted by all algorithms
 var algorithm;
 var directionsDisplay;
+var POIpopularitySoftSum = 0.0;
 
 ﻿//Map works
 function initMap() {
@@ -120,8 +121,11 @@ var poiFile = 'Data/poi-Melb-all.csv';
 
           allMelbournePOIs[poiCount] = new Array (7);
           allMelbournePOIs[poiCount] = poiData;
+
+          POIpopularitySoftSum = POIpopularitySoftSum + Math.exp(d.poiPopularity);
           poiCount++;
       });
+
 
     var trajCount;
 
@@ -555,7 +559,7 @@ function attachInstructionText(marker, poi) {
        poi.poiName+
       '<p>Theme: '+poi.poiTheme+'</p>'+
       '<p><a href="'+poi.poiURL+'"> on Wikipedia ...</a> '+'</p>'+
-      '<p>Popularity: '+poi.poiPopularity+'</p>' +
+      '<p>Popularity: '+ poi.poiPopularity+' </p>' +
       '</p>';
 
   var markerInfoDisplay = new google.maps.InfoWindow({
