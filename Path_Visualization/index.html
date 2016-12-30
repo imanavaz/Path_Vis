@@ -102,17 +102,18 @@
 
                 //The SVG Container
                 var svgContainer = d3.select("body").append("svg")
+                    .remove()
                     .attr("width", shapeWidth)
                     .attr("height", shapeHeight);
 
                 //draw flag pole
                 var line = svgContainer.append("line")
-                        .attr("stroke", "black")
-                        .attr("stroke-width", defaultStroke)
-                        .attr("x1", locationPointRadius)
-                        .attr("y1", 0)
-                        .attr("x2", locationPointRadius)
-                        .attr("y2", shapeHeight - locationPointRadius);
+                    .attr("stroke", "black")
+                    .attr("stroke-width", defaultStroke)
+                    .attr("x1", locationPointRadius)
+                    .attr("y1", 0)
+                    .attr("x2", locationPointRadius)
+                    .attr("y2", shapeHeight - locationPointRadius);
 
                 //Draw the flag point
                 var circle = svgContainer.append("circle")
@@ -147,24 +148,28 @@
                 var rectangleValue1 = svgContainer.append("rect")
                     .attr("x", locationPointRadius + 1)
                     .attr("y", 0 * flagHeight / flagParts + defaultStroke)
-                    .attr("width", (value1 * 100)/flagWidth)
+                    .attr("width", (value1 * 100) / flagWidth)
                     .attr("height", flagHeight / flagParts - defaultStroke)
                     .attr("stroke", "green")
                     .attr("fill", "green");
                 var rectangleValue2 = svgContainer.append("rect")
                     .attr("x", locationPointRadius + 1)
                     .attr("y", 1 * flagHeight / flagParts + defaultStroke)
-                    .attr("width", (value2 * 100)/flagWidth)
+                    .attr("width", (value2 * 100) / flagWidth)
                     .attr("height", flagHeight / flagParts - defaultStroke)
                     .attr("stroke", "blue")
                     .attr("fill", "blue");
                 var rectangleValue1 = svgContainer.append("rect")
                     .attr("x", locationPointRadius + 1)
                     .attr("y", 2 * flagHeight / flagParts + defaultStroke)
-                    .attr("width", (value1 * 100)/flagWidth)
+                    .attr("width", (value1 * 100) / flagWidth)
                     .attr("height", flagHeight / flagParts - defaultStroke)
                     .attr("stroke", "yellow")
                     .attr("fill", "yellow");
+
+                document.body.appendChild(svgContainer.node());
+
+
             </script>
 
             <br />
