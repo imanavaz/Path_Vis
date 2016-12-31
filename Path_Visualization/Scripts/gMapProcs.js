@@ -1,5 +1,3 @@
-
-
 var markerArray = [];
 var allMelbournePOIs = [];
 var gMapBase;
@@ -8,17 +6,22 @@ var trajectories = []; //to keep trajectories calcualted by all algorithms
 var algorithm;
 var directionsDisplay;
 var POIpopularitySoftSum = 0.0;
+var showPOIRatings = false;
+var showPOICategories = true;
 
-﻿//Map works
+﻿ //Map works
 function initMap() {
 
     directionsDisplay = new google.maps.DirectionsRenderer({
-      suppressMarkers: true
+        suppressMarkers: true
     });
     var directionsService = new google.maps.DirectionsService;
     gMapBase = new google.maps.Map(document.getElementById('map-canvas'), {
         zoom: 8,
-        center: { lat: -37.811106, lng: 144.962160 }
+        center: {
+            lat: -37.811106,
+            lng: 144.962160
+        }
     });
     directionsDisplay.setMap(gMapBase);
 
@@ -26,16 +29,16 @@ function initMap() {
     //markerInfoDisplay = new google.maps.InfoWindow();
 
     gMapBase.controls[google.maps.ControlPosition.RIGHT_TOP].push(
-      document.getElementById('legend-panel'));
+        document.getElementById('legend-panel'));
 
 
     var trajectoryList = document.getElementById("trajectory-list");
-    trajectoryList.addEventListener("change", function () {
+    trajectoryList.addEventListener("change", function() {
         processData(trajectoryList, directionsService, directionsDisplay);
     });
 
     var modeList = document.getElementById("mode");
-    modeList.addEventListener("change", function () {
+    modeList.addEventListener("change", function() {
         processData(trajectoryList, directionsService, directionsDisplay);
     });
 
@@ -47,42 +50,42 @@ function initMap() {
     //prepare markers
     var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
     icons = {
-      parking: {
-        icon: iconBase + 'parking_lot_maps.png'
-      },
-      library: {
-        icon: iconBase + 'library_maps.png'
-      },
-      info: {
-        icon: iconBase + 'info.png'
-      },
-      sport: {
-        icon: iconBase + 'play.png'
-      },
-      transport:{
-        icon: iconBase + 'rail.png'
-      },
-      park:{
-        icon: iconBase + 'parks.png'
-      },
-      shopping:{
-        icon: iconBase + 'shopping.png'
-      },
-      city: {
-        icon: iconBase + 'museum.png'
-      },
-      entertainment: {
-        icon: iconBase + 'movies.png'
-      },
-      art: {
-        icon: iconBase + 'arts.png'
-      },
-      structure: {
-        icon: iconBase + 'landmark.png'
-      },
-      institution: {
-        icon: iconBase + 'govtbldgs.png'
-      }
+        parking: {
+            icon: iconBase + 'parking_lot_maps.png'
+        },
+        library: {
+            icon: iconBase + 'library_maps.png'
+        },
+        info: {
+            icon: iconBase + 'info.png'
+        },
+        sport: {
+            icon: iconBase + 'play.png'
+        },
+        transport: {
+            icon: iconBase + 'rail.png'
+        },
+        park: {
+            icon: iconBase + 'parks.png'
+        },
+        shopping: {
+            icon: iconBase + 'shopping.png'
+        },
+        city: {
+            icon: iconBase + 'museum.png'
+        },
+        entertainment: {
+            icon: iconBase + 'movies.png'
+        },
+        art: {
+            icon: iconBase + 'arts.png'
+        },
+        structure: {
+            icon: iconBase + 'landmark.png'
+        },
+        institution: {
+            icon: iconBase + 'govtbldgs.png'
+        }
     };
 
     //generate legend for algorithm list panel vis
@@ -93,144 +96,138 @@ function initMap() {
 
 function processData(trajectoryCombo, directionsService, directionsDisplay) {
     var trajectoryFile = 'Data/Melb_recommendations.csv';
-    var selectedTrajectory = [];//only one will be used
+    var selectedTrajectory = []; //only one will be used
 
-    for (var i = 0; i < 10; i++){//initialize trajecotires array
-      trajectories[i] = new Array(6);//algorithm name, POIs, Time, Distance, Path, Markers
-      trajectories[i]["Name"] = undefined;
-      trajectories[i]["POIs"] = [];
-      trajectories[i]["Duration"] = 0;
-      trajectories[i]["Distance"] = 0;
-      trajectories[i]["Path"] = undefined;
-      //trajectories[i]["Markers"] = undefined;
+    for (var i = 0; i < 10; i++) { //initialize trajecotires array
+        trajectories[i] = new Array(6); //algorithm name, POIs, Time, Distance, Path, Markers
+        trajectories[i]["Name"] = undefined;
+        trajectories[i]["POIs"] = [];
+        trajectories[i]["Duration"] = 0;
+        trajectories[i]["Distance"] = 0;
+        trajectories[i]["Path"] = undefined;
+        //trajectories[i]["Markers"] = undefined;
     }
 
-//read Melbourne POIs
-var poiFile = 'Data/poi-Melb-all.csv';
+    //read Melbourne POIs
+    var poiFile = 'Data/poi-Melb-all.csv';
     var poiCount = 0;
-    d3.csv(poiFile, function (data) {
-        data.forEach(function (d) {
-          var poiData = [];
-          poiData["poiID"] = d.poiID;
-          poiData["poiName"] = d.poiName;
-          poiData["poiTheme"] = d.poiTheme;
-          poiData["poiLat"] = d.poiLat;
-          poiData["poiLon"] = d.poiLon;
-          poiData["poiURL"] = d.poiURL;
-          poiData["poiPopularity"] = d.poiPopularity;
+    d3.csv(poiFile, function(data) {
+        data.forEach(function(d) {
+            var poiData = [];
+            poiData["poiID"] = d.poiID;
+            poiData["poiName"] = d.poiName;
+            poiData["poiTheme"] = d.poiTheme;
+            poiData["poiLat"] = d.poiLat;
+            poiData["poiLon"] = d.poiLon;
+            poiData["poiURL"] = d.poiURL;
+            poiData["poiPopularity"] = d.poiPopularity;
 
-          allMelbournePOIs[poiCount] = new Array (7);
-          allMelbournePOIs[poiCount] = poiData;
+            allMelbournePOIs[poiCount] = new Array(7);
+            allMelbournePOIs[poiCount] = poiData;
 
-          POIpopularitySoftSum = POIpopularitySoftSum + Math.exp(d.poiPopularity);
-          poiCount++;
-      });
-
-
-    var trajCount;
-
-    //var algList = document.getElementById("alg-list");
-    if (algorithm == null)
-      algorithm = 0;// put first algorithm as default, before it was algList.value;
-
-    var dsv = d3.dsv(";", "text/plain");
-
-    dsv(trajectoryFile, function (data) {
-        data.forEach(function (d) {
-          if (d.trajID == trajectoryCombo.value)
-          {
-            trajectories[0]["Name"] = "REAL";
-            trajectories[0]["POIs"] = arrayStringToArrayNumberConverter(d["REAL"]);
-            trajectories[1]["Name"] = "PoiPopularity";
-            trajectories[1]["POIs"] = arrayStringToArrayNumberConverter(d["PoiPopularity"]);
-            trajectories[2]["Name"] = "PoiRank";
-            trajectories[2]["POIs"] = arrayStringToArrayNumberConverter(d["PoiRank"]);
-            trajectories[3]["Name"] = "Markov";
-            trajectories[3]["POIs"] = arrayStringToArrayNumberConverter(d["Markov"]);
-            trajectories[4]["Name"] = "MarkovPath";
-            trajectories[4]["POIs"] = arrayStringToArrayNumberConverter(d["MarkovPath"]);
-            trajectories[5]["Name"] = "RankMarkov";
-            trajectories[5]["POIs"] = arrayStringToArrayNumberConverter(d["RankMarkov"]);
-            trajectories[6]["Name"] = "RankMarkovPath";
-            trajectories[6]["POIs"] = arrayStringToArrayNumberConverter(d["RankMarkovPath"]);
-            trajectories[7]["Name"] = "StructuredSVM";
-            trajectories[7]["POIs"] = arrayStringToArrayNumberConverter(d["StructuredSVM"]);
-            trajectories[8]["Name"] = "PersTour";
-            trajectories[8]["POIs"] = arrayStringToArrayNumberConverter(d["PersTour"]);
-            trajectories[9]["Name"] = "PersTourL";
-            trajectories[9]["POIs"] = arrayStringToArrayNumberConverter(d["PersTourL"]);
+            POIpopularitySoftSum = POIpopularitySoftSum + Math.exp(d.poiPopularity);
+            poiCount++;
+        });
 
 
-            clearAlgorithmList();
+        var trajCount;
+
+        //var algList = document.getElementById("alg-list");
+        if (algorithm == null)
+            algorithm = 0; // put first algorithm as default, before it was algList.value;
+
+        var dsv = d3.dsv(";", "text/plain");
+
+        dsv(trajectoryFile, function(data) {
+                data.forEach(function(d) {
+                    if (d.trajID == trajectoryCombo.value) {
+                        trajectories[0]["Name"] = "REAL";
+                        trajectories[0]["POIs"] = arrayStringToArrayNumberConverter(d["REAL"]);
+                        trajectories[1]["Name"] = "PoiPopularity";
+                        trajectories[1]["POIs"] = arrayStringToArrayNumberConverter(d["PoiPopularity"]);
+                        trajectories[2]["Name"] = "PoiRank";
+                        trajectories[2]["POIs"] = arrayStringToArrayNumberConverter(d["PoiRank"]);
+                        trajectories[3]["Name"] = "Markov";
+                        trajectories[3]["POIs"] = arrayStringToArrayNumberConverter(d["Markov"]);
+                        trajectories[4]["Name"] = "MarkovPath";
+                        trajectories[4]["POIs"] = arrayStringToArrayNumberConverter(d["MarkovPath"]);
+                        trajectories[5]["Name"] = "RankMarkov";
+                        trajectories[5]["POIs"] = arrayStringToArrayNumberConverter(d["RankMarkov"]);
+                        trajectories[6]["Name"] = "RankMarkovPath";
+                        trajectories[6]["POIs"] = arrayStringToArrayNumberConverter(d["RankMarkovPath"]);
+                        trajectories[7]["Name"] = "StructuredSVM";
+                        trajectories[7]["POIs"] = arrayStringToArrayNumberConverter(d["StructuredSVM"]);
+                        trajectories[8]["Name"] = "PersTour";
+                        trajectories[8]["POIs"] = arrayStringToArrayNumberConverter(d["PersTour"]);
+                        trajectories[9]["Name"] = "PersTourL";
+                        trajectories[9]["POIs"] = arrayStringToArrayNumberConverter(d["PersTourL"]);
 
 
-            for (trajCount = 0; trajCount < 10; trajCount++)//10 algorithms
-            {
-              var trajectoryPOIs = trajectories[trajCount].POIs;
-
-              if (trajectoryPOIs.length > 1)
-              {
-                var POIs = [];//to fetch POI details from the file
-
-                for (var c=0; c < trajectoryPOIs.length; c ++)
-                {
-                  POIs[c] = grabPOI(trajectoryPOIs[c]);
-                }
-
-                //imported code - prepare waypoints
-                var batches = [];
-                var itemsPerBatch = 10; // google API max - 1 start, 1 stop, and 8 waypoints
-                var itemsCounter = 0;
-                var wayptsExist = POIs.length > 0;
-
-                while (wayptsExist) {
-                    var subBatch = [];
-                    var subitemsCounter = 0;
-
-                    for (var j = itemsCounter; j < POIs.length; j++) {
-                        subitemsCounter++;
-                        subBatch.push({
-                            location: new window.google.maps.LatLng(POIs[j].poiLat, POIs[j].poiLon),
-                            stopover: true,
-                        });
-                        if (subitemsCounter == itemsPerBatch)
-                            break;
-                    }
-
-                    itemsCounter += subitemsCounter;
-                    batches.push(subBatch);
-                    wayptsExist = itemsCounter < POIs.length;
-                    // If it runs again there are still points. Minus 1 before continuing to
-                    // start up with end of previous tour leg
-                    itemsCounter--;
-                }
+                        clearAlgorithmList();
 
 
-                if (POIs.length > 0) {
+                        for (trajCount = 0; trajCount < 10; trajCount++) //10 algorithms
+                        {
+                            var trajectoryPOIs = trajectories[trajCount].POIs;
 
-                  calcRoute(batches, directionsService, directionsDisplay, trajCount);
+                            if (trajectoryPOIs.length > 1) {
+                                var POIs = []; //to fetch POI details from the file
 
-                }
-                else
-                    console.log("No trajectories found!");
-            }
-            else
-            {
-              console.log("Trajectory does not exists");
-            }
-          }//end of for loop for algorithms
+                                for (var c = 0; c < trajectoryPOIs.length; c++) {
+                                    POIs[c] = grabPOI(trajectoryPOIs[c]);
+                                }
 
-          //displayRout(trajectories[0].Path, trajectories[0].POIs);
+                                //imported code - prepare waypoints
+                                var batches = [];
+                                var itemsPerBatch = 10; // google API max - 1 start, 1 stop, and 8 waypoints
+                                var itemsCounter = 0;
+                                var wayptsExist = POIs.length > 0;
 
-          return; //break out of foreach loop
-        }//end if trajectory id is found
-      });//end data foreach
-    })//end dsv
-  });
+                                while (wayptsExist) {
+                                    var subBatch = [];
+                                    var subitemsCounter = 0;
+
+                                    for (var j = itemsCounter; j < POIs.length; j++) {
+                                        subitemsCounter++;
+                                        subBatch.push({
+                                            location: new window.google.maps.LatLng(POIs[j].poiLat, POIs[j].poiLon),
+                                            stopover: true,
+                                        });
+                                        if (subitemsCounter == itemsPerBatch)
+                                            break;
+                                    }
+
+                                    itemsCounter += subitemsCounter;
+                                    batches.push(subBatch);
+                                    wayptsExist = itemsCounter < POIs.length;
+                                    // If it runs again there are still points. Minus 1 before continuing to
+                                    // start up with end of previous tour leg
+                                    itemsCounter--;
+                                }
+
+
+                                if (POIs.length > 0) {
+
+                                    calcRoute(batches, directionsService, directionsDisplay, trajCount);
+
+                                } else
+                                    console.log("No trajectories found!");
+                            } else {
+                                console.log("Trajectory does not exists");
+                            }
+                        } //end of for loop for algorithms
+
+                        //displayRout(trajectories[0].Path, trajectories[0].POIs);
+
+                        return; //break out of foreach loop
+                    } //end if trajectory id is found
+                }); //end data foreach
+            }) //end dsv
+    });
 }
 
 
-function calcRoute (batches, directionsService, directionsDisplay, trajIndex) {
+function calcRoute(batches, directionsService, directionsDisplay, trajIndex) {
     var combinedResults;
     var unsortedResults = [{}]; // to hold the counter and the results themselves as they come back, to later sort
     var directionsResultsReturned = 0;
@@ -248,20 +245,19 @@ function calcRoute (batches, directionsService, directionsDisplay, trajIndex) {
         waypts.splice(waypts.length - 1, 1);
 
         var request = {
-            origin : start,
-            destination : end,
-            waypoints : waypts,
+            origin: start,
+            destination: end,
+            waypoints: waypts,
             travelMode: document.getElementById('mode').value
         };
 
-        (function (kk)
-        {
-            directionsService.route(request, function (result, status) {
+        (function(kk) {
+            directionsService.route(request, function(result, status) {
                 if (status == window.google.maps.DirectionsStatus.OK) {
 
                     var unsortedResult = {
-                        order : 0,//kk,
-                        result : result
+                        order: 0, //kk,
+                        result: result
                     };
                     unsortedResults.push(unsortedResult);
                     directionsResultsReturned++;
@@ -269,7 +265,7 @@ function calcRoute (batches, directionsService, directionsDisplay, trajIndex) {
                     if (directionsResultsReturned == batches.length) // we've received all the results. put to map
                     {
                         // sort the returned values into their correct order
-                        unsortedResults.sort(function (a, b) {
+                        unsortedResults.sort(function(a, b) {
                             return parseFloat(a.order) - parseFloat(b.order);
                         });
                         var count = 0;
@@ -296,11 +292,12 @@ function calcRoute (batches, directionsService, directionsDisplay, trajIndex) {
                     //calculate total duration and distance of trip
                     var totalDistance = 0.0;
                     var totalDuration = 0.0;
-                    if (combinedResults){
-                    for (var i=0; i < combinedResults.routes[0].legs.length; i++) {
-                      totalDistance += combinedResults.routes[0].legs[i].distance.value;
-                      totalDuration += combinedResults.routes[0].legs[i].duration.value;
-                    }}
+                    if (combinedResults) {
+                        for (var i = 0; i < combinedResults.routes[0].legs.length; i++) {
+                            totalDistance += combinedResults.routes[0].legs[i].distance.value;
+                            totalDuration += combinedResults.routes[0].legs[i].duration.value;
+                        }
+                    }
                     trajectories[trajIndex].Distance = JSON.parse(JSON.stringify(totalDistance / 1000));
                     trajectories[trajIndex].Duration = JSON.parse(JSON.stringify(parseInt(totalDuration / 60)));
 
@@ -316,46 +313,46 @@ function calcRoute (batches, directionsService, directionsDisplay, trajIndex) {
                     listElementDiv.setAttribute("data-internalid", trajIndex);
 
                     //when user clicks on div showing rout characteristics
-                    listElementDiv.addEventListener('click', function (event) {
-                      var tindex = parseInt(this.getAttribute("data-internalid"));
-                      displayRout(trajectories[tindex].Path, trajectories[tindex].POIs);
+                    listElementDiv.addEventListener('click', function(event) {
+                        var tindex = parseInt(this.getAttribute("data-internalid"));
+                        displayRout(trajectories[tindex].Path, trajectories[tindex].POIs);
                     });
 
                     var listElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                    listElement.setAttribute('height',55);
+                    listElement.setAttribute('height', 55);
 
-                    var nameElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
+                    var nameElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
                     //nameElement.setAttribute('height', 50);
                     nameElement.setAttribute('y', 18);
                     var textNode = document.createTextNode(trajectories[trajIndex].Name);
                     nameElement.appendChild(textNode);
                     listElement.appendChild(nameElement);
 
-                    var distanceElement = document.createElementNS("http://www.w3.org/2000/svg",'rect');
-                    distanceElement.setAttribute('width', trajectories[trajIndex].Distance*10); //This needs normalization
+                    var distanceElement = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+                    distanceElement.setAttribute('width', trajectories[trajIndex].Distance * 10); //This needs normalization
                     distanceElement.setAttribute('height', 15);
                     distanceElement.setAttribute('y', 20);
                     distanceElement.setAttribute('style', "fill:rgb(0,146,146);");
                     listElement.appendChild(distanceElement);
 
-                    var distanceTextElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
+                    var distanceTextElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
                     //nameElement.setAttribute('height', 50);
-                    distanceTextElement.setAttribute('x', trajectories[trajIndex].Distance*10 + 2);//this needs normaization
+                    distanceTextElement.setAttribute('x', trajectories[trajIndex].Distance * 10 + 2); //this needs normaization
                     distanceTextElement.setAttribute('y', 34);
                     var textNode2 = document.createTextNode(trajectories[trajIndex].Distance + 'km');
                     distanceTextElement.appendChild(textNode2);
                     listElement.appendChild(distanceTextElement);
 
-                    var durationElement = document.createElementNS("http://www.w3.org/2000/svg","rect");
+                    var durationElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
                     durationElement.setAttribute('width', trajectories[trajIndex].Duration); //this needs normaization
                     durationElement.setAttribute('height', 15);
-                    durationElement.setAttribute('y',35);
+                    durationElement.setAttribute('y', 35);
                     durationElement.setAttribute('style', "fill:rgb(146,0,0);");
                     listElement.appendChild(durationElement);
 
-                    var durationTextElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
+                    var durationTextElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
                     //nameElement.setAttribute('height', 50);
-                    durationTextElement.setAttribute('x', trajectories[trajIndex].Duration + 2);//this needs normaization
+                    durationTextElement.setAttribute('x', trajectories[trajIndex].Duration + 2); //this needs normaization
                     durationTextElement.setAttribute('y', 49);
                     var textNode3 = document.createTextNode(trajectories[trajIndex].Duration + 'min');
                     durationTextElement.appendChild(textNode3);
@@ -376,198 +373,224 @@ function calcRoute (batches, directionsService, directionsDisplay, trajIndex) {
 }
 
 
-function resetMarkers(poiArray)
-{
-  //clear markers
-  for (i = 0; i < markerArray.length; i++) {
-      markerArray[i].setMap(null);
-  }
+function resetMarkers(poiArray) {
+    //clear markers
+    for (i = 0; i < markerArray.length; i++) {
+        markerArray[i].setMap(null);
+    }
 
-  for (var i = 0; i < poiArray.length; i++) {
+    if (showPOICategories) {
+        for (var i = 0; i < poiArray.length; i++) {
 
-    var tempPOI = grabPOI(poiArray[i]);
+            var tempPOI = grabPOI(poiArray[i]);
 
-    var markerPosition = {lat: parseFloat(tempPOI.poiLat), lng: parseFloat(tempPOI.poiLon)};
+            var markerPosition = {
+                lat: parseFloat(tempPOI.poiLat),
+                lng: parseFloat(tempPOI.poiLon)
+            };
 
-    var markerIcon;
-    if (tempPOI.poiTheme == "Sports stadiums")
-      markerIcon = icons["sport"].icon;
-    else if (tempPOI.poiTheme == "Parks and spaces")
-      markerIcon = icons["park"].icon;
-    else if (tempPOI.poiTheme == "Transport")
-      markerIcon = icons["transport"].icon;
-    else if (tempPOI.poiTheme == "City precincts")
-      markerIcon = icons["city"].icon;
-    else if (tempPOI.poiTheme == "Shopping")
-      markerIcon = icons["shopping"].icon;
-    else if (tempPOI.poiTheme == "Entertainment")
-      markerIcon = icons["entertainment"].icon;
-    else if (tempPOI.poiTheme == "Public galleries")
-      markerIcon = icons["art"].icon;
-    else if (tempPOI.poiTheme == "Institutions")
-      markerIcon = icons["institution"].icon;
-    else if (tempPOI.poiTheme == "Structures")
-      markerIcon = icons["structure"].icon;
-    else
-      markerIcon = icons["info"].icon;
-
-
-    var marker = new google.maps.Marker({
-      position: markerPosition,
-      map: gMapBase,
-      icon: markerIcon
-    });
-    attachInstructionText(marker, tempPOI);
-    markerArray[i] = marker;
-    markerArray[i].setMap(gMapBase);
-
-  }
-
-}
-
-function displayRout(resultsToDisplay, poiA)
-{
-  directionsDisplay.setDirections(resultsToDisplay);
-  resetMarkers(poiA);
-}
+            var markerIcon;
+            if (tempPOI.poiTheme == "Sports stadiums")
+                markerIcon = icons["sport"].icon;
+            else if (tempPOI.poiTheme == "Parks and spaces")
+                markerIcon = icons["park"].icon;
+            else if (tempPOI.poiTheme == "Transport")
+                markerIcon = icons["transport"].icon;
+            else if (tempPOI.poiTheme == "City precincts")
+                markerIcon = icons["city"].icon;
+            else if (tempPOI.poiTheme == "Shopping")
+                markerIcon = icons["shopping"].icon;
+            else if (tempPOI.poiTheme == "Entertainment")
+                markerIcon = icons["entertainment"].icon;
+            else if (tempPOI.poiTheme == "Public galleries")
+                markerIcon = icons["art"].icon;
+            else if (tempPOI.poiTheme == "Institutions")
+                markerIcon = icons["institution"].icon;
+            else if (tempPOI.poiTheme == "Structures")
+                markerIcon = icons["structure"].icon;
+            else
+                markerIcon = icons["info"].icon;
 
 
-function clearAlgorithmList(){
-  //document.getElementById("alg-panel").innerHTML="";
+            var marker = new google.maps.Marker({
+                position: markerPosition,
+                map: gMapBase,
+                icon: markerIcon
+            });
+            attachInstructionText(marker, tempPOI);
+            markerArray[i] = marker;
+            markerArray[i].setMap(gMapBase);
 
-  var myChart = document.getElementById("alg-list");
-  myChart.innerHTML="";
-}
-
-function generateAlgorithmPanelLegend(){
-  var chartLegend = document.getElementById('alg-legend-panel');
-  chartLegend.innerHTML = "";
-
-  chartLegend.setAttribute("style","height:60px");
-
-  var legendContents = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-
-  var distanceBox = document.createElementNS("http://www.w3.org/2000/svg",'rect');
-  distanceBox.setAttribute('width', 20);
-  distanceBox.setAttribute('height', 15);
-  distanceBox.setAttribute('y', 5);
-  distanceBox.setAttribute('x', 0)
-  distanceBox.setAttribute('style', "fill:rgb(0,146,146);");
-  legendContents.appendChild(distanceBox);
-
-
-  var nameElement = document.createElementNS("http://www.w3.org/2000/svg",'text');
-  //nameElement.setAttribute('height', 50);
-  nameElement.setAttribute('y', 19);
-  nameElement.setAttribute('x', 22)
-  var textNode = document.createTextNode("Distance");
-  nameElement.appendChild(textNode);
-  legendContents.appendChild(nameElement);
-
-  var distanceBox2 = document.createElementNS("http://www.w3.org/2000/svg",'rect');
-  distanceBox2.setAttribute('width', 20);
-  distanceBox2.setAttribute('height', 15);
-  distanceBox2.setAttribute('y', 27);
-  distanceBox2.setAttribute('x', 0)
-  distanceBox2.setAttribute('style', "fill:rgb(146,0,0);");
-  legendContents.appendChild(distanceBox2);
-
-  var nameElement2 = document.createElementNS("http://www.w3.org/2000/svg",'text');
-  //nameElement.setAttribute('height', 50);
-  nameElement2.setAttribute('y', 40);
-  nameElement2.setAttribute('x', 22)
-  var textNode2 = document.createTextNode("Duration");
-  nameElement2.appendChild(textNode2);
-  legendContents.appendChild(nameElement2);
-
-  chartLegend.appendChild(legendContents);
-  //myChart.appendChild(chartLegend);
+        }
+    }
 
 }
 
-function test(data)
-{
-  var div1 = d3.select('#alg-panel');
+function displayRout(resultsToDisplay, poiA) {
+    directionsDisplay.setDirections(resultsToDisplay);
+    resetMarkers(poiA);
+}
+
+function handleClickPOICategory(cb) {
+    if (cb.checked == true)
+        showPOICategories = true;
+    else {
+        showPOICategories = false;
+    }
+
+    //update route
+}
+
+function handleClickPOIRating(cb) {
+    if (cb.checked == true)
+        showPOIRatings = true;
+    else {
+        showPOIRatings = false;
+    }
+
+    //update route
+}
+
+function clearAlgorithmList() {
+    //document.getElementById("alg-panel").innerHTML="";
+
+    var myChart = document.getElementById("alg-list");
+    myChart.innerHTML = "";
+}
+
+function generateAlgorithmPanelLegend() {
+    var chartLegend = document.getElementById('alg-legend-panel');
+    chartLegend.innerHTML = "";
+
+    chartLegend.setAttribute("style", "height:60px");
+
+    var legendContents = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+
+    var distanceBox = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+    distanceBox.setAttribute('width', 20);
+    distanceBox.setAttribute('height', 15);
+    distanceBox.setAttribute('y', 5);
+    distanceBox.setAttribute('x', 0)
+    distanceBox.setAttribute('style', "fill:rgb(0,146,146);");
+    legendContents.appendChild(distanceBox);
+
+
+    var nameElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+    //nameElement.setAttribute('height', 50);
+    nameElement.setAttribute('y', 19);
+    nameElement.setAttribute('x', 22)
+    var textNode = document.createTextNode("Distance");
+    nameElement.appendChild(textNode);
+    legendContents.appendChild(nameElement);
+
+    var distanceBox2 = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+    distanceBox2.setAttribute('width', 20);
+    distanceBox2.setAttribute('height', 15);
+    distanceBox2.setAttribute('y', 27);
+    distanceBox2.setAttribute('x', 0)
+    distanceBox2.setAttribute('style', "fill:rgb(146,0,0);");
+    legendContents.appendChild(distanceBox2);
+
+    var nameElement2 = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+    //nameElement.setAttribute('height', 50);
+    nameElement2.setAttribute('y', 40);
+    nameElement2.setAttribute('x', 22)
+    var textNode2 = document.createTextNode("Duration");
+    nameElement2.appendChild(textNode2);
+    legendContents.appendChild(nameElement2);
+
+    chartLegend.appendChild(legendContents);
+    //myChart.appendChild(chartLegend);
+
+}
+
+function test(data) {
+    var div1 = d3.select('#alg-panel');
     //.append('div')
-  //  .attr('width', 100)
-  //  .attr('height', 240);
-  div1.selectAll('svg')
-    .data(data)
-    .enter()
-    .append('svg')
-      .attr('height',60);
+    //  .attr('width', 100)
+    //  .attr('height', 240);
+    div1.selectAll('svg')
+        .data(data)
+        .enter()
+        .append('svg')
+        .attr('height', 60);
 
-  var  myarray = div1.selectAll('svg')
+    var myarray = div1.selectAll('svg')
 
-          .append('rect')
-            .attr('y', function(d, i) { return i * 22; })
-            .attr('x', function(d) { return 5; })//100 - d.Distance * 20; })
-            .attr('height', 20)
-            .attr('width', function(d,i) { return data[i].Distance * 20 + 10; })
-            .attr('fill', d3.rgb(0,146,146));
+    .append('rect')
+        .attr('y', function(d, i) {
+            return i * 22;
+        })
+        .attr('x', function(d) {
+            return 5;
+        }) //100 - d.Distance * 20; })
+        .attr('height', 20)
+        .attr('width', function(d, i) {
+            return data[i].Distance * 20 + 10;
+        })
+        .attr('fill', d3.rgb(0, 146, 146));
 
-       //myarray.enter()
-        //.append('rect')
-          //.attr('y', function(d, i) { return (i + 2) * 22 ; })
-          //.attr('x', function(d) { return 5; })//100 - d.Distance * 20; })
-          //.attr('height', 20)
-          //.attr('width', function(d) { return d.Duration * 20; })
-          //.attr('fill', d3.rgb(146,0,0));
+    //myarray.enter()
+    //.append('rect')
+    //.attr('y', function(d, i) { return (i + 2) * 22 ; })
+    //.attr('x', function(d) { return 5; })//100 - d.Distance * 20; })
+    //.attr('height', 20)
+    //.attr('width', function(d) { return d.Duration * 20; })
+    //.attr('fill', d3.rgb(146,0,0));
 
 
 }
 
 
 //this would load POIs but have not been used in the code
-function loadPOIs(){
-  //read Melbourne POIs
-  var poiFile = 'Data/poi-Melb-all.csv';
+function loadPOIs() {
+    //read Melbourne POIs
+    var poiFile = 'Data/poi-Melb-all.csv';
 
-  var poiCount = 0;
-  d3.csv(poiFile, function (data) {
-      data.forEach(function (d) {
-        var poiData = [];
-        poiData["poiID"] = d.poiID;
-        poiData["poiName"] = d.poiName;
-        poiData["poiTheme"] = d.poiTheme;
-        poiData["poiLat"] = d.poiLat;
-        poiData["poiLon"] = d.poiLon;
-        poiData["poiURL"] = d.poiURL;
-        poiData["poiPopularity"] = d.poiPopularity;
+    var poiCount = 0;
+    d3.csv(poiFile, function(data) {
+        data.forEach(function(d) {
+            var poiData = [];
+            poiData["poiID"] = d.poiID;
+            poiData["poiName"] = d.poiName;
+            poiData["poiTheme"] = d.poiTheme;
+            poiData["poiLat"] = d.poiLat;
+            poiData["poiLon"] = d.poiLon;
+            poiData["poiURL"] = d.poiURL;
+            poiData["poiPopularity"] = d.poiPopularity;
 
-        allMelbournePOIs[poiCount] = new Array (7);
-        allMelbournePOIs[poiCount] = jQuery.extend(true, {}, poiData);
-        poiCount++;
+            allMelbournePOIs[poiCount] = new Array(7);
+            allMelbournePOIs[poiCount] = jQuery.extend(true, {}, poiData);
+            poiCount++;
+        });
     });
-  });
 }
 
 
-function grabPOI (poiID){
-  for(var i = 0; i < allMelbournePOIs.length; i++)
-  {
-    if (allMelbournePOIs[i].poiID == poiID){
-      return allMelbournePOIs[i];
+function grabPOI(poiID) {
+    for (var i = 0; i < allMelbournePOIs.length; i++) {
+        if (allMelbournePOIs[i].poiID == poiID) {
+            return allMelbournePOIs[i];
+        }
     }
-  }
 }
 
 
 function attachInstructionText(marker, poi) {
 
-  var infoContentString = '<p>'+
-       poi.poiName+
-      '<p>Theme: '+poi.poiTheme+'</p>'+
-      '<p><a href="'+poi.poiURL+'"> on Wikipedia ...</a> '+'</p>'+
-      '<p>Popularity: '+ poi.poiPopularity+' </p>' +
-      '</p>';
+    var infoContentString = '<p>' +
+        poi.poiName +
+        '<p>Theme: ' + poi.poiTheme + '</p>' +
+        '<p><a href="' + poi.poiURL + '"> on Wikipedia ...</a> ' + '</p>' +
+        '<p>Popularity: ' + poi.poiPopularity + ' </p>' +
+        '</p>';
 
-  var markerInfoDisplay = new google.maps.InfoWindow({
-          content: infoContentString
-        });
-  google.maps.event.addListener(marker, 'click', function() {
-    markerInfoDisplay.open(gMapBase, marker);
-  });
+    var markerInfoDisplay = new google.maps.InfoWindow({
+        content: infoContentString
+    });
+    google.maps.event.addListener(marker, 'click', function() {
+        markerInfoDisplay.open(gMapBase, marker);
+    });
 }
 
 //Convert Numbers to Alphabet
@@ -585,19 +608,19 @@ function numberToAlphabetConverter(n) {
 }
 
 //just works for this application due to bad encoding of numbers in csv file
-function arrayStringToArrayNumberConverter (str){
-  str = str.replace("[","");
-  str = str.replace("]","");
-  str = str.replace(",","");
+function arrayStringToArrayNumberConverter(str) {
+    str = str.replace("[", "");
+    str = str.replace("]", "");
+    str = str.replace(",", "");
 
-  var result = [];
+    var result = [];
 
-  result = str.split(' ');
+    result = str.split(' ');
 
-  for (var i = 0; i< result.length; i++)
-    result[i] = parseInt(result[i]);
+    for (var i = 0; i < result.length; i++)
+        result[i] = parseInt(result[i]);
 
-  return result;
+    return result;
 }
 
 
