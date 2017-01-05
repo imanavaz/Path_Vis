@@ -415,6 +415,7 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["park"].icon;
               }
               else {
                 markerIcon = icons["park"].icon;
@@ -423,6 +424,7 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["transport"].icon;
               }
               else {
                 markerIcon = icons["transport"].icon;
@@ -431,6 +433,7 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["city"].icon;
               }
               else {
                 markerIcon = icons["city"].icon;
@@ -439,6 +442,7 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["shopping"].icon;
               }
               else {
                 markerIcon = icons["shopping"].icon;
@@ -447,6 +451,7 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["entertainment"].icon;
               }
               else {
                 markerIcon = icons["entertainment"].icon;
@@ -455,6 +460,7 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["art"].icon;
               }
               else {
                 markerIcon = icons["art"].icon;
@@ -463,6 +469,7 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["institution"].icon;
               }
               else {
                 markerIcon = icons["institution"].icon;
@@ -471,6 +478,7 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["structure"].icon;
               }
               else {
                 markerIcon = icons["structure"].icon;
@@ -479,12 +487,13 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
 
+                markerIcon = icons["info"].icon;
               }
               else {
                 markerIcon = icons["info"].icon;
               }
             }
-
+            console.log(markerIcon);
             var marker = new google.maps.Marker({
                 position: markerPosition,
                 map: gMapBase,
