@@ -402,7 +402,7 @@ function resetMarkers(poiArray) {
             if (tempPOI.poiTheme == "Sports stadiums")
             {
               if (showPOIRatings){
-                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity);
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["sport"].icon);
                 //console.log('data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(temps.node().outerHTML));
                 markerIcon = {
                   url: 'data:image/svg+xml;charset=utf-8, ' + encodeURIComponent(temps.node().outerHTML)

@@ -1,4 +1,4 @@
-function makePOIMarkerFlag(valueCount, values, maxScale) {
+function makePOIMarkerFlag(valueCount, values, maxScale, markerImageURL) {
 
     //shape configurations
     var shapeWidth = 45;
@@ -16,7 +16,7 @@ function makePOIMarkerFlag(valueCount, values, maxScale) {
     var svgContainer = d3.select("body").append("svg")
         .remove()
         .attr("width", shapeWidth)
-        .attr("height", shapeHeight);
+        .attr("height", shapeHeight + flagWidth); //flag width for image marker
 
     //draw flag pole
     //var line = svgContainer.append("line")
@@ -54,6 +54,14 @@ function makePOIMarkerFlag(valueCount, values, maxScale) {
             .attr("stroke", getColor(i))
             .attr("fill", getColor(i));
     }
+
+    //add marker logo
+    svgContainer.append("svg:image")
+      .attr("x", locationPointRadius)
+      .attr("y",shapeHeight)
+      .attr("width", flagWidth)
+      .attr("height", flagWidth) //make it a square
+      .attr("xlink:href",markerImageURL)
 
     return svgContainer;
 }
