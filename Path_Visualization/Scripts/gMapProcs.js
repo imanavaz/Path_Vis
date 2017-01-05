@@ -381,9 +381,11 @@ function resetMarkers(poiArray) {
 
     //find max PoiPopularity
     var maxPopularity = 0;
-    for (var i = 0; i < poiArray.length; i++)
-      if (poiArray[i].poiPopularity > maxPopularity)
-        maxPopularity = poiArray[i].poiPopularity;
+    for (var i = 0; i < poiArray.length; i++){
+      var tempp = grabPOI(poiArray[i]);
+      if (tempp.poiPopularity > maxPopularity)
+        maxPopularity = tempp.poiPopularity;
+    }
 
 
     //if (showPOICategories) {
@@ -399,34 +401,88 @@ function resetMarkers(poiArray) {
             var markerIcon;
             if (tempPOI.poiTheme == "Sports stadiums")
             {
+              if (showPOIRatings){
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity);
+                //console.log('data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(temps.node().outerHTML));
+                markerIcon = {
+                  url: 'data:image/svg+xml;charset=utf-8, ' + encodeURIComponent(temps.node().outerHTML)
+                }
+              }
+              else {
                 markerIcon = icons["sport"].icon;
+              }
             }else if (tempPOI.poiTheme == "Parks and spaces")
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["park"].icon;
+              }
             }else if (tempPOI.poiTheme == "Transport")
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["transport"].icon;
+              }
             }else if (tempPOI.poiTheme == "City precincts")
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["city"].icon;
+              }
             }else if (tempPOI.poiTheme == "Shopping")
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["shopping"].icon;
+              }
             }else if (tempPOI.poiTheme == "Entertainment")
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["entertainment"].icon;
+              }
             }else if (tempPOI.poiTheme == "Public galleries")
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["art"].icon;
+              }
             }else if (tempPOI.poiTheme == "Institutions")
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["institution"].icon;
+              }
             }else if (tempPOI.poiTheme == "Structures")
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["structure"].icon;
+              }
             }else
             {
+              if (showPOIRatings){
+
+              }
+              else {
                 markerIcon = icons["info"].icon;
+              }
             }
 
             var marker = new google.maps.Marker({
