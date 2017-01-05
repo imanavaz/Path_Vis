@@ -379,7 +379,14 @@ function resetMarkers(poiArray) {
         markerArray[i].setMap(null);
     }
 
-    if (showPOICategories) {
+    //find max PoiPopularity
+    var maxPopularity = 0;
+    for (var i = 0; i < poiArray.length; i++)
+      if (poiArray[i].poiPopularity > maxPopularity)
+        maxPopularity = poiArray[i].poiPopularity;
+
+
+    //if (showPOICategories) {
         for (var i = 0; i < poiArray.length; i++) {
 
             var tempPOI = grabPOI(poiArray[i]);
@@ -391,26 +398,36 @@ function resetMarkers(poiArray) {
 
             var markerIcon;
             if (tempPOI.poiTheme == "Sports stadiums")
+            {
                 markerIcon = icons["sport"].icon;
-            else if (tempPOI.poiTheme == "Parks and spaces")
+            }else if (tempPOI.poiTheme == "Parks and spaces")
+            {
                 markerIcon = icons["park"].icon;
-            else if (tempPOI.poiTheme == "Transport")
+            }else if (tempPOI.poiTheme == "Transport")
+            {
                 markerIcon = icons["transport"].icon;
-            else if (tempPOI.poiTheme == "City precincts")
+            }else if (tempPOI.poiTheme == "City precincts")
+            {
                 markerIcon = icons["city"].icon;
-            else if (tempPOI.poiTheme == "Shopping")
+            }else if (tempPOI.poiTheme == "Shopping")
+            {
                 markerIcon = icons["shopping"].icon;
-            else if (tempPOI.poiTheme == "Entertainment")
+            }else if (tempPOI.poiTheme == "Entertainment")
+            {
                 markerIcon = icons["entertainment"].icon;
-            else if (tempPOI.poiTheme == "Public galleries")
+            }else if (tempPOI.poiTheme == "Public galleries")
+            {
                 markerIcon = icons["art"].icon;
-            else if (tempPOI.poiTheme == "Institutions")
+            }else if (tempPOI.poiTheme == "Institutions")
+            {
                 markerIcon = icons["institution"].icon;
-            else if (tempPOI.poiTheme == "Structures")
+            }else if (tempPOI.poiTheme == "Structures")
+            {
                 markerIcon = icons["structure"].icon;
-            else
+            }else
+            {
                 markerIcon = icons["info"].icon;
-
+            }
 
             var marker = new google.maps.Marker({
                 position: markerPosition,
@@ -422,7 +439,7 @@ function resetMarkers(poiArray) {
             markerArray[i].setMap(gMapBase);
 
         }
-    }
+    //}
 
 }
 

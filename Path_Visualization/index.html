@@ -49,8 +49,8 @@
         }
     </style>
 
-    <script type="text/javascript" src="Scripts/gMapProcs.js"></script>
     <script type="text/javascript" src="Scripts/POIMaker.js"></script>
+    <script type="text/javascript" src="Scripts/gMapProcs.js"></script>
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <!--script type="text/javascript" src="Lib/papaparse.min.js"></script-->
 
@@ -86,14 +86,13 @@
             </script>
 
             <script type="text/javascript">
-                var values = [10];
+                //to Test POI maker
+                var values = [50, 10, 20, 90];
 
                 //The SVG Container
-                var poiSVG = makePOIMarkerFlag(1, values);
+                var poiSVG = makePOIMarkerFlag(4, values, 100);
 
                 document.body.appendChild(poiSVG.node());
-
-
             </script>
 
             <br />
@@ -129,8 +128,8 @@
             <br/>
 
             <input type="checkbox" id="POIRatingCheckBox" name="POIRating" onclick="handleClickPOIRating(this)" value="ShowRating"> Show POI rating </input>
-            <br/>
-            <input type="checkbox" id="POICategoryCheckBox" name="POICategory" checked="true" onclick="handleClickPOICategory(this)" value="ShowCategory"> Show POI category </input>
+            <!--br/-->
+            <!--input type="checkbox" id="POICategoryCheckBox" name="POICategory" checked="true" onclick="handleClickPOICategory(this)" value="ShowCategory"> Show POI category </input-->
 
             <br/>
             <br/>
