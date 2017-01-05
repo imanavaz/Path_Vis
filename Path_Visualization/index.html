@@ -50,6 +50,7 @@
     </style>
 
     <script type="text/javascript" src="Scripts/gMapProcs.js"></script>
+    <script type="text/javascript" src="Scripts/POIMaker.js"></script>
     <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <!--script type="text/javascript" src="Lib/papaparse.min.js"></script-->
 
@@ -85,89 +86,12 @@
             </script>
 
             <script type="text/javascript">
-                var shapeWidth = 45;
-                var shapeHeight = 43;
-
-                var locationPointRadius = 4;
-                var defaultStroke = 2;
-
-                var flagWidth = 39;
-                var flagHeight = 30;
-                var flagParts = 3;
-
-                var value1 = 10;
-                var value2 = 5;
-                var value3 = 25;
-
+                var values = [10];
 
                 //The SVG Container
-                var svgContainer = d3.select("body").append("svg")
-                    .remove()
-                    .attr("width", shapeWidth)
-                    .attr("height", shapeHeight);
+                var poiSVG = makePOIMarkerFlag(1, values);
 
-                //draw flag pole
-                var line = svgContainer.append("line")
-                    .attr("stroke", "black")
-                    .attr("stroke-width", defaultStroke)
-                    .attr("x1", locationPointRadius)
-                    .attr("y1", 0)
-                    .attr("x2", locationPointRadius)
-                    .attr("y2", shapeHeight - locationPointRadius);
-
-                //Draw the flag point
-                var circle = svgContainer.append("circle")
-                    .attr("cx", locationPointRadius)
-                    .attr("cy", shapeHeight - locationPointRadius)
-                    .attr("r", locationPointRadius);
-
-                //Draw the base flag
-                var rectangle1 = svgContainer.append("rect")
-                    .attr("x", locationPointRadius)
-                    .attr("y", 0 * flagHeight / flagParts + defaultStroke / 2)
-                    .attr("width", flagWidth)
-                    .attr("height", flagHeight / flagParts)
-                    .attr("stroke", "black")
-                    .attr("fill", "none");
-                var rectangle2 = svgContainer.append("rect")
-                    .attr("x", locationPointRadius)
-                    .attr("y", 1 * flagHeight / flagParts + defaultStroke / 2)
-                    .attr("width", flagWidth)
-                    .attr("height", flagHeight / flagParts)
-                    .attr("stroke", "black")
-                    .attr("fill", "none");
-                var rectangle3 = svgContainer.append("rect")
-                    .attr("x", locationPointRadius)
-                    .attr("y", 2 * flagHeight / flagParts + defaultStroke / 2)
-                    .attr("width", flagWidth)
-                    .attr("height", flagHeight / flagParts)
-                    .attr("stroke", "black")
-                    .attr("fill", "none");
-
-                //fill flag parts
-                var rectangleValue1 = svgContainer.append("rect")
-                    .attr("x", locationPointRadius + 1)
-                    .attr("y", 0 * flagHeight / flagParts + defaultStroke)
-                    .attr("width", (value1 * 100) / flagWidth)
-                    .attr("height", flagHeight / flagParts - defaultStroke)
-                    .attr("stroke", "green")
-                    .attr("fill", "green");
-                var rectangleValue2 = svgContainer.append("rect")
-                    .attr("x", locationPointRadius + 1)
-                    .attr("y", 1 * flagHeight / flagParts + defaultStroke)
-                    .attr("width", (value2 * 100) / flagWidth)
-                    .attr("height", flagHeight / flagParts - defaultStroke)
-                    .attr("stroke", "blue")
-                    .attr("fill", "blue");
-                var rectangleValue1 = svgContainer.append("rect")
-                    .attr("x", locationPointRadius + 1)
-                    .attr("y", 2 * flagHeight / flagParts + defaultStroke)
-                    .attr("width", (value1 * 100) / flagWidth)
-                    .attr("height", flagHeight / flagParts - defaultStroke)
-                    .attr("stroke", "yellow")
-                    .attr("fill", "yellow");
-
-                document.body.appendChild(svgContainer.node());
+                document.body.appendChild(poiSVG.node());
 
 
             </script>
