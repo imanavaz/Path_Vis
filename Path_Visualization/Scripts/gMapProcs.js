@@ -404,9 +404,7 @@ function resetMarkers(poiArray) {
               if (showPOIRatings){
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["sport"].icon);
                 //console.log('data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(temps.node().outerHTML));
-                markerIcon = {
-                  url: 'data:image/svg+xml;charset=utf-8, ' + encodeURIComponent(temps.node().outerHTML)
-                }
+                markerIcon = 'data:image/svg+xml;charset=utf-8, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["sport"].icon;
@@ -497,7 +495,9 @@ function resetMarkers(poiArray) {
             var marker = new google.maps.Marker({
                 position: markerPosition,
                 map: gMapBase,
-                icon: markerIcon
+                icon: {
+                  url: markerIcon
+                }
             });
             attachInstructionText(marker, tempPOI);
             markerArray[i] = marker;
