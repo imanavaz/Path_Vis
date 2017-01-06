@@ -403,8 +403,8 @@ function resetMarkers(poiArray) {
             {
               if (showPOIRatings){
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["sport"].icon);
-                //console.log('data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(temps.node().outerHTML));
-                markerIcon = 'data:image/svg+xml;charset=utf-8, ' + encodeURIComponent(temps.node().outerHTML);
+                //console.log('data:image/svg+xml;charset=UTF-8,' + temps.node().outerHTML);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["sport"].icon;
@@ -412,8 +412,8 @@ function resetMarkers(poiArray) {
             }else if (tempPOI.poiTheme == "Parks and spaces")
             {
               if (showPOIRatings){
-
-                markerIcon = icons["park"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["park"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["park"].icon;
@@ -421,8 +421,8 @@ function resetMarkers(poiArray) {
             }else if (tempPOI.poiTheme == "Transport")
             {
               if (showPOIRatings){
-
-                markerIcon = icons["transport"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["transport"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["transport"].icon;
@@ -430,8 +430,8 @@ function resetMarkers(poiArray) {
             }else if (tempPOI.poiTheme == "City precincts")
             {
               if (showPOIRatings){
-
-                markerIcon = icons["city"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["city"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["city"].icon;
@@ -439,8 +439,8 @@ function resetMarkers(poiArray) {
             }else if (tempPOI.poiTheme == "Shopping")
             {
               if (showPOIRatings){
-
-                markerIcon = icons["shopping"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["shopping"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["shopping"].icon;
@@ -448,8 +448,8 @@ function resetMarkers(poiArray) {
             }else if (tempPOI.poiTheme == "Entertainment")
             {
               if (showPOIRatings){
-
-                markerIcon = icons["entertainment"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["entertainment"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["entertainment"].icon;
@@ -457,8 +457,8 @@ function resetMarkers(poiArray) {
             }else if (tempPOI.poiTheme == "Public galleries")
             {
               if (showPOIRatings){
-
-                markerIcon = icons["art"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["art"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["art"].icon;
@@ -466,8 +466,8 @@ function resetMarkers(poiArray) {
             }else if (tempPOI.poiTheme == "Institutions")
             {
               if (showPOIRatings){
-
-                markerIcon = icons["institution"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["institution"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["institution"].icon;
@@ -475,8 +475,8 @@ function resetMarkers(poiArray) {
             }else if (tempPOI.poiTheme == "Structures")
             {
               if (showPOIRatings){
-
-                markerIcon = icons["structure"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["structure"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["structure"].icon;
@@ -484,21 +484,23 @@ function resetMarkers(poiArray) {
             }else
             {
               if (showPOIRatings){
-
-                markerIcon = icons["info"].icon;
+                var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["info"].icon);
+                markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
               }
               else {
                 markerIcon = icons["info"].icon;
               }
             }
-            console.log(markerIcon);
+            //console.log(markerIcon);
             var marker = new google.maps.Marker({
                 position: markerPosition,
                 map: gMapBase,
                 icon: {
+                  anchor: new google.maps.Point(4, 12 + 39 - 4), //based on the pole position (locationPointRadius, shapeHeight + flagWidth - locationPointRadius)
                   url: markerIcon
                 }
             });
+            console.log(marker);
             attachInstructionText(marker, tempPOI);
             markerArray[i] = marker;
             markerArray[i].setMap(gMapBase);
