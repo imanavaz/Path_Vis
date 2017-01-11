@@ -4,9 +4,14 @@
 <head>
     <title>Trajectory Display</title>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <!--script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script-->
+
+    <script type="text/javascript" src="Scripts/gMapProcs.js"></script>
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="Scripts/POIMaker.js"></script>
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
@@ -49,14 +54,11 @@
         }
     </style>
 
-    <script type="text/javascript" src="Scripts/POIMaker.js"></script>
-    <script type="text/javascript" src="Scripts/gMapProcs.js"></script>
-    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <!--script type="text/javascript" src="Lib/papaparse.min.js"></script-->
 
 </head>
 
 <body>
+
     <div id="control-panel">
         <div>
             <br />
@@ -87,12 +89,12 @@
 
             <script type="text/javascript">
                 //to Test POI maker
-                var values = [50, 90];
+                //var values = [50, 90];
 
                 //The SVG Container
-                var poiSVG = makePOIMarkerFlag(2, values, 100, "https://maps.google.com/mapfiles/kml/shapes/play.png");
+                //var poiSVG = makePOIMarkerFlag(2, values, 100, "../Images/bus-15.svg");
 
-                document.body.appendChild(poiSVG.node());
+                //document.body.appendChild(poiSVG.node());
             </script>
 
             <br />
@@ -153,43 +155,43 @@
         <div id="legend" class="collapse">
             <table style="width:100%">
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/play.png" height="30" width="30"></td>
+                    <td><img src="../Images/stadium.svg" height="30" width="30"></td>
                     <td>Sports stadiums</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/rail.png" height="30" width="30"></td>
+                    <td><img src="../Images/bus-station.svg" height="30" width="30"></td>
                     <td>Transport</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/parks.png" height="30" width="30"></td>
+                    <td><img src="../Images/park.svg" height="30" width="30"></td>
                     <td>Parks and spaces</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/shopping.png" height="30" width="30"></td>
+                    <td><img src="../Images/shopping-mall.svg" height="30" width="30"></td>
                     <td>Shopping</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/museum.png" height="30" width="30"></td>
+                    <td><img src="../Images/city-hall.svg" height="30" width="30"></td>
                     <td>City precincts</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/movies.png" height="30" width="30"></td>
+                    <td><img src="../Images/movie-theater.svg" height="30" width="30"></td>
                     <td>Entertainment</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/arts.png" height="30" width="30"></td>
+                    <td><img src="../Images/art-gallery.svg" height="30" width="30"></td>
                     <td>Public galleries</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/landmark.png" height="42" width="42"></td>
+                    <td><img src="../Images/point-of-interest.svg" height="42" width="42"></td>
                     <td>Structure</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/govtbldgs.png" height="42" width="42"></td>
+                    <td><img src="../Images/political.svg" height="42" width="42"></td>
                     <td>Institutions</td>
                 </tr>
                 <tr>
-                    <td><img src="https://maps.google.com/mapfiles/kml/shapes/info.png" height="42" width="42"></td>
+                    <td><img src="../Images/embassy.svg" height="42" width="42"></td>
                     <td>Undefined Category</td>
                 </tr>
             </table>
@@ -198,7 +200,9 @@
 
     <div id="map-canvas"></div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&signed_in=true&callback=initMap" async defer></script>
+    <!--script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&signed_in=true&callback=initMap" async defer></script-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACY1MwaH0ouk67iUX_m91nM8vaAAaa8n4&callback=initMap" async defer></script>
+
 
 
 

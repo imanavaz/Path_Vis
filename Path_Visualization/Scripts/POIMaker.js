@@ -1,9 +1,13 @@
+
+function createMarker (){
+
+}
+
+
+
 function makePOIMarkerFlag(valueCount, values, maxScale, markerImageURL) {
 
     //shape configurations
-    var shapeWidth = 45;
-    var shapeHeight = (valueCount * 10) + 2;// 13; XXXXXX 13 was for the flag pole and line
-
     var locationPointRadius = 4;
     var defaultStroke = 2;
 
@@ -11,12 +15,17 @@ function makePOIMarkerFlag(valueCount, values, maxScale, markerImageURL) {
     var flagHeight = (valueCount * 10);
     var flagParts = valueCount;
 
+    var shapeWidth = 45;
+
+    var markerImageSize = 20;
+
+    var shapeHeight = flagHeight + 2 + markerImageSize; // 13; XXXXXX 13 was for the flag pole and line
 
     //The SVG Container
     var svgContainer = d3.select("body").append("svg")
         .remove()
-        .attr("xmlns","http://www.w3.org/2000/svg")
-        .attr("xmlns:xlink","http://www.w3.org/1999/xlink")
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
         .attr("width", shapeWidth)
         .attr("height", shapeHeight + flagWidth); //flag width for image marker
 
@@ -58,16 +67,60 @@ function makePOIMarkerFlag(valueCount, values, maxScale, markerImageURL) {
     }
 
     //add marker logo
-    svgContainer.append("svg:image")
-      .attr(":xlink:href",markerImageURL)
-      .attr("x", locationPointRadius)
-      .attr("y",shapeHeight)
-      .attr("width", flagWidth)
-      .attr("height", flagWidth); //make it a square
+    //svgContainer.append("svg:image")
+    //  .attr(":xlink:href",markerImageURL)
+    //   .attr("x", locationPointRadius)
+    //  .attr("y",shapeHeight)
+    //  .attr("width", flagWidth)
+    //  .attr("height", flagWidth); //make it a square
 
+
+    d3.xml(markerImageURL).mimeType("image/svg+xml").get(function(error, xml) {
+        if (error) throw error;
+
+        var svgInside = xml.getElementsByTagName("svg")[0];
+
+        svgInside.setAttribute("x", "0");
+        svgInside.setAttribute("y", flagHeight + 2);
+        svgInside.setAttribute("width", markerImageSize);
+        svgInside.setAttribute("height", markerImageSize);
+        //svgInside.setAttribute("viewBox", "0 0 "+ markerImageSize + " " + markerImageSize);
+        //svgInside.setAttribute("style", "enable-background:new "+"0 0 "+ markerImageSize + " " + markerImageSize+";");
+
+        svgContainer.node().appendChild(xml.documentElement);
+    });
+
+
+
+
+    //svgContainer.node().appendChild(fetchXML(markerImageURL,function(newSVGDoc){
+    //import it into the current DOM
+    //    var n = document.importNode(newSVGDoc.documentElement,true);
+    //    document.documentElement.appendChild(n);
+    //}));
+
+
+
+
+    //console.log(svgContainer.node().outerHTML);
 
     return svgContainer;
 }
+
+function fetchXML(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onreadystatechange = function(evt) {
+        //Do not explicitly handle errors, those should be
+        //visible via console output in the browser.
+        if (xhr.readyState === 4) {
+            callback(xhr.responseXML);
+        }
+    };
+    xhr.send(null);
+};
+
+
 
 function getColor(n) {
     var colors = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac"];

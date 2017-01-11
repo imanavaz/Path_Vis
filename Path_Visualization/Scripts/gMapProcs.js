@@ -15,6 +15,7 @@ function initMap() {
     directionsDisplay = new google.maps.DirectionsRenderer({
         suppressMarkers: true
     });
+
     var directionsService = new google.maps.DirectionsService;
     gMapBase = new google.maps.Map(document.getElementById('map-canvas'), {
         zoom: 8,
@@ -48,43 +49,44 @@ function initMap() {
     //});
 
     //prepare markers
-    var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+    //var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
+    var iconBase = '../Images/';
     icons = {
         parking: {
-            icon: iconBase + 'parking_lot_maps.png'
+            icon: iconBase + 'parking.svg'
         },
         library: {
-            icon: iconBase + 'library_maps.png'
+            icon: iconBase + 'library.svg'
         },
         info: {
-            icon: iconBase + 'info.png'
+            icon: iconBase + 'embassy.svg'
         },
         sport: {
-            icon: iconBase + 'play.png'
+            icon: iconBase + 'test2.svg'//'stadium.svg'
         },
         transport: {
-            icon: iconBase + 'rail.png'
+            icon: iconBase + 'bus-station.svg' //iconBase + 'rail.png'
         },
         park: {
-            icon: iconBase + 'parks.png'
+            icon: iconBase + 'park.svg'
         },
         shopping: {
-            icon: iconBase + 'shopping.png'
+            icon: iconBase + 'shopping-mall.svg'
         },
         city: {
-            icon: iconBase + 'museum.png'
+            icon: iconBase + 'city-hall.svg'
         },
         entertainment: {
-            icon: iconBase + 'movies.png'
+            icon: iconBase + 'movie-theater.svg'
         },
         art: {
-            icon: iconBase + 'arts.png'
+            icon: iconBase + 'art-gallery.svg'
         },
         structure: {
-            icon: iconBase + 'landmark.png'
+            icon: iconBase + 'point-of-interest.svg'
         },
         institution: {
-            icon: iconBase + 'govtbldgs.png'
+            icon: iconBase + 'political.svg'
         }
     };
 
@@ -381,131 +383,125 @@ function resetMarkers(poiArray) {
 
     //find max PoiPopularity
     var maxPopularity = 0;
-    for (var i = 0; i < poiArray.length; i++){
-      var tempp = grabPOI(poiArray[i]);
-      if (tempp.poiPopularity > maxPopularity)
-        maxPopularity = tempp.poiPopularity;
+    for (var i = 0; i < poiArray.length; i++) {
+        var tempp = grabPOI(poiArray[i]);
+        if (tempp.poiPopularity > maxPopularity)
+            maxPopularity = tempp.poiPopularity;
     }
 
 
     //if (showPOICategories) {
-        for (var i = 0; i < poiArray.length; i++) {
+    for (var i = 0; i < poiArray.length; i++) {
 
-            var tempPOI = grabPOI(poiArray[i]);
+        var tempPOI = grabPOI(poiArray[i]);
 
-            var markerPosition = {
-                lat: parseFloat(tempPOI.poiLat),
-                lng: parseFloat(tempPOI.poiLon)
-            };
+        var markerPosition = new google.maps.LatLng(parseFloat(tempPOI.poiLat),parseFloat(tempPOI.poiLon));
 
-            var markerIcon;
-            if (tempPOI.poiTheme == "Sports stadiums")
-            {
-              if (showPOIRatings){
+        var markerIcon;
+        if (tempPOI.poiTheme == "Sports stadiums") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["sport"].icon);
                 //console.log('data:image/svg+xml;charset=UTF-8,' + temps.node().outerHTML);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["sport"].icon;
-              }
-            }else if (tempPOI.poiTheme == "Parks and spaces")
-            {
-              if (showPOIRatings){
+            }
+        } else if (tempPOI.poiTheme == "Parks and spaces") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["park"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["park"].icon;
-              }
-            }else if (tempPOI.poiTheme == "Transport")
-            {
-              if (showPOIRatings){
+            }
+        } else if (tempPOI.poiTheme == "Transport") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["transport"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["transport"].icon;
-              }
-            }else if (tempPOI.poiTheme == "City precincts")
-            {
-              if (showPOIRatings){
+            }
+        } else if (tempPOI.poiTheme == "City precincts") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["city"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["city"].icon;
-              }
-            }else if (tempPOI.poiTheme == "Shopping")
-            {
-              if (showPOIRatings){
+            }
+        } else if (tempPOI.poiTheme == "Shopping") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["shopping"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["shopping"].icon;
-              }
-            }else if (tempPOI.poiTheme == "Entertainment")
-            {
-              if (showPOIRatings){
+            }
+        } else if (tempPOI.poiTheme == "Entertainment") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["entertainment"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["entertainment"].icon;
-              }
-            }else if (tempPOI.poiTheme == "Public galleries")
-            {
-              if (showPOIRatings){
+            }
+        } else if (tempPOI.poiTheme == "Public galleries") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["art"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["art"].icon;
-              }
-            }else if (tempPOI.poiTheme == "Institutions")
-            {
-              if (showPOIRatings){
+            }
+        } else if (tempPOI.poiTheme == "Institutions") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["institution"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["institution"].icon;
-              }
-            }else if (tempPOI.poiTheme == "Structures")
-            {
-              if (showPOIRatings){
+            }
+        } else if (tempPOI.poiTheme == "Structures") {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["structure"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["structure"].icon;
-              }
-            }else
-            {
-              if (showPOIRatings){
+            }
+        } else {
+            if (showPOIRatings) {
                 var temps = makePOIMarkerFlag(1, [tempPOI.poiPopularity], maxPopularity, icons["info"].icon);
                 markerIcon = 'data:image/svg+xml, ' + encodeURIComponent(temps.node().outerHTML);
-              }
-              else {
+            } else {
                 markerIcon = icons["info"].icon;
-              }
             }
-            //console.log(markerIcon);
-            var marker = new google.maps.Marker({
-                position: markerPosition,
-                map: gMapBase,
-                icon: {
-                  anchor: new google.maps.Point(4, 12 + 39 - 4), //based on the pole position (locationPointRadius, shapeHeight + flagWidth - locationPointRadius)
-                  url: markerIcon
-                }
-            });
-            console.log(marker);
-            attachInstructionText(marker, tempPOI);
-            markerArray[i] = marker;
-            markerArray[i].setMap(gMapBase);
-
         }
+        //console.log(markerIcon);
+        var marker = new google.maps.Marker({
+            position: markerPosition,
+            map: gMapBase,
+            icon: {
+                anchor: new google.maps.Point(4, 12 + 39 - 4), //based on the pole position (locationPointRadius, shapeHeight + flagWidth - locationPointRadius)
+                url: markerIcon
+            }
+        });
+
+        //console.log(markerPosition);
+        //console.log(parseFloat(tempPOI.poiLat));
+        //var marker = new Marker({
+        //    map: gMapBase,
+        //    position: new google.maps.LatLng(parseFloat(tempPOI.poiLat),parseFloat(tempPOI.poiLon)),//markerPosition,
+        //    icon: {
+        //        path: SQUARE_PIN,
+        //        fillColor: '#6331AE',
+        //        fillOpacity: 1,
+        //        strokeColor: '',
+        //        strokeWeight: 0
+        //    },
+        //    map_icon_label: '<span class="map-icon map-icon-city-hall"></span>'
+        //});
+
+
+        attachInstructionText(marker, tempPOI);
+        markerArray[i] = marker;
+        //console.log(marker);
+        markerArray[i].setMap(gMapBase);
+
+    }
     //}
 
 }
