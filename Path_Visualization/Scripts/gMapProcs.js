@@ -56,37 +56,37 @@ function initMap() {
             icon: iconBase + 'parking.svg'
         },
         library: {
-            icon: iconBase + 'library.svg'
+            icon: iconBase + 'library2.svg'
         },
         info: {
-            icon: iconBase + 'embassy.svg'
+            icon: iconBase + 'embassy2.svg'
         },
         sport: {
-            icon: iconBase + 'test2.svg'//'stadium.svg'
+            icon: iconBase + 'Olympic2.svg'//'stadium.svg'
         },
         transport: {
-            icon: iconBase + 'bus-station.svg' //iconBase + 'rail.png'
+            icon: iconBase + 'bus-station2.svg' //iconBase + 'rail.png'
         },
         park: {
-            icon: iconBase + 'park.svg'
+            icon: iconBase + 'park2.svg'
         },
         shopping: {
-            icon: iconBase + 'shopping-mall.svg'
+            icon: iconBase + 'shopping-mall2.svg'
         },
         city: {
-            icon: iconBase + 'city-hall.svg'
+            icon: iconBase + 'city-hall2.svg'
         },
         entertainment: {
-            icon: iconBase + 'movie-theater.svg'
+            icon: iconBase + 'movie-theater2.svg'
         },
         art: {
-            icon: iconBase + 'art-gallery.svg'
+            icon: iconBase + 'art-gallery2.svg'
         },
         structure: {
-            icon: iconBase + 'point-of-interest.svg'
+            icon: iconBase + 'point-of-interest2.svg'
         },
         institution: {
-            icon: iconBase + 'political.svg'
+            icon: iconBase + 'political2.svg'
         }
     };
 
