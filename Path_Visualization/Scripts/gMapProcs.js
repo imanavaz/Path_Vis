@@ -387,8 +387,9 @@ function resetMarkers(poiArray) {
         var tempp = grabPOI(poiArray[i]);
         if (tempp.poiPopularity > maxPopularity)
             maxPopularity = tempp.poiPopularity;
+        console.log(tempp.poiPopularity);
     }
-
+    console.log("max is: "+maxPopularity);
 
     //if (showPOICategories) {
     for (var i = 0; i < poiArray.length; i++) {
@@ -477,7 +478,8 @@ function resetMarkers(poiArray) {
             icon: {
                 anchor: new google.maps.Point(4, 12 + 39 - 4), //based on the pole position (locationPointRadius, shapeHeight + flagWidth - locationPointRadius)
                 url: markerIcon
-            }
+            },
+            //createPOIGradientFill(tempPOI.poiPopularity, maxPopularity, 50) //50 is poiWidth
         });
 
         //console.log(markerPosition);
@@ -704,7 +706,21 @@ function arrayStringToArrayNumberConverter(str) {
 }
 
 
-
+function createPOIGradientFill(popularity, maxPopularity, poiWidth) {
+    var c = document.createElement("canvas");
+    c.className  = "myClass";
+    c.id = "myId";
+    //var c = document.getElementById("map-canvas");
+    var ctx = c.getContext("2d");
+    var grd = ctx.createLinearGradient(0, 0, poiWidth, 0);
+    grd.addColorStop(0, "red");
+    grd.addColorStop(popularity / maxPopularity, "red");
+    grd.addColorStop(popularity / maxPopularity, "white");
+    grd.addColorStop(1, "white");
+    //ctx.fillStyle = grd;
+    //ctx.fillRect(20, 20, 150, 100);
+    return grd;
+}
 
 
 
