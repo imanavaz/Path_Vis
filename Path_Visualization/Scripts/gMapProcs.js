@@ -471,13 +471,15 @@ function resetMarkers(poiArray) {
                 markerIcon = icons["info"].icon;
             }
         }
-        //console.log(markerIcon);
+
+        console.log(readSVGXML(markerIcon));
         var marker = new google.maps.Marker({
             position: markerPosition,
             map: gMapBase,
             icon: {
                 anchor: new google.maps.Point(4, 12 + 39 - 4), //based on the pole position (locationPointRadius, shapeHeight + flagWidth - locationPointRadius)
                 url: markerIcon
+                //url:'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(
             },
             //createPOIGradientFill(tempPOI.poiPopularity, maxPopularity, 50) //50 is poiWidth
         });
@@ -508,6 +510,51 @@ function resetMarkers(poiArray) {
 
 }
 
+function readSVGXML(svgAddress){
+if (window.XMLHttpRequest)
+            {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {// code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+
+
+            xmlhttp.onload = function() {
+                var xmlDoc = new DOMParser().parseFromString(xmlhttp.responseText,'text/xml');
+
+                console.log(xmlDoc);
+
+                return xmlDoc;
+
+                //document.write("<table border='1'>");
+                var defNode=xmlDoc.getElementsByTagName("def")[0];
+
+                //var gradientNode = xmlDoc.createElement("linearGradient");
+                //gradientNode.
+                //    document.write(x[i].getElementsByTagName("c_id")[0].childNodes[0].nodeValue);
+                //    document.write("</td><td>");
+                //    document.write(x[i].getElementsByTagName("facebook_id")[0].childNodes[0].nodeValue);
+                //    document.write("</td></tr>");
+
+                //document.write("</table>");
+                //<defs>
+                //<linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                //  <stop offset="0%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+                //  <stop offset="40%" style="stop-color:rgb(255,255,0);stop-opacity:1" />
+                //  <stop offset="40%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+                //  <stop offset="100%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+                //</linearGradient>
+                //</defs>
+            }
+
+
+            xmlhttp.open("GET",svgAddress,false);
+            xmlhttp.send();
+
+}
 function displayRout(resultsToDisplay, poiA) {
     directionsDisplay.setDirections(resultsToDisplay);
     resetMarkers(poiA);
