@@ -50,8 +50,8 @@ function initMap() {
 
     //prepare markers
     //var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
-    //var iconBase = '../Images/';
-    var iconBase = 'https://raw.githubusercontent.com/cdawei/path_vis/master/Images/';
+    var iconBase = 'Images/';
+    //var iconBase = 'https://raw.githubusercontent.com/cdawei/path_vis/master/Images/';
     icons = {
         parking: {
             icon: iconBase + 'parking.svg'
@@ -98,8 +98,8 @@ function initMap() {
 
 
 function processData(trajectoryCombo, directionsService, directionsDisplay) {
-    //var trajectoryFile = 'Data/Melb_recommendations.csv';
-    var trajectoryFile = 'https://raw.githubusercontent.com/cdawei/path_vis/master/Data/Melb_recommendations.csv';
+    var trajectoryFile = 'Data/Melb_recommendations.csv';
+    //var trajectoryFile = 'https://raw.githubusercontent.com/cdawei/path_vis/master/Data/Melb_recommendations.csv';
     var selectedTrajectory = []; //only one will be used
 
     for (var i = 0; i < 10; i++) { //initialize trajecotires array
@@ -113,8 +113,8 @@ function processData(trajectoryCombo, directionsService, directionsDisplay) {
     }
 
     //read Melbourne POIs
-    //var poiFile = 'Data/poi-Melb-all.csv';
-    var poiFile = 'https://raw.githubusercontent.com/cdawei/path_vis/master/Data/poi-Melb-all.csv';
+    var poiFile = 'Data/poi-Melb-all.csv';
+    //var poiFile = 'https://raw.githubusercontent.com/cdawei/path_vis/master/Data/poi-Melb-all.csv';
     var poiCount = 0;
     d3.csv(poiFile, function(data) {
         data.forEach(function(d) {
@@ -628,8 +628,8 @@ function test(data) {
 //this would load POIs but have not been used in the code
 function loadPOIs() {
     //read Melbourne POIs
-    //var poiFile = 'Data/poi-Melb-all.csv';
-    var poiFile = 'https://raw.githubusercontent.com/cdawei/path_vis/master/Data/poi-Melb-all.csv';
+    var poiFile = 'Data/poi-Melb-all.csv';
+    //var poiFile = 'https://raw.githubusercontent.com/cdawei/path_vis/master/Data/poi-Melb-all.csv';
 
     var poiCount = 0;
     d3.csv(poiFile, function(data) {
