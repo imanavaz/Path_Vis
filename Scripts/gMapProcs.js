@@ -322,24 +322,24 @@ function calcRoute(batches, directionsService, directionsDisplay, trajIndex) {
                         displayRout(trajectories[tindex].Path, trajectories[tindex].POIs);
                     });
 
-                    var listElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    var listElement = document.createElementNS("https://www.w3.org/2000/svg", "svg");
                     listElement.setAttribute('height', 55);
 
-                    var nameElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+                    var nameElement = document.createElementNS("https://www.w3.org/2000/svg", 'text');
                     //nameElement.setAttribute('height', 50);
                     nameElement.setAttribute('y', 18);
                     var textNode = document.createTextNode(trajectories[trajIndex].Name);
                     nameElement.appendChild(textNode);
                     listElement.appendChild(nameElement);
 
-                    var distanceElement = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+                    var distanceElement = document.createElementNS("https://www.w3.org/2000/svg", 'rect');
                     distanceElement.setAttribute('width', trajectories[trajIndex].Distance * 10); //This needs normalization
                     distanceElement.setAttribute('height', 15);
                     distanceElement.setAttribute('y', 20);
                     distanceElement.setAttribute('style', "fill:rgb(0,146,146);");
                     listElement.appendChild(distanceElement);
 
-                    var distanceTextElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+                    var distanceTextElement = document.createElementNS("https://www.w3.org/2000/svg", 'text');
                     //nameElement.setAttribute('height', 50);
                     distanceTextElement.setAttribute('x', trajectories[trajIndex].Distance * 10 + 2); //this needs normaization
                     distanceTextElement.setAttribute('y', 34);
@@ -347,14 +347,14 @@ function calcRoute(batches, directionsService, directionsDisplay, trajIndex) {
                     distanceTextElement.appendChild(textNode2);
                     listElement.appendChild(distanceTextElement);
 
-                    var durationElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    var durationElement = document.createElementNS("https://www.w3.org/2000/svg", "rect");
                     durationElement.setAttribute('width', trajectories[trajIndex].Duration); //this needs normaization
                     durationElement.setAttribute('height', 15);
                     durationElement.setAttribute('y', 35);
                     durationElement.setAttribute('style', "fill:rgb(146,0,0);");
                     listElement.appendChild(durationElement);
 
-                    var durationTextElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+                    var durationTextElement = document.createElementNS("https://www.w3.org/2000/svg", 'text');
                     //nameElement.setAttribute('height', 50);
                     durationTextElement.setAttribute('x', trajectories[trajIndex].Duration + 2); //this needs normaization
                     durationTextElement.setAttribute('y', 49);
@@ -546,9 +546,9 @@ function generateAlgorithmPanelLegend() {
 
     chartLegend.setAttribute("style", "height:60px");
 
-    var legendContents = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    var legendContents = document.createElementNS("https://www.w3.org/2000/svg", "svg");
 
-    var distanceBox = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+    var distanceBox = document.createElementNS("https://www.w3.org/2000/svg", 'rect');
     distanceBox.setAttribute('width', 20);
     distanceBox.setAttribute('height', 15);
     distanceBox.setAttribute('y', 5);
@@ -557,7 +557,7 @@ function generateAlgorithmPanelLegend() {
     legendContents.appendChild(distanceBox);
 
 
-    var nameElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+    var nameElement = document.createElementNS("https://www.w3.org/2000/svg", 'text');
     //nameElement.setAttribute('height', 50);
     nameElement.setAttribute('y', 19);
     nameElement.setAttribute('x', 22)
@@ -565,7 +565,7 @@ function generateAlgorithmPanelLegend() {
     nameElement.appendChild(textNode);
     legendContents.appendChild(nameElement);
 
-    var distanceBox2 = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+    var distanceBox2 = document.createElementNS("https://www.w3.org/2000/svg", 'rect');
     distanceBox2.setAttribute('width', 20);
     distanceBox2.setAttribute('height', 15);
     distanceBox2.setAttribute('y', 27);
@@ -573,7 +573,7 @@ function generateAlgorithmPanelLegend() {
     distanceBox2.setAttribute('style', "fill:rgb(146,0,0);");
     legendContents.appendChild(distanceBox2);
 
-    var nameElement2 = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+    var nameElement2 = document.createElementNS("https://www.w3.org/2000/svg", 'text');
     //nameElement.setAttribute('height', 50);
     nameElement2.setAttribute('y', 40);
     nameElement2.setAttribute('x', 22)
