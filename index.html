@@ -12,21 +12,22 @@
   <!--<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/hpneo/gmaps/master/examples/examples.css" />-->
   <link rel="stylesheet" type="text/css" href="style/examples.css" />
   <script type="text/javascript">
-    var map;
-    var latMelb = -37.815018
-    var lngMelb = 144.97
+    //var map;
+    //var latMelb = -37.815018
+    //var lngMelb = 144.97
     $(document).ready(function(){
-      map = new GMaps({
-        el: '#map',
-        lat: latMelb,
-        lng: lngMelb,
-        zoom: 15
-     });
-     var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/Data/poi-Melb-all.csv';
+      //map = new GMaps({
+      //  el: '#map',
+      //  lat: latMelb,
+      //  lng: lngMelb,
+      //  zoom: 15
+      //});
+     draw_map();
+     var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
      traj = [9, 22, 14, 15, 17, 8, 82, 81];
      travel_mode = "walking"; // driving, bicycling or walking
-     draw_route(map, fpoi, traj, travel_mode);
-     draw_POIs(map, fpoi);
+     draw_route(fpoi, traj, travel_mode);
+     draw_POIs(fpoi);
     });
   </script>
 </head>

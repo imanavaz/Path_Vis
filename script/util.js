@@ -1,4 +1,22 @@
-function draw_POIs(map, fpoi) {
+var map = undefined;
+
+
+function draw_map() {
+    var latMelb = -37.815018
+    var lngMelb = 144.97
+    map = new GMaps({
+        div: '#map',
+        lat: latMelb,
+        lng: lngMelb,
+        zoom: 15
+    });
+}
+
+
+function draw_POIs(fpoi) {
+    if (map === undefined) {
+        draw_map();
+    }
     d3.csv(fpoi, function(data) {
         var pois = {};
         data.forEach(function(d) {
@@ -37,7 +55,10 @@ function draw_POIs(map, fpoi) {
 }
 
 
-function draw_route(map, fpoi, traj, travel_mode) {
+function draw_route(fpoi, traj, travel_mode) {
+    if (map === undefined) {
+        draw_map();
+    }
     d3.csv(fpoi, function(data) {
         var pois = {};
         data.forEach(function(d) {
