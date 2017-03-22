@@ -1,211 +1,56 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Trajectory Display</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!--script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script-->
-
-    <script type="text/javascript" src="Scripts/gMapProcs.js"></script>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="Scripts/POIMaker.js"></script>
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-
-    <meta name="viewport" content="initial-scale=1.0">
-    <meta charset="utf-8">
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', 'sans-serif';
-        }
-
-        #legend {
-            background: white;
-            padding: 5px;
-        }
-
-        #map-canvas {
-            height: 100%;
-            width: 80%;
-            float: right;
-            foreground: black;
-        }
-
-        #control-panel {
-            height: 100%;
-            width: 18%;
-            float: left;
-            padding-left: 15px;
-            margin-top: 10px;
-            background-color: #fff;
-            text-align: left;
-            font-family: 'Roboto', 'sans-serif';
-        }
-
-        #mode {
-            margin-top: 10px;
-            width: 80px;
-            font-family: 'Roboto', 'sans-serif';
-        }
-    </style>
-
-
+  <meta charset="utf-8">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+  <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+  <!--<script type="text/javascript" src="https://cdn.rawgit.com/hpneo/gmaps/master/gmaps.min.js"></script>-->
+  <script type="text/javascript" src="script/gmaps.min.js"></script>
+  <script type="text/javascript" src="script/d3.min.js"></script>
+  <script type="text/javascript" src="script/util.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://twitter.github.com/bootstrap/1.3.0/bootstrap.min.css" />
+  <!--<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/hpneo/gmaps/master/examples/examples.css" />-->
+  <link rel="stylesheet" type="text/css" href="style/examples.css" />
+  <script type="text/javascript">
+    var map;
+    var latMelb = -37.815018
+    var lngMelb = 144.97
+    $(document).ready(function(){
+      map = new GMaps({
+        el: '#map',
+        lat: latMelb,
+        lng: lngMelb,
+        zoom: 15
+     });
+     var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/Data/poi-Melb-all.csv';
+     traj = [9, 22, 14, 15, 17, 8, 82, 81];
+     travel_mode = "walking"; // driving, bicycling or walking
+     draw_route(map, fpoi, traj, travel_mode);
+     draw_POIs(map, fpoi);
+    });
+  </script>
 </head>
-
 <body>
-
-    <div id="control-panel">
-        <div>
-            <br />
-            <br/>
-
-            <b>Trajecctories:</b>
-            <select id="trajectory-list">
-                <option selected disabled>Choose ...</option>
-            </select>
-
-            <script type="text/javascript">
-                //Data works
-                var trajectoryFile = 'Data/Melb_recommendations.csv';
-
-                var dsv = d3.dsv(";", "text/plain");
-
-                var trajList = document.getElementById('trajectory-list');
-
-                dsv(trajectoryFile, function(data) {
-                    data.forEach(function(d) {
-                        var opt = document.createElement('option');
-                        opt.innerHTML = d.trajID;
-                        opt.value = d.trajID;
-                        trajList.appendChild(opt);
-                    });
-                });
-            </script>
-
-            <script type="text/javascript">
-                //to Test POI maker
-                //var values = [50, 90];
-
-                //The SVG Container
-                //var poiSVG = makePOIMarkerFlag(2, values, 100, "https://raw.githubusercontent.com/cdawei/path_vis/master/Images/bus-15.svg");
-
-                //document.body.appendChild(poiSVG.node());
-            </script>
-
-            <br />
-            <br />
-
-            <!--b>Algorithm : </b>
-            <select id="alg-list">
-                <option value="REAL">Real</option>
-                <option value="PoiPopularity">POI Popularity</option>
-                <option value="PoiRank">POI Rank</option>
-                <option value="Markov">Markov</option>
-                <option value="MarkovPath">Markov Path</option>
-                <option value="RankMarkov">Rank + Markov</option>
-                <option value="RankMarkovPath">Rank + MarkovPath</option>
-                <option value="StructuredSVM">StructuredSVM</option>
-                <option value="PersTour">PersTour</option>
-                <option value="PersTourL">Pers Tour - L</option>
-
-            </select>
-
-            <br />
-            <br /-->
-
-            <b>Travel mode: </b>
-            <select id="mode">
-                <option value="WALKING">Walking</option>
-                <option value="DRIVING">Driving</option>
-                <option value="BICYCLING">Bicycling</option>
-                <option value="TRANSIT">Transit</option>
-            </select>
-
-            <br/>
-            <br/>
-
-            <input type="checkbox" id="POIRatingCheckBox" name="POIRating" onclick="handleClickPOIRating(this)" value="ShowRating"> Show POI rating </input>
-            <!--br/-->
-            <!--input type="checkbox" id="POICategoryCheckBox" name="POICategory" checked="true" onclick="handleClickPOICategory(this)" value="ShowCategory"> Show POI category </input-->
-
-            <br/>
-            <br/>
-
-            <!--div id="directions-panel"></div-->
-            <div id="alg-panel">
-                <div id="alg-legend-panel">
-                </div>
-
-                <div id="alg-list">
-                </div>
-
-            </div>
-
-        </div>
+  <div class="row">
+    Trajectory start at POI <span id="ID_marker"><font color="red">10</font></span> (click to change) with 
+    <span id="ID_sliderValue"><font color="red">5</font></span> (slide to change) POIs 
+    &nbsp;
+    2<input type="range" min="2" max="10" value="5" onchange="changeValue(this.value)"/>10 
+    <script type="text/javascript">
+    function changeValue(newValue) {
+        document.getElementById("ID_sliderValue").innerHTML = "<font color=\"red\">" + newValue + "</font>";
+        document.getElementById("ID_length").value = newValue;
+    }
+    </script>
+    <form action="/recommend" method="POST">
+    <input id='ID_start' type="hidden" name="START" value="10">
+    <input id='ID_length' type="hidden" name="LENGTH" value="5">
+    <input type="submit" value="Recommend">
+    </form>
+    <br>
+    <div class="span11">
+      <div id="map"></div>
     </div>
-
-    <div id="legend-panel">
-        <button type="button" style="float: right;" data-toggle="collapse" data-target="#legend">Marker Legend</button>
-        <br/>
-        <div id="legend" class="collapse">
-            <table style="width:100%">
-                <tr>
-                    <td><img src="Images/stadium.svg" height="30" width="30"></td>
-                    <td>Sports stadiums</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/bus-station.svg" height="30" width="30"></td>
-                    <td>Transport</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/park.svg" height="30" width="30"></td>
-                    <td>Parks and spaces</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/shopping-mall.svg" height="30" width="30"></td>
-                    <td>Shopping</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/city-hall.svg" height="30" width="30"></td>
-                    <td>City precincts</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/movie-theater.svg" height="30" width="30"></td>
-                    <td>Entertainment</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/art-gallery.svg" height="30" width="30"></td>
-                    <td>Public galleries</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/point-of-interest.svg" height="42" width="42"></td>
-                    <td>Structure</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/political.svg" height="42" width="42"></td>
-                    <td>Institutions</td>
-                </tr>
-                <tr>
-                    <td><img src="Images/embassy.svg" height="42" width="42"></td>
-                    <td>Undefined Category</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <div id="map-canvas"></div>
-
-    <!--script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPQ6-9x_BCjSzId9KBa1shTezPQoDgrg8&signed_in=true&callback=initMap" async defer></script-->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACY1MwaH0ouk67iUX_m91nM8vaAAaa8n4&callback=initMap" async defer></script>
-
-
-
-
+  </div>
 </body>
-
 </html>
