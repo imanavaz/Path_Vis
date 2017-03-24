@@ -1,5 +1,5 @@
 var map = undefined;
-
+var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
 
 function draw_map() {
     var latMelb = -37.815018
@@ -13,7 +13,7 @@ function draw_map() {
 }
 
 
-function draw_POIs(fpoi) {
+function draw_POIs() {
     if (map === undefined) {
         draw_map();
     }
@@ -55,7 +55,8 @@ function draw_POIs(fpoi) {
 }
 
 
-function draw_route(fpoi, traj, travel_mode) {
+function draw_route(traj, color, travel_mode="walking") {
+    //travel_mode: driving, bicycling or walking
     if (map === undefined) {
         draw_map();
     }
@@ -87,8 +88,7 @@ function draw_route(fpoi, traj, travel_mode) {
             waypoints: waypts,
             optimizeWaypoints: false, //do NOT allow way points to be reordered
             travelMode: travel_mode,
-            strokeColor: '#1F5566', //RRGGBB
-            //strokeColor: '#131540',
+            strokeColor: color, //RRGGBB, e.g. '#1F5566', '#131540'
             strokeOpacity: 0.6,
             strokeWeight: 6,
             fillColor: "#0000FF",
@@ -96,4 +96,22 @@ function draw_route(fpoi, traj, travel_mode) {
         });
     });
     console.log(traj);
+}
+
+
+function parse_draw(response) {
+    trajs = response.split(";");
+    console.log(trajs);
+    console.log(trajs.length);
+    for (var i = 0; i < trajs.length; i++) {
+        var trajstr = trajs[i].split(",");
+        var traj = [];
+        for (var j = 0; j < trajstr.length; j++) {
+            traj.push(parseInt(trajstr[j]));
+        }
+        console.log(traj);
+        color = '#'+(Math.random()*0xFFFFFF<<0).toString(16); //random color
+        draw_route(traj, color);
+
+    }
 }

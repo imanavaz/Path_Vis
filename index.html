@@ -2,53 +2,61 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
   <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
-  <!--<script type="text/javascript" src="https://cdn.rawgit.com/hpneo/gmaps/master/gmaps.min.js"></script>-->
   <script type="text/javascript" src="script/gmaps.min.js"></script>
   <script type="text/javascript" src="script/d3.min.js"></script>
+  <script type="text/javascript" src="script/jquery-3.2.0.min.js"></script>
   <script type="text/javascript" src="script/util.js"></script>
-  <link rel="stylesheet" type="text/css" href="https://twitter.github.com/bootstrap/1.3.0/bootstrap.min.css" />
-  <!--<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/hpneo/gmaps/master/examples/examples.css" />-->
   <link rel="stylesheet" type="text/css" href="style/examples.css" />
   <script type="text/javascript">
-    //var map;
-    //var latMelb = -37.815018
-    //var lngMelb = 144.97
     $(document).ready(function(){
-      //map = new GMaps({
-      //  el: '#map',
-      //  lat: latMelb,
-      //  lng: lngMelb,
-      //  zoom: 15
-      //});
      draw_map();
-     var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
      traj = [9, 22, 14, 15, 17, 8, 82, 81];
-     travel_mode = "walking"; // driving, bicycling or walking
-     draw_route(fpoi, traj, travel_mode);
-     draw_POIs(fpoi);
+     draw_route(traj, "#1F5566");
+     draw_POIs();
     });
   </script>
 </head>
 <body>
   <div class="row">
+    <form id="ID_form" action="/recommend" method="POST">
+        <input id="ID_start" type="hidden" name="START" value="10">
+        <input id="ID_length" type="hidden" name="LENGTH" value="5">
+    </form>
     Trajectory start at POI <span id="ID_marker"><font color="red">10</font></span> (click to change) with 
     <span id="ID_sliderValue"><font color="red">5</font></span> (slide to change) POIs 
     &nbsp;
     2<input type="range" min="2" max="10" value="5" onchange="changeValue(this.value)"/>10 
+    &nbsp;
+    <button id="ID_button" type="button">Recommend</button>
     <script type="text/javascript">
     function changeValue(newValue) {
         document.getElementById("ID_sliderValue").innerHTML = "<font color=\"red\">" + newValue + "</font>";
         document.getElementById("ID_length").value = newValue;
     }
     </script>
-    <form action="/recommend" method="POST">
-    <input id='ID_start' type="hidden" name="START" value="10">
-    <input id='ID_length' type="hidden" name="LENGTH" value="5">
-    <input type="submit" value="Recommend">
-    </form>
-    <br>
+    <script>
+    $( "#ID_form" ).submit(function(event) {
+        console.log('submit form');
+        $.ajax({
+            type: $( "#ID_form" ).attr("method"),
+            url:  $( "#ID_form" ).attr("action"),
+            data: $( "#ID_form" ).serialize(),
+        }).done(function(data) {
+            console.log('ok');
+            console.log(data);
+            parse_draw(data);
+        }).fail(function(data) {
+            console.log('error');
+        });
+        alert('submit');
+        event.preventDefault();
+    });
+
+    $( "#ID_button" ).click(function() {
+        $( "#ID_form" ).submit();
+    });
+    </script>
     <div class="span11">
       <div id="map"></div>
     </div>

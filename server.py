@@ -18,6 +18,7 @@ class dummyHandler(BaseHTTPRequestHandler):
 
 
     def recommend(self, start, length):
+        print('in recommend()')
         #startPOI = 9  # the start POI-ID for the desired trajectory, can be any POI-ID in flickr-photo/data/poi-Melb-all.csv
         #length = 8    # the length of desired trajectory: the number of POIs in trajectory (including start POI)
                        # if length > 8, the inference could be slow
@@ -34,9 +35,14 @@ class dummyHandler(BaseHTTPRequestHandler):
         for i in range(len(recommendations)):
             print('Top %d recommendation: %s' % (i+1, str(list(recommendations[i]))))
 
+        # encode the top-2 into a string: p0,p1,...,pn;p0,p1,...,pn
+        return ','.join([str(p) for p in recommendations[0]]) + ';' + ','.join([str(p) for p in recommendations[1]])
+
+
 
     # GET requests handler
     def do_GET(self):
+        print('in do_GET()')
         if self.path=="/":
             self.path="/index.html"
 
@@ -80,6 +86,7 @@ class dummyHandler(BaseHTTPRequestHandler):
 
     # POST requests handler
     def do_POST(self):
+        print('in do_POST()')
         if self.path=="/recommend":
             formData = cgi.FieldStorage(
                 fp=self.rfile, 
@@ -90,10 +97,10 @@ class dummyHandler(BaseHTTPRequestHandler):
             start = int(formData["START"].value)
             length = int(formData["LENGTH"].value)
             print("Start point: %d, length: %d" % (start, length))
-            self.recommend(start, length)
+            output = self.recommend(start, length)
             self.send_response(200)
             self.end_headers()
-            output = "<p>Thanks! start=%d, length=%d</p>" % (start, length)
+            #output = "<p>Thanks! start=%d, length=%d</p>" % (start, length)
             self.wfile.write(output.encode('utf-8'))
             return          
             
