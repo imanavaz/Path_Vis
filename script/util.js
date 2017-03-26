@@ -10,6 +10,10 @@ function draw_map() {
         lng: lngMelb,
         zoom: 15
     });
+    // properties of the Map object
+    //for (var prop in map) {
+    //    console.log('map property: ' + prop);
+    //}
 }
 
 
@@ -95,23 +99,25 @@ function draw_route(traj, color, travel_mode="walking") {
             fillOpacity: 0.4
         });
     });
-    console.log(traj);
+    console.log('trajectory: ' + traj);
+    //console.log(travel);
 }
 
 
 function parse_draw(response) {
     trajs = response.split(";");
-    console.log(trajs);
-    console.log(trajs.length);
+    //console.log(trajs);
+    //console.log(trajs.length);
     for (var i = 0; i < trajs.length; i++) {
         var trajstr = trajs[i].split(",");
         var traj = [];
         for (var j = 0; j < trajstr.length; j++) {
             traj.push(parseInt(trajstr[j]));
         }
-        console.log(traj);
-        color = '#'+(Math.random()*0xFFFFFF<<0).toString(16); //random color
-        draw_route(traj, color);
+        //console.log(traj);
+        color = "#" + (Math.random()*0xFFFFFF<<0).toString(16); //random color
+        travel = document.getElementById("ID_select").value;
+        draw_route(traj, color, travel);
 
     }
 }
