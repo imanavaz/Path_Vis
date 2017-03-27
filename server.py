@@ -1,11 +1,10 @@
 #!/usr/bin/python
 from http.server import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
-import sys, cgi
+import sys, cgi, os
 import numpy as np
 import pandas as pd
 import pickle as pkl
-
 
 class dummyHandler(BaseHTTPRequestHandler):
 
@@ -104,8 +103,16 @@ class dummyHandler(BaseHTTPRequestHandler):
             self.wfile.write(output.encode('utf-8'))
             return          
             
+def check_system():
+    if sys.platform == "darwin":
+        if not os.path.exists("./lib/inference_lv_linux.so"):
+            os.rename("./lib/inference_lv.so", "./lib/inference_lv_linux.so")
+            os.rename("./lib/inference_lv_mac.so", "./lib/inference_lv.so")
+    elif sys.platform == "win32":
+        raise OSError("does not support Windows systems")   
 
 if __name__ == '__main__':
+    check_system()
     try:
         # Create a web server and define the handler
         PORT = 8080
