@@ -10,5 +10,4 @@ Trajectory visualisation.
 
 ### Note:
  - the required python version to load the trained model is 3.5.3, other versions of python will cause "bad magic number" error.
- - on MacOS, please rename `lib/inference_lv_mac.so` to `lib/inference_lv.so` before starting `server.py`
  - only top-2 recommended trajectories are rendered.
