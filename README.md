@@ -9,5 +9,6 @@ Trajectory visualisation.
  1. click the `Recommend` button
 
 ### Note:
- - the required python version to load the trained model is 3.5.3, other versions of python will cause "bad magic number" error.
+ - the required `python` version to load the trained model is 3.5.3, other versions of python will cause "bad magic number" error.
+ - the required `pandas` version is 0.19.2, other versions may cause "import error".
  - only top-2 recommended trajectories are rendered.
