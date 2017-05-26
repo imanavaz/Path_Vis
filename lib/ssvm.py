@@ -147,12 +147,12 @@ class SSVM:
                 trans_score[j] = np.dot(self.edge_features[ss, tt], pw_params[ss, tt])
                 trans_feature_score += np.multiply(self.edge_features[ss, tt], pw_params[ss, tt])
 
-            item['Trajectory'] = [self.poi_id_rdict[x] for x in y_hat]
+            item['Trajectory'] = np.array([self.poi_id_rdict[x] for x in y_hat])
             item['TotalScore'] = np.sum(poi_score) + np.sum(trans_score)
-            item['POIScore'] = poi_score.tolist()
-            item['TransitionScore'] = trans_score.tolist()
-            item['POIFeatureScore'] = poi_feature_score.tolist()
-            item['TransitionFeatureScore'] = trans_feature_score.tolist()
+            item['POIScore'] = poi_score
+            item['TransitionScore'] = trans_score
+            item['POIFeatureScore'] = poi_feature_score
+            item['TransitionFeatureScore'] = trans_feature_score
 
             result_set.append(item)
         return result_set

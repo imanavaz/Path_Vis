@@ -15,6 +15,24 @@ class dummyHandler(BaseHTTPRequestHandler):
     #    self.model = pkl.load(open(fmodel, 'rb'))['MODEL']  # trained model
     #    print('trained model loaded')
 
+    def preprocess(self, recommendations): 
+        # scale scores and convert arrays to lists
+        score = recommendations[0]['TotalScore']
+        assert(abs(score) > 1e-9)
+        ratio = 100 / score
+        for j in range(len(recommendations)):
+            rec = recommendations[j]
+            if j == 0:
+                recommendations[j]['TotalScore'] = 100
+            else:
+                recommendations[j]['TotalScore'] *= ratio
+            recommendations[j]['POIScore'] = (rec['POIScore'] * ratio).tolist()
+            recommendations[j]['TransitionScore'] = (rec['TransitionScore'] * ratio).tolist()
+            recommendations[j]['POIFeatureScore'] = (rec['POIFeatureScore'] * ratio).tolist()
+            recommendations[j]['TransitionFeatureScore'] = (rec['TransitionFeatureScore'] * ratio).tolist()
+            recommendations[j]['Trajectory'] = rec['Trajectory'].tolist()
+        return recommendations
+
 
     def recommend(self, start, length):
         print('in recommend()')
@@ -38,7 +56,7 @@ class dummyHandler(BaseHTTPRequestHandler):
         #return ','.join([str(p) for p in recommendations[0]]) + ';' + ','.join([str(p) for p in recommendations[1]])
 
         # return recommended trajectories as well as a number of scores
-        return json.dumps(recommendations, sort_keys=True)
+        return json.dumps(self.preprocess(recommendations), sort_keys=True)
 
 
 
@@ -126,6 +144,6 @@ if __name__ == '__main__':
         server.serve_forever()
 
     except KeyboardInterrupt:
-        print('Shutting down the web server')
+        print(' Shutting down the web server')
         server.socket.close()
  
