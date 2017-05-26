@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from http.server import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
-import sys, cgi, os
+import sys, cgi, os, json
 import numpy as np
 import pandas as pd
 import pickle as pkl
@@ -32,10 +32,13 @@ class dummyHandler(BaseHTTPRequestHandler):
 
         recommendations = self.model.predict(start, length) # recommendations is list of 10 trajectories
         for i in range(len(recommendations)):
-            print('Top %d recommendation: %s' % (i+1, str(list(recommendations[i]))))
+            print('Top %d recommendation: %s' % (i+1, str(list(recommendations[i]['Trajectory']))))
 
         # encode the top-2 into a string: p0,p1,...,pn;p0,p1,...,pn
-        return ','.join([str(p) for p in recommendations[0]]) + ';' + ','.join([str(p) for p in recommendations[1]])
+        #return ','.join([str(p) for p in recommendations[0]]) + ';' + ','.join([str(p) for p in recommendations[1]])
+
+        # return recommended trajectories as well as a number of scores
+        return json.dumps(recommendations, sort_keys=True)
 
 
 
@@ -123,6 +126,6 @@ if __name__ == '__main__':
         server.serve_forever()
 
     except KeyboardInterrupt:
-        print('^C received, shutting down the web server')
+        print('Shutting down the web server')
         server.socket.close()
  

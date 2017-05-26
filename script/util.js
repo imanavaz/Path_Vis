@@ -105,15 +105,21 @@ function draw_route(traj, color, travel_mode="walking") {
 
 
 function parse_draw(response) {
-    trajs = response.split(";");
+    var trajdata = JSON.parse(response);
+    console.log(trajdata);
+    var trajs = [trajdata[0]['Trajectory'], trajdata[1]['Trajectory']];
+    //trajs = response.split(";");
     //console.log(trajs);
     //console.log(trajs.length);
     for (var i = 0; i < trajs.length; i++) {
+        /*
         var trajstr = trajs[i].split(",");
         var traj = [];
         for (var j = 0; j < trajstr.length; j++) {
             traj.push(parseInt(trajstr[j]));
         }
+        */
+        traj = trajs[i];
         //console.log(traj);
         color = "#" + (Math.random()*0xFFFFFF<<0).toString(16); //random color
         travel = document.getElementById("ID_select").value;
