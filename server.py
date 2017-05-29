@@ -9,7 +9,7 @@ import pickle as pkl
 class dummyHandler(BaseHTTPRequestHandler):
 
     #def __init__(self, request, client_address, server):
-    #    #super(dummyHandler, self).__init__(request, client_address, server)
+    #    super(dummyHandler, self).__init__(request, client_address, server)
     #    sys.path.append('lib')
     #    fmodel = 'lib/model-Melb.pkl'  # path of the trained model file
     #    self.model = pkl.load(open(fmodel, 'rb'))['MODEL']  # trained model
@@ -31,6 +31,10 @@ class dummyHandler(BaseHTTPRequestHandler):
             recommendations[j]['POIFeatureScore'] = (rec['POIFeatureScore'] * ratio).tolist()
             recommendations[j]['TransitionFeatureScore'] = (rec['TransitionFeatureScore'] * ratio).tolist()
             recommendations[j]['Trajectory'] = rec['Trajectory'].tolist()
+            if 'POIFeatureWeight' in rec:
+                recommendations[j]['POIFeatureWeight'] = rec['POIFeatureWeight'].tolist()
+                recommendations[j]['TransitionFeatureWeight'] = rec['TransitionFeatureWeight'].tolist()
+
         return recommendations
 
 
@@ -57,7 +61,6 @@ class dummyHandler(BaseHTTPRequestHandler):
 
         # return recommended trajectories as well as a number of scores
         return json.dumps(self.preprocess(recommendations), sort_keys=True)
-
 
 
     # GET requests handler
