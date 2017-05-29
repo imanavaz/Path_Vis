@@ -4,10 +4,13 @@
   <meta charset="utf-8">
   <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
   <script type="text/javascript" src="script/gmaps.min.js"></script>
-  <script type="text/javascript" src="script/d3.min.js"></script>
+  <script type="text/javascript" src="script/d3-3.5.17.min.js"></script>
   <script type="text/javascript" src="script/jquery-3.2.0.min.js"></script>
+  <script type="text/javascript" src="script/LineUpJS.min.js"></script>
   <script type="text/javascript" src="script/util.js"></script>
   <link rel="stylesheet" type="text/css" href="style/examples.css" />
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <link rel="stylesheet" type="text/css" href="style/font-awesome.min.css" />
   <script type="text/javascript">
     $(document).ready(function(){
      draw_map();
@@ -55,6 +58,7 @@
             //console.log(data);
             map.cleanRoute();  // clean previous routes
             parse_draw(data);
+            visualise_score(data);
         }).fail(function(data) {
             map.cleanRoute();  // clean previous routes
             alert('No good recommendation');
@@ -70,6 +74,7 @@
     </script>
     <div class="span11">
       <div id="map"></div>
+      <div id="bars"></div>
     </div>
   </div>
 </body>

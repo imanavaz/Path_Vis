@@ -1,5 +1,6 @@
 var map = undefined;
 var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
+const COLORS = ['black', 'green', 'purple', 'lime', 'red', 'silver', 'blue', 'gray', 'navy', 'olive', 'white', 'yellow', 'maroon', 'teal', 'fuchsia', 'aqua'];
 
 function draw_map() {
     var latMelb = -37.815018
@@ -126,4 +127,69 @@ function parse_draw(response) {
         draw_route(traj, color, travel);
 
     }
+}
+
+
+function visualise_score(response) {
+    var trajdata = JSON.parse(response);
+    var arr = [];
+    var ncols = 0;
+    for (var i = 0; i < trajdata.length; i++) {
+        var rowdata = trajdata[i]['POIScore'];
+        var row = {'name': 'Top' + (i+1).toString()};
+        ncols = rowdata.length;
+        for (var j = 1; j < ncols; j++) {
+            //var key = 'score_' + j.toString();
+            var key = 's' + j.toString();
+            row[key] = rowdata[j];
+        }
+        arr.push(row);
+    }
+    var desc = [];
+    desc.push({label: 'Recommendation', type: 'string', column: 'name'});
+    for (var j = 1; j < ncols; j++) {
+        desc.push({
+            //label: 'SCORE_' + j.toString(),
+            type: 'number',
+            //column: 'score_' + j.toString(),
+            column: 's' + j.toString(),
+            'domain': [0, 20],
+            color: COLORS[j]});
+    }
+    
+    /*
+    const arr = [
+      {a: 8, b: 20, c: 30, d: 'Top1_Name', e: false, l: {alt: 'Google', href: 'https://google.com'}, cat: 'c2'},
+      {a: 5, b: 10, c: 2, d: 'Top2_Name', e: true, l: {alt: 'ORF', href: 'https://orf.at'}, cat: 'c3'},
+      {a: 10, b: 30, c: 100, d: 'Top3_Name', e: false, l: {alt: 'heise.de', href: 'https://heise.de'}, cat: 'c2'},];
+    const desc = [
+      {label: 'D', type: 'string', column: 'd', cssClass: 'orange'},
+      {label: 'A', type: 'number', column: 'a', 'domain': [0, 10], cssClass: 'green', color: 'green'},
+      {label: 'B', type: 'number', column: 'b', 'domain': [0, 30], cssClass: 'red', color: 'red'},
+    ]; */
+
+    const p = new LineUpJS.provider.LocalDataProvider(arr, desc);
+    {
+      const r = p.pushRanking();
+      r.insert(p.create(LineUpJS.model.createSelectionDesc()), 0);
+      r.push(p.create(desc[0]));
+
+      r.push((function () {
+        const rstack = p.create(LineUpJS.model.createStackDesc('Stack'));
+        for (var j = 1; j < desc.length; j++) {
+            rstack.push(p.create(desc[j]));
+        }
+        //rstack.setWeights([0.2, 0.8]);
+        return rstack;
+      })());
+    }
+
+    const instance = LineUpJS.create(p, document.getElementById("bars"), {
+      renderingOptions: {
+        animation: false,
+        histograms: false,
+        meanLine: false
+      }
+    });
+    instance.update(); //comment this to hide table header
 }

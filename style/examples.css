@@ -4,8 +4,10 @@ body{
 }
 #map{
   display: block;
-  width: 95%;
-  height: 800px;
+  position: absolute;
+  left: 10px;
+  width: 70%;
+  height: 90%;
   margin: 0 auto;
   -moz-box-shadow: 0px 5px 20px #ccc;
   -webkit-box-shadow: 0px 5px 20px #ccc;
@@ -13,6 +15,19 @@ body{
 }
 #map.large{
   height:500px;
+}
+
+#bars{
+    position: absolute;
+    right: 10px;
+    width: 25%; /*300px;*/
+    /*border: 3px solid #73AD21;*/
+    /*padding: 10px;*/
+    background: white;
+    margin: 0 auto;
+    -moz-box-shadow: 0px 5px 20px #ccc;
+    -webkit-box-shadow: 0px 5px 20px #ccc;
+    box-shadow: 0px 5px 20px #ccc;
 }
 
 .overlay{
