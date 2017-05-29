@@ -1,6 +1,7 @@
 var map = undefined;
 var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
 const COLORS = ['black', 'green', 'purple', 'lime', 'red', 'silver', 'blue', 'gray', 'navy', 'olive', 'white', 'yellow', 'maroon', 'teal', 'fuchsia', 'aqua'];
+var colors = ["#345E9D","#7A2947","#47C29D","#78349D","#8BCF6E","#E1E2A7","#C4684F","#4787C2","#BFA640","#C79FDF"]
 
 function draw_map() {
     var latMelb = -37.815018
@@ -26,11 +27,11 @@ function draw_POIs() {
         var pois = {};
         data.forEach(function(d) {
             pois[d.poiID] = {
-                "name": d.poiName, 
-                "category": d.poiTheme, 
-                "lat": d.poiLat, 
-                "lng": d.poiLon, 
-                "url": d.poiURL, 
+                "name": d.poiName,
+                "category": d.poiTheme,
+                "lat": d.poiLat,
+                "lng": d.poiLon,
+                "url": d.poiURL,
                 "popularity": d.poiPopularity
            };
         });
@@ -69,11 +70,11 @@ function draw_route(traj, color, travel_mode="walking") {
         var pois = {};
         data.forEach(function(d) {
             pois[d.poiID] = {
-                "name": d.poiName, 
-                "category": d.poiTheme, 
-                "lat": d.poiLat, 
-                "lng": d.poiLon, 
-                "url": d.poiURL, 
+                "name": d.poiName,
+                "category": d.poiTheme,
+                "lat": d.poiLat,
+                "lng": d.poiLon,
+                "url": d.poiURL,
                 "popularity": d.poiPopularity
            };
         });
@@ -122,7 +123,7 @@ function parse_draw(response) {
         */
         traj = trajs[i];
         //console.log(traj);
-        color = "#" + (Math.random()*0xFFFFFF<<0).toString(16); //random color
+        color = colors[i]
         travel = document.getElementById("ID_select").value;
         draw_route(traj, color, travel);
 
