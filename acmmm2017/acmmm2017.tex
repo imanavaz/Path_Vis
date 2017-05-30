@@ -41,7 +41,7 @@
 
 
 \begin{document}
-\title{Visualising Travel Route via Structured Recommendation}
+\title{Visual Analysis of Travel Route Recommendation}
 
 \author{Dawei Chen}
 \orcid{1234-5678-9012}
@@ -55,7 +55,7 @@
 \email{trovato@corporation.com}
 
 \author{G.K.M. Tobin}
-\authornote{The secretary disavows any knowledge of this author's actions.}
+%\authornote{The secretary disavows any knowledge of this author's actions.}
 \affiliation{%
   \institution{Institute for Clarity in Documentation}
   \streetaddress{P.O. Box 1212}
@@ -66,8 +66,6 @@
 \email{webmaster@marysville-ohio.com}
 
 \author{Lars Th{\o}rv{\"a}ld}
-\authornote{This author is the
-  one who did all the really hard work.}
 \affiliation{%
   \institution{The Th{\o}rv{\"a}ld Group}
   \streetaddress{1 Th{\o}rv{\"a}ld Circle}
@@ -80,7 +78,7 @@
 
 
 \begin{abstract}
-In this demo, we propose a novel trajectory visualisation tool. 
+We propose a novel travel route visualisation tool. 
 \end{abstract}
 
 %
@@ -127,7 +125,7 @@ In this demo, we propose a novel trajectory visualisation tool.
  \begin{teaserfigure}
  \centering
    \includegraphics[width=0.8\textwidth]{figure/sample_map.png}
-   \caption{Travel route recommendation system. Given a starting POI and a number of POI to be visited, the algorithm suggests a set of routes from a history of previous travellers.}
+   \caption{Travel route recommendation visualisation system. Given a starting POI and a number of POI to be visited, the system suggests a set of routes from a history of previous tourists.}
    \label{fig:overview}
  \end{teaserfigure}
 
@@ -143,16 +141,25 @@ In this paper, we tackle the problem of sequence visualisation, especially, in t
 
 \section{Structured Recommendation}
 %what is special about sr?
-We solve the sequence ranking algorithm
+We first cast the sequence recommendation as a structured prediction problem, which allows us to leverage the well-studied literature of structured SVMs (SSVM)~\cite{tsochantaridis2005large,joachims2009predicting}. There are two obstacles to prevent us applying the SSVM directly for the sequence recommendation problem; first, there would be multiple possible routes among a set of POIs, second, a naive application of SSVM would generate repeating sequence in the prediction time. 
+To eliminate possible loop in a prediction time, we apply serial list Viterbi~\cite{seshadri1994list,nill1995list} algorithm.
+We finally trained our model on the trajectory data extracted from Flickr photos~\cite{chen2016learning}.
 
+From a visualisation perspective, an important advantage of the SSVM is the explicit representation of feature score in its final decision process. Especially, in our case, we can disassemble the final score of a route into feature scores of each POI and each transition between two adjacency POIs. We hand-crafted POI features such as the category, popularity, average spending time of previous tourists, etc, and also crafted transition features such as the distance between two POIs, .
 
 \section{Visualisation}
 %what are the features we want to emphasis?
 %make a bullet list of something like that
+The Figure \ref{fig:overview}
 Break total score into individual feature score, represent using stacked bar graph.
 
 Comparison between two POIs in a single trajectory.
 Further comparison of POIs within a single trajectory, we use radar chart to show the score of each feature.
+
+We further provide a tool to analyse an internal variation between multiple POIs in a single route. 
+Figure \ref{fig:radar} shows the feature scores of two POIs in a single route via a radar plot. 
+
+Stacked bar plot \cite{gratzl2013lineup}
 
 
 \begin{figure}[t!]
@@ -163,6 +170,7 @@ Further comparison of POIs within a single trajectory, we use radar chart to sho
 \begin{figure}[t!]
 \includegraphics[width=0.9\linewidth]{figure/sample_radar.png}
 \caption{Visualisation of feature score for each POI within a single route.}
+\label{fig:radar}
 \end{figure}
 
 
