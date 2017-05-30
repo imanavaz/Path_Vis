@@ -157,7 +157,7 @@ function visualise_score(response) {
             'domain': [0, 20],
             color: COLORS[j]});
     }
-    
+
     /*
     const arr = [
       {a: 8, b: 20, c: 30, d: 'Top1_Name', e: false, l: {alt: 'Google', href: 'https://google.com'}, cat: 'c2'},
@@ -183,6 +183,11 @@ function visualise_score(response) {
         //rstack.setWeights([0.2, 0.8]);
         return rstack;
       })());
+    }
+
+    var element = document.getElementById("bars");
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
     }
 
     const instance = LineUpJS.create(p, document.getElementById("bars"), {

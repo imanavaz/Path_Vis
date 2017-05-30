@@ -2,12 +2,17 @@
 <html>
 <head>
   <meta charset="utf-8">
+
+  <title>Visualising Travel Route via Structured Prediction</title>
+
   <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
   <script type="text/javascript" src="script/gmaps.min.js"></script>
   <script type="text/javascript" src="script/d3-3.5.17.min.js"></script>
   <script type="text/javascript" src="script/jquery-3.2.0.min.js"></script>
   <script type="text/javascript" src="script/LineUpJS.min.js"></script>
   <script type="text/javascript" src="script/util.js"></script>
+  <script type="text/javascript" src="script/RadarChart.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="style/examples.css" />
   <link rel="stylesheet" type="text/css" href="style/style.css" />
   <link rel="stylesheet" type="text/css" href="style/font-awesome.min.css" />
@@ -21,60 +26,79 @@
   </script>
 </head>
 <body>
-  <div class="row">
-    <form id="ID_form" action="/recommend" method="POST">
-        <input id="ID_start" type="hidden" name="START" value="21">
-        <input id="ID_length" type="hidden" name="LENGTH" value="5">
-    </form>
-    Trajectory start at POI <span id="ID_marker"><font color="red">21</font></span> (click to change) with 
-    <span id="ID_sliderValue"><font color="red">5</font></span> (slide to change) POIs
-    &nbsp;
-    2<input type="range" min="2" max="10" value="5" onchange="changeValue(this.value)"/>10 
-    &nbsp;
-    Travel mode
-    <select id="ID_select">
-        <option value="bicycling">Bicycling</option>
-        <option value="driving">Driving</option>
-        <option value="walking" selected>Walking</option>
-    </select>
-    &nbsp;
-    <button id="ID_button" type="button">Recommend</button>
-    <br><br>
-    <script type="text/javascript">
-    function changeValue(newValue) {
-        document.getElementById("ID_sliderValue").innerHTML = "<font color=\"red\">" + newValue + "</font>";
-        document.getElementById("ID_length").value = newValue;
-    }
-    </script>
-    <script>
-    $( "#ID_form" ).submit(function(event) {
-        //console.log('submit form');
-        $.ajax({
-            type: $( "#ID_form" ).attr("method"),
-            url:  $( "#ID_form" ).attr("action"),
-            data: $( "#ID_form" ).serialize(),
-        }).done(function(data) {
-            //console.log('ok');
-            //console.log(data);
-            map.cleanRoute();  // clean previous routes
-            parse_draw(data);
-            visualise_score(data);
-        }).fail(function(data) {
-            map.cleanRoute();  // clean previous routes
-            alert('No good recommendation');
-            console.log('error');
+  <div id="page-wrapper">
+    <div class="row">
+      <div class="col-lg-12">
+        <h2 class="page-header"><b>Visualising Travel Route via Structured Prediction</b></h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12" style="margin-bottom: 10px">
+        <form id="ID_form" action="/recommend" method="POST">
+            <input id="ID_start" type="hidden" name="START" value="21">
+            <input id="ID_length" type="hidden" name="LENGTH" value="5">
+        </form>
+        Trajectory start at POI <span id="ID_marker"><font color="red">21</font></span> (click to change) with
+        <span id="ID_sliderValue"><font color="red">5</font></span> (slide to change) POIs
+        <div class="input-form">
+          <label>2</label>
+          <input type="range" min="2" max="10" value="5" onchange="changeValue(this.value)"/>
+          <label>10</label>
+        </div>
+        <div class="input-form">
+          Travel mode
+          <select id="ID_select" class="form-control">
+            <option value="bicycling">Bicycling</option>
+            <option value="driving">Driving</option>
+            <option value="walking" selected>Walking</option>
+          </select>
+        </div>
+        <div class="input-form">
+          <button id="ID_button" type="button" class="btn btn-default" >Recommend</button>
+        </div>
+        <script type="text/javascript">
+        function changeValue(newValue) {
+            document.getElementById("ID_sliderValue").innerHTML = "<font color=\"red\">" + newValue + "</font>";
+            document.getElementById("ID_length").value = newValue;
+        }
+        </script>
+        <script>
+        $( "#ID_form" ).submit(function(event) {
+            //console.log('submit form');
+            $.ajax({
+                type: $( "#ID_form" ).attr("method"),
+                url:  $( "#ID_form" ).attr("action"),
+                data: $( "#ID_form" ).serialize(),
+            }).done(function(data) {
+                //console.log('ok');
+                //console.log(data);
+                map.cleanRoute();  // clean previous routes
+                parse_draw(data);
+                visualise_score(data);
+            }).fail(function(data) {
+                map.cleanRoute();  // clean previous routes
+                alert('No good recommendation');
+                console.log('error');
+            });
+            //alert('submit');
+            event.preventDefault();
         });
-        //alert('submit');
-        event.preventDefault();
-    });
 
-    $( "#ID_button" ).click(function() {
-        $( "#ID_form" ).submit();
-    });
-    </script>
-    <div class="span11">
-      <div id="map"></div>
-      <div id="bars"></div>
+        $( "#ID_button" ).click(function() {
+            $( "#ID_form" ).submit();
+        });
+        </script>
+      </div>
+    </div>
+    <div class="row">
+      <div id="map" class="map"></div>
+      <div class="info">
+        <div id="bars"></div>
+        <div id="body">
+            <div id="chart"></div>
+        </div>
+        <script type="text/javascript" src="script/RadarChartScript.js"></script>
+      </div>
     </div>
   </div>
 </body>
