@@ -134,15 +134,19 @@ We propose a novel travel route visualisation tool.
 
 \section{Introduction}
 %background
-Sequence ranking has emerged as an important tool for solving diverse problems such as travel route and music playlist recommendations. Unlike the classical ranking algorithm where each item considers independently, the sequence ranking algorithm requires modelling a structure between items and suggests a set of items as a whole. For example, let us consider recommending a trajectory of points of interest (POI) in a city to a visitor. If the classical ranking algorithm learns a user's preference for each individual location while ignores the distances between them, the algorithm may create a long trajectory, which should be shorter in optimal routeing. Several sequence ranking algorithms are proposed to solve the problem and achieve relative success to compare with the classical algorithms. An important challenge remaining is how to visualise the recommended sequences so that a user can understand why the sequences are suggested.
+Sequence ranking has emerged as an important tool for solving diverse problems such as travel route and music playlist recommendations. Unlike the classical ranking algorithm where each item considers independently, the sequence ranking algorithm requires modelling a structure between items and suggests a set of items as a whole. For example, let us consider recommending a trajectory of points of interest (POI) in a city to a visitor. If the classical ranking algorithm learns a user's preference for each individual location while ignores the distances between them, the algorithm may create a long trajectory, which should be shorter in optimal routeing. Several sequence ranking algorithms are proposed to solve the problem and achieve relative success to compare with the classical algorithms. An important challenge remaining is to construct a visualisation of the recommendation system so that a user can analyse the suggested sequences and plan a better trip based on the interaction with the system.
 
 %approach
-In this paper, we tackle the problem of sequence visualisation, especially, in the context of a travel route recommendation. We first formulate the sequence ranking algorithm as a structured recommendation problem, and then we develop a novel visualisation engine that efficiently distinguishes differences between suggested routes as well as a variation of POIs within a suggested route. 
+In this paper, we tackle the problem of sequence visualisation, especially, in the context of a travel route recommendation. We first define and formulate the sequence ranking algorithm as a structured recommendation problem, and then we develop a novel visualisation engine that efficiently displays multiple suggested routes and helps users understand the rational behind the recommendations. Specifically, we formulate a travel route as a sequence of points-of-interest (POIs)...
 
-\section{Structured Recommendation}
-%what is special about sr?
-We first cast the sequence recommendation as a structured prediction problem, which allows us to leverage the well-studied literature of structured SVMs (SSVM)~\cite{tsochantaridis2005large,joachims2009predicting}. There are two obstacles to prevent us applying the SSVM directly for the sequence recommendation problem; first, there would be multiple possible routes among a set of POIs, second, a naive application of SSVM would generate repeating sequence in the prediction time. 
-To eliminate possible loop in a prediction time, we apply serial list Viterbi~\cite{seshadri1994list,nill1995list} algorithm.
+\section{Structured Prediction}
+% don't need very details of the algorithm
+% need problem definition
+% copied from nips paper
+Travel route recommendation problems involve a set of POIs in a city. Given a trajectory query $\mathbf{x} = (s, l)$, comprising a start POI $s$ and trip length $l$, i.e. the number of POIs to be visited during the trip including $s$, the goal is to suggest one or more sequences of POIs that maximise some notion of utility.
+
+We first cast the travel recommendation as a structured prediction problem, which allows us to leverage the well-studied literature of structured SVMs (SSVM)~\cite{tsochantaridis2005large,joachims2009predicting}. There are two obstacles to prevent us applying the SSVM directly to the sequence recommendation problem; first, there would be multiple possible routes among a set of POIs, second, a naive application of SSVM would generate repeating sequence in the prediction time. 
+To eliminate possible loop in a prediction time, we adopt serial list Viterbi~\cite{seshadri1994list,nill1995list} algorithm.
 We finally trained our model on the trajectory data extracted from Flickr photos~\cite{chen2016learning}.
 
 From a visualisation perspective, an important advantage of the SSVM is the explicit representation of feature score in its final decision process. Especially, in our case, we can disassemble the final score of a route into feature scores of each POI and each transition between two adjacency POIs. We hand-crafted POI features such as the category, popularity, average spending time of previous tourists, etc, and also crafted transition features such as the distance between two POIs, .
@@ -150,6 +154,7 @@ From a visualisation perspective, an important advantage of the SSVM is the expl
 \section{Visualisation}
 %what are the features we want to emphasis?
 %make a bullet list of something like that
+Our goal is to design an interactive system where a user 
 The Figure \ref{fig:overview}
 Break total score into individual feature score, represent using stacked bar graph.
 
@@ -164,7 +169,7 @@ Stacked bar plot \cite{gratzl2013lineup}
 
 \begin{figure}[t!]
 \includegraphics[width=0.9\linewidth]{figure/sample_stack.png}
-\caption{Visualisation of feature score for each trajectory.}
+\caption{Visualisation of feature scores for each trajectory. From top to bottom, we represent top 10 recommended routes with their scores where each score is further decomposed into multiple features.}
 \end{figure}
 
 \begin{figure}[t!]
