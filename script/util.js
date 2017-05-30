@@ -2,6 +2,7 @@ var map = undefined;
 var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
 const COLORS = ['black', 'green', 'purple', 'lime', 'red', 'silver', 'blue', 'gray', 'navy', 'olive', 'white', 'yellow', 'maroon', 'teal', 'fuchsia', 'aqua'];
 var colors = ["#345E9D","#7A2947","#47C29D","#78349D","#8BCF6E","#E1E2A7","#C4684F","#4787C2","#BFA640","#C79FDF"]
+var gmap_icons = 'http://maps.google.com/mapfiles/ms/icons/'
 
 function draw_map() {
     var latMelb = -37.815018
@@ -18,7 +19,7 @@ function draw_map() {
     //}
 }
 
-
+var selectedMarker = undefined;
 function draw_POIs() {
     if (map === undefined) {
         draw_map();
@@ -37,14 +38,21 @@ function draw_POIs() {
         });
         for (var pid in pois) {
             var pi = pois[pid]
-            map.addMarker({
+            var marker = {
                 lat: pi["lat"],
                 lng: pi["lng"],
                 //title: pi["category"],
                 poiID: pid,  //custom property
+                icon: gmap_icons + "yellow.png",
                 infoWindow: {content: '<p>POI: &nbsp;' + pi["name"] + ',&nbsp;' + pi["category"] + ',&nbsp;' + pid + '</p>'},
                 click: function(e) {
                     // set the start point
+                    this.setIcon(gmap_icons + "red-dot.png");
+                    if (selectedMarker != undefined) {
+                      selectedMarker.setIcon(gmap_icons + "yellow.png"); // set back to default
+                    }
+                    selectedMarker = this;
+
                     document.getElementById("ID_marker").innerHTML = "POI " + this.poiID + "<br/>" + pois[this.poiID]["name"];
                     document.getElementById("ID_start").value = this.poiID;
                     console.log('set the start point to ' + this.poiID);
@@ -55,7 +63,8 @@ function draw_POIs() {
                 mouseout: function() {
                     this.infoWindow.close();
                 }
-            });
+            }
+            map.addMarker(marker);
         }
     });
 }
