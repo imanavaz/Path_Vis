@@ -17,20 +17,42 @@ class dummyHandler(BaseHTTPRequestHandler):
 
     def preprocess(self, recommendations): 
         # scale scores and convert arrays to lists
-        score = recommendations[0]['TotalScore']
-        assert(abs(score) > 1e-9)
-        ratio = 100 / score
+        score_max = recommendations[0]['TotalScore']
+        score_min = recommendations[-1]['TotalScore']
+        assert(abs(score_max) > 1e-9)
+        assert(abs(score_min) > 1e-9)
+        assert(score_max > score_min)
+
+        # linear scaling
+        # a * score_max + b = 100
+        # a * score_min + b = 10
+        a = np.exp(np.log(90) - np.log(score_max - score_min))
+        b = 100 - a * score_max
+        print(a, b)
+
         for j in range(len(recommendations)):
             rec = recommendations[j]
+            score0 = rec['TotalScore']
+            score1 = 0
             if j == 0:
-                recommendations[j]['TotalScore'] = 100
+                score1 = 100
+            elif j == len(recommendations) - 1:
+                score1 = 10
             else:
-                recommendations[j]['TotalScore'] *= ratio
+                score1 = a * rec['TotalScore'] + b
+
+            assert(score1 > 9)
+            assert(score1 < 101)
+            recommendations[j]['TotalScore'] = score1
+
+            # distribute score to POIs and Transitions
+            assert(abs(score0) > 1e-9)
+            ratio = np.exp(np.log(score1) - np.log(score0))
             recommendations[j]['POIScore'] = (rec['POIScore'] * ratio).tolist()
             recommendations[j]['TransitionScore'] = (rec['TransitionScore'] * ratio).tolist()
             recommendations[j]['POIFeatureScore'] = (rec['POIFeatureScore'] * ratio).tolist()
             recommendations[j]['TransitionFeatureScore'] = (rec['TransitionFeatureScore'] * ratio).tolist()
-            recommendations[j]['Trajectory'] = rec['Trajectory'].tolist()
+            recommendations[j]['Trajectory'] = (rec['Trajectory']).tolist()
             if 'POIFeatureWeight' in rec:
                 recommendations[j]['POIFeatureWeight'] = rec['POIFeatureWeight'].tolist()
                 recommendations[j]['TransitionFeatureWeight'] = rec['TransitionFeatureWeight'].tolist()
@@ -55,6 +77,8 @@ class dummyHandler(BaseHTTPRequestHandler):
         recommendations = self.model.predict(start, length) # recommendations is list of 10 trajectories
         for i in range(len(recommendations)):
             print('Top %d recommendation: %s' % (i+1, str(list(recommendations[i]['Trajectory']))))
+        for i in range(len(recommendations)):
+            print('%s' % recommendations[i]['TotalScore'])
 
         # encode the top-2 into a string: p0,p1,...,pn;p0,p1,...,pn
         #return ','.join([str(p) for p in recommendations[0]]) + ';' + ','.join([str(p) for p in recommendations[1]])
