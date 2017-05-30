@@ -33,10 +33,9 @@
 \acmISBN{123-4567-24-567/08/06}
 
 %Conference
-\acmConference[WOODSTOCK'97]{ACM Woodstock conference}{July 1997}{El
-  Paso, Texas USA} 
-\acmYear{1997}
-\copyrightyear{2016}
+\acmConference[ACMMM2017]{ACM Multimedia}{October 2017}{Mountain View, CA USA} 
+\acmYear{2017}
+\copyrightyear{2017}
 
 \acmPrice{15.00}
 
@@ -77,7 +76,7 @@
 \email{larst@affiliation.org}
 
 % The default list of authors is too long for headers}
-\renewcommand{\shortauthors}{B. Trovato et al.}
+\renewcommand{\shortauthors}{D. Chen et al.}
 
 
 \begin{abstract}
@@ -137,21 +136,35 @@ In this demo, we propose a novel trajectory visualisation tool.
 
 \section{Introduction}
 %background
-Sequence ranking has emerged as an important tool for solving diverse problems such as travel route and music playlist recommendations. Unlike the classical ranking algorithm where each item considers independently, the sequence ranking algorithm requires modelling a structure between items and suggests a set of items as a whole. For example, let us consider recommending a trajectory of points of interest (POI) in a city to a visitor. If the classical ranking algorithm learns a user's preference for each individual location while ignores the distances between them, the algorithm may create a long trajectory, which should be shorter in optimal routeing. 
+Sequence ranking has emerged as an important tool for solving diverse problems such as travel route and music playlist recommendations. Unlike the classical ranking algorithm where each item considers independently, the sequence ranking algorithm requires modelling a structure between items and suggests a set of items as a whole. For example, let us consider recommending a trajectory of points of interest (POI) in a city to a visitor. If the classical ranking algorithm learns a user's preference for each individual location while ignores the distances between them, the algorithm may create a long trajectory, which should be shorter in optimal routeing. Several sequence ranking algorithms are proposed to solve the problem and achieve relative success to compare with the classical algorithms. An important challenge remaining is how to visualise the recommended sequences so that a user can understand why the sequences are suggested.
+
 %approach
+In this paper, we tackle the problem of sequence visualisation, especially, in the context of a travel route recommendation. We first formulate the sequence ranking algorithm as a structured recommendation problem, and then we develop a novel visualisation engine that efficiently distinguishes differences between suggested routes as well as a variation of POIs within a suggested route. 
 
 \section{Structured Recommendation}
 %what is special about sr?
+We solve the sequence ranking algorithm
 
 
 \section{Visualisation}
 %what are the features we want to emphasis?
 %make a bullet list of something like that
+Break total score into individual feature score, represent using stacked bar graph.
+
+Comparison between two POIs in a single trajectory.
+Further comparison of POIs within a single trajectory, we use radar chart to show the score of each feature.
 
 
-\begin{figure}
+\begin{figure}[t!]
+\includegraphics[width=0.9\linewidth]{figure/sample_stack.png}
 \caption{Visualisation of feature score for each trajectory.}
 \end{figure}
+
+\begin{figure}[t!]
+\includegraphics[width=0.9\linewidth]{figure/sample_radar.png}
+\caption{Visualisation of feature score for each POI within a single route.}
+\end{figure}
+
 
 \section{Conclusion}
 %summary
