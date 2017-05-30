@@ -45,7 +45,7 @@ function draw_POIs() {
                 infoWindow: {content: '<p>POI: &nbsp;' + pi["name"] + ',&nbsp;' + pi["category"] + ',&nbsp;' + pid + '</p>'},
                 click: function(e) {
                     // set the start point
-                    document.getElementById("ID_marker").innerHTML = "<font color=\"red\">" + this.poiID + "</font>";
+                    document.getElementById("ID_marker").innerHTML = "POI " + this.poiID + "<br/>" + pois[this.poiID]["name"];
                     document.getElementById("ID_start").value = this.poiID;
                     console.log('set the start point to ' + this.poiID);
                 },

@@ -27,34 +27,49 @@
 </head>
 <body>
   <div id="page-wrapper">
+    <div id="map" class="map"></div>
     <div class="row">
-      <div class="col-lg-12">
+      <div class="col-lg-12 text-center">
         <h2 class="page-header"><b>Visualising Travel Route via Structured Prediction</b></h2>
       </div>
     </div>
-    <div class="row">
-      <div class="col-lg-12" style="margin-bottom: 10px">
+    <div class="panel panel-default input-form">
+      <div class="panel-heading bg-white">
+        Trajectory Recommender
+      </div>
+      <div class="panel-body">
         <form id="ID_form" action="/recommend" method="POST">
             <input id="ID_start" type="hidden" name="START" value="21">
             <input id="ID_length" type="hidden" name="LENGTH" value="5">
         </form>
-        Trajectory start at POI <span id="ID_marker"><font color="red">21</font></span> (click to change) with
-        <span id="ID_sliderValue"><font color="red">5</font></span> (slide to change) POIs
-        <div class="input-form">
-          <label>2</label>
-          <input type="range" min="2" max="10" value="5" onchange="changeValue(this.value)"/>
-          <label>10</label>
+        <div class="form-group">
+          <label>Start point:
+            <span id="ID_marker" style="color: red">POI 21
+            <br/>Queen Victoria Market</span>
+            <br/><small class="text-muted" style="font-weight: normal;">(click map to change)</small>
+          </label><br/>
         </div>
-        <div class="input-form">
-          Travel mode
+        <div class="form-group">
+          <label>Number of POIs:
+            <span id="ID_sliderValue"><font color="red">5</font></span>
+            <br/><small class="text-muted" style="font-weight: normal;">(slide to change)</small>
+          </label><br/>
+          <div class="slider">
+            <span class="badge">2</span>
+            <input type="range" min="2" max="10" value="5" onchange="changeValue(this.value)"/>
+            <span class="badge">10</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Travel mode</label>
           <select id="ID_select" class="form-control">
             <option value="bicycling">Bicycling</option>
             <option value="driving">Driving</option>
             <option value="walking" selected>Walking</option>
           </select>
         </div>
-        <div class="input-form">
-          <button id="ID_button" type="button" class="btn btn-default" >Recommend</button>
+        <div class="form-group">
+          <button id="ID_button" type="button" class="btn btn-info" >Recommend</button>
         </div>
         <script type="text/javascript">
         function changeValue(newValue) {
@@ -91,10 +106,9 @@
       </div>
     </div>
     <div class="row">
-      <div id="map" class="map"></div>
       <div class="info">
-        <div id="bars"></div>
-        <div id="body">
+        <div id="bars" class="panel panel-default"></div>
+        <div id="body" class="panel panel-default">
             <div id="chart"></div>
         </div>
         <script type="text/javascript" src="script/RadarChartScript.js"></script>
