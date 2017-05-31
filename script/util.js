@@ -136,7 +136,7 @@ function draw_route(traj, color, travel_mode="walking") {
 function parse_draw(response) {
     var trajdata = JSON.parse(response);
     console.log(trajdata);
-    var trajs = [trajdata[0]['Trajectory'], trajdata[1]['Trajectory']];
+    var trajs = [trajdata[0]['Trajectory']]; //, trajdata[1]['Trajectory']];
     //trajs = response.split(";");
     //console.log(trajs);
     //console.log(trajs.length);
@@ -190,7 +190,7 @@ function visualise_score(response) {
         {label: 'Recommendation', type: 'string', column: 'name'},
         {label: 'Total Score', type: 'number', column: 'total_score', 'domain': [0, 100], color: 'lime'}, //domain is required if type=number
     ];
-    for (var j = 0; j < npois; j++) {  
+    for (var j = 0; j < npois; j++) {
         desc.push({
             //label: 'SCORE_' + j.toString(),
             type: 'number',
