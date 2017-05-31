@@ -16,7 +16,7 @@ class dummyHandler(BaseHTTPRequestHandler):
     #    print('trained model loaded')
 
 
-    def preprocess(self, recommendations): 
+    def preprocess(self, recommendations):
         # scale scores and convert arrays to lists
         score_max = recommendations[0]['TotalScore']
         score_min = recommendations[-1]['TotalScore']
@@ -49,7 +49,7 @@ class dummyHandler(BaseHTTPRequestHandler):
             # Both recommendations[j]['POIFeatureScore'] and recommendations[j]['POIFeatureWeight'] are 24-dimention vectors,
             # and the correspondence between POI features (and feature weights) and elements in these two vectors are:
             # Index    Feature name
-            # 0-8      category (POI categories are: 
+            # 0-8      category (POI categories are:
             # [City precincts, Shopping, Entertainment, Public galleries, Institutions, Structures, Sports stadiums, Parks and spaces, Transport])
             # 9-13     neighbourhood
             # 14       popularity
@@ -71,7 +71,7 @@ class dummyHandler(BaseHTTPRequestHandler):
             # 2        nVisit        (transition probability according to the number of visit at POI)
             # 3        avgDuration   (transition probability according to the average duration at POI)
             # 4        neighbourhood (transition probability according to the neighbourhood of POI)
-            
+
             assert(abs(score0) > 1e-9)
             ratio = np.exp(np.log(score1) - np.log(score0))
             recommendations[j]['POIScore'] = (rec['POIScore'] * ratio).tolist()
@@ -133,17 +133,35 @@ class dummyHandler(BaseHTTPRequestHandler):
             if self.path.endswith(".gif"):
                 mimetype='image/gif'
                 sendReply = True
+            if self.path.endswith(".ico"):
+                mimetype='image/x-icon'
+                sendReply = True
             if self.path.endswith(".js"):
                 mimetype='application/javascript'
                 sendReply = True
             if self.path.endswith(".css"):
                 mimetype='text/css'
                 sendReply = True
+            if self.path.endswith(".eot"):
+                mimetype='application/x-font-opentype'
+                sendReply = True
+            if self.path.endswith(".woff"):
+                mimetype='application/font-woff'
+                sendReply = True
+            if self.path.endswith(".woff2"):
+                mimetype='application/font-woff2'
+                sendReply = True
+            if self.path.endswith(".svg"):
+                mimetype='image/svg+xml'
+                sendReply = True
+            if self.path.endswith(".ttf"):
+                mimetype='application/x-font-ttf'
+                sendReply = True
 
             if sendReply == True:
                 #Open the static file requested and send it
                 fname = curdir + sep + self.path
-                f = open(curdir + sep + self.path, 'rb') 
+                f = open(curdir + sep + self.path, 'rb')
                 #with open(fname, 'r') as f1:
                 #    for line in f1: print(line)
                 self.send_response(200)
@@ -162,7 +180,7 @@ class dummyHandler(BaseHTTPRequestHandler):
         print('in do_POST()')
         if self.path=="/recommend":
             formData = cgi.FieldStorage(
-                fp=self.rfile, 
+                fp=self.rfile,
                 headers=self.headers,
                 environ={'REQUEST_METHOD':'POST',
                          'CONTENT_TYPE':self.headers['Content-Type'],
@@ -175,15 +193,15 @@ class dummyHandler(BaseHTTPRequestHandler):
             self.end_headers()
             #output = "<p>Thanks! start=%d, length=%d</p>" % (start, length)
             self.wfile.write(output.encode('utf-8'))
-            return          
-            
+            return
+
 def check_system():
     if sys.platform == "darwin":
         if not os.path.exists("./lib/inference_lv_linux.so"):
             os.rename("./lib/inference_lv.so", "./lib/inference_lv_linux.so")
             os.rename("./lib/inference_lv_mac.so", "./lib/inference_lv.so")
     elif sys.platform == "win32":
-        raise OSError("does not support Windows systems")   
+        raise OSError("does not support Windows systems")
 
 if __name__ == '__main__':
     check_system()
@@ -192,11 +210,10 @@ if __name__ == '__main__':
         PORT = 8080
         server = HTTPServer(('', PORT), dummyHandler)
         print('Started local httpserver on port %d' % PORT)
-    
+
         # Waiting for incoming http requests
         server.serve_forever()
 
     except KeyboardInterrupt:
         print(' Shutting down the web server')
         server.socket.close()
- 
