@@ -4,6 +4,7 @@ var colors = ["3f51b5", "f44336","ff9800","ffc107","cddc39","8bc34a","009688","e
 var selected_color = colors[0];
 var default_color = "ffffff";
 var gmap_icons = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld="
+var route_drawn = undefined;
 
 var DEFAULT_POI = get_custom_pin("", default_color);
 function get_custom_pin(char, color) {
@@ -123,7 +124,7 @@ function draw_route(traj, color, travel_mode="walking") {
         ps = pois[ traj[0] ];
         pt = pois[ traj[traj.length-1] ];
 
-        // set PIO colors on the route
+        // set POI colors on the route
         allMarkers[traj[0]].icon.url = get_custom_pin("S", selected_color);
         for (var i = 1; i <  traj.length; i++) {
             console.log('change marker color: ' + i);
@@ -136,6 +137,7 @@ function draw_route(traj, color, travel_mode="walking") {
             destination: [ pt["lat"], pt["lng"] ],
             waypoints: waypts,
             optimizeWaypoints: false, //do NOT allow way points to be reordered
+            //optimizeWaypoints: true, //allow way points to be reordered: might be better visually.
             travelMode: travel_mode,
             strokeColor: color, //RRGGBB, e.g. '#1F5566', '#131540'
             strokeOpacity: 0.6,
@@ -179,9 +181,15 @@ function visualise_score(response) {
     var arr = [];
     var npois = 0;
     var ntrans = 0;
+    var poi_score_max = 0;
+    var tran_score_max = 0;
+    if (route_drawn == undefined) {
+        route_drawn = [];
+    }
     for (var i = 0; i < trajdata.length; i++) {
         var row = {
-            'name': 'Top' + (i+1).toString(),
+            //'name': 'Top' + (i+1).toString(),
+            'index': i,
             'total_score': trajdata[i]['TotalScore'],
         };
         var poi_scores = trajdata[i]['POIScore'];
@@ -201,9 +209,12 @@ function visualise_score(response) {
             row[key] = tran_scores[j];
         }
         arr.push(row);
+        route_drawn.push(false);
     }
     var desc = [
-        {label: 'Recommendation', type: 'string', column: 'name'},
+        //{label: 'Recommendation', type: 'string', column: 'name'},
+        //{label: 'Total Score', type: 'string', column: 'total_score'}, //plain numbers (as strings)
+        {label: 'Index', type: 'number', column: 'index', 'domain': [0, trajdata.length-1]},
         {label: 'Total Score', type: 'number', column: 'total_score', 'domain': [0, 100], color: 'lime'}, //domain is required if type=number
     ];
     for (var j = 0; j < npois; j++) {
@@ -237,9 +248,34 @@ function visualise_score(response) {
     const p = new LineUpJS.provider.LocalDataProvider(arr, desc);
     {
         const r = p.pushRanking();
-        r.insert(p.create(LineUpJS.model.createSelectionDesc()), 0);  //selection column
+        //r.insert(p.create(LineUpJS.model.createSelectionDesc()), 0);  //selection column
         //r.push(p.create(desc[0]));  //name column
-        r.push(p.create(desc[1]));  //trajectory total score column
+        //r.push(p.create(desc[1]));  //trajectory total score column
+        var sel = p.create(LineUpJS.model.createSelectionDesc());  //selection column
+        console.log(sel);
+        console.log(sel.listeners.select);
+        sel.listeners.select = function () {
+            idx = this.args[0]['index'];
+            flag = this.args[1];
+            if (flag == true) {
+                route_drawn[idx] = true;
+                draw_route(trajdata[idx]['Trajectory'], '#' + colors[idx]);
+            } else {
+                route_drawn[idx] = false;
+                map.cleanRoute();
+                for (var j = 0; j < route_drawn.length; j++) {
+                    if (route_drawn[j] == true) {
+                        draw_route(trajdata[j]['Trajectory'], '#' + colors[j]);
+                    }
+                }
+            }
+            console.log(this);
+        }
+        r.insert(sel, 0);
+        var col = p.create(desc[1]);
+        col.compressed = true;
+        //col.collapsed = true;
+        r.push(col);
 
         //poi scores stack
         r.push((function () {
@@ -248,6 +284,8 @@ function visualise_score(response) {
                 rstack.push(p.create(desc[2+j]));
             }
             //rstack.setWeights([0.2, 0.8]);
+            //rstack.compressed = true;
+            //rstack.collapsed = true;
             return rstack;
         })());
 
@@ -257,6 +295,8 @@ function visualise_score(response) {
             for (var j = 0; j < ntrans; j++) {
                 rstack.push(p.create(desc[2+npois+j]));
             }
+            rstack.compressed = true;
+            //rstack.collapsed = true;
             return rstack;
         })());
 
