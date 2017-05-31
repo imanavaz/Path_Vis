@@ -178,6 +178,7 @@ function parse_draw(response) {
 
 function visualise_score(response) {
     var trajdata = JSON.parse(response);
+    console.log(trajdata);
     var arr = [];
     var npois = 0;
     var ntrans = 0;
@@ -252,8 +253,8 @@ function visualise_score(response) {
         //r.push(p.create(desc[0]));  //name column
         //r.push(p.create(desc[1]));  //trajectory total score column
         var sel = p.create(LineUpJS.model.createSelectionDesc());  //selection column
-        console.log(sel);
-        console.log(sel.listeners.select);
+        //console.log(sel);
+        //console.log(sel.listeners.select);
         sel.listeners.select = function () {
             idx = this.args[0]['index'];
             flag = this.args[1];
