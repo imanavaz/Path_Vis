@@ -226,7 +226,7 @@ function visualise_score(response) {
         //{label: 'Recommendation', type: 'string', column: 'name'},
         //{label: 'Total Score', type: 'string', column: 'total_score'}, //plain numbers (as strings)
         {label: 'Index', type: 'number', column: 'index', 'domain': [0, trajdata.length-1]},
-        {label: 'Total Score', type: 'number', column: 'total_score', 'domain': [0, 100], color: 'lime'}, //domain is required if type=number
+        {label: 'Total Score', type: 'number', column: 'total_score', 'domain': [0, 100]}, //domain is required if type=number
     ];
     for (var j = 0; j < npois; j++) {
         desc.push({
