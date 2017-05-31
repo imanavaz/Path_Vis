@@ -1,8 +1,14 @@
 var map = undefined;
 var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
-const COLORS = ['black', 'green', 'purple', 'lime', 'red', 'silver', 'blue', 'gray', 'navy', 'olive', 'white', 'yellow', 'maroon', 'teal', 'fuchsia', 'aqua'];
-var colors = ["#345E9D","#7A2947","#47C29D","#78349D","#8BCF6E","#E1E2A7","#C4684F","#4787C2","#BFA640","#C79FDF"]
-var gmap_icons = 'http://maps.google.com/mapfiles/ms/icons/'
+var colors = ["3f51b5", "f44336","ff9800","ffc107","cddc39","8bc34a","009688","e91e63","9c27b0","03a9f4"]
+var selected_color = colors[0];
+var default_color = "ffffff";
+var gmap_icons = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld="
+
+var DEFAULT_POI = get_custom_pin("", default_color);
+function get_custom_pin(char, color) {
+    return gmap_icons + char + '|' + color + '|000000';
+}
 
 function draw_map() {
     var latMelb = -37.815018
@@ -44,13 +50,24 @@ function init_POIs() {
                 lng: pi["lng"],
                 //title: pi["category"],
                 poiID: pid,  //custom property
-                icon: gmap_icons + "yellow.png",
+                // icon: gmap_icons + "yellow.png",
+                icon: new google.maps.MarkerImage(
+                    DEFAULT_POI, null, null, null,
+                    new google.maps.Size(24, 38)
+                ),
                 infoWindow: {content: '<p>POI: &nbsp;' + pi["name"] + ',&nbsp;' + pi["category"] + ',&nbsp;' + pid + '</p>'},
                 click: function(e) {
                     // set the start point
-                    this.setIcon(gmap_icons + "red-dot.png");
+                    // this.icon.url = SELECTED_POI;
+                    this.setIcon(new google.maps.MarkerImage(
+                        get_custom_pin("", selected_color), null, null, null,
+                        new google.maps.Size(24, 38)
+                    ));
                     if (selectedMarker != undefined) {
-                        selectedMarker.setIcon(gmap_icons + "yellow.png"); // set back to default
+                        selectedMarker.setIcon(new google.maps.MarkerImage(
+                            DEFAULT_POI, null, null, null,
+                            new google.maps.Size(24, 38)
+                        ));
                     }
                     selectedMarker = this;
 
@@ -107,12 +124,11 @@ function draw_route(traj, color, travel_mode="walking") {
         pt = pois[ traj[traj.length-1] ];
 
         // set PIO colors on the route
-        allMarkers[traj[0]].icon = gmap_icons + "red-dot.png";
-        for (var i = 1; i <  traj.length-1; i++) {
+        allMarkers[traj[0]].icon.url = get_custom_pin("S", selected_color);
+        for (var i = 1; i <  traj.length; i++) {
             console.log('change marker color: ' + i);
-            allMarkers[traj[i]].icon = gmap_icons + "green.png";
+            allMarkers[traj[i]].icon.url = get_custom_pin(i.toString(), colors[i]);
         }
-        allMarkers[traj[traj.length-1]].icon = gmap_icons + "green-dot.png";
         draw_POIs();
 
         map.drawRoute({
@@ -136,7 +152,7 @@ function draw_route(traj, color, travel_mode="walking") {
 function parse_draw(response) {
     var trajdata = JSON.parse(response);
     console.log(trajdata);
-    var trajs = [trajdata[0]['Trajectory']]; //, trajdata[1]['Trajectory']];
+    var trajs = [trajdata[0]['Trajectory']];
     //trajs = response.split(";");
     //console.log(trajs);
     //console.log(trajs.length);
@@ -151,7 +167,7 @@ function parse_draw(response) {
         */
         traj = trajs[i];
         //console.log(traj);
-        color = colors[i]
+        color = '#' + colors[i]
         travel = document.getElementById("ID_select").value;
         draw_route(traj, color, travel);
     }
@@ -163,8 +179,6 @@ function visualise_score(response) {
     var arr = [];
     var npois = 0;
     var ntrans = 0;
-    var poi_score_max = 0;
-    var tran_score_max = 0;
     for (var i = 0; i < trajdata.length; i++) {
         var row = {
             'name': 'Top' + (i+1).toString(),
@@ -181,16 +195,10 @@ function visualise_score(response) {
         for (var j = 0; j < poi_scores.length; j++) {
             var key = 'p' + j.toString();
             row[key] = poi_scores[j];
-            if (poi_score_max < poi_scores[j]) {
-                poi_score_max = poi_scores[j];
-            }
         }
         for (var j = 0; j < tran_scores.length; j++) {
             var key = 't' + j.toString();
             row[key] = tran_scores[j];
-            if (tran_score_max < tran_scores[j]) {
-                tran_score_max = tran_scores[j];
-            }
         }
         arr.push(row);
     }
@@ -203,16 +211,16 @@ function visualise_score(response) {
             //label: 'SCORE_' + j.toString(),
             type: 'number',
             column: 'p' + j.toString(),
-            'domain': [0, poi_score_max],
-            color: COLORS[j]});
+            'domain': [0, 20],
+            color: '#' + colors[j]});
     }
     for (var j = 0; j < ntrans; j++) {
         desc.push({
             //label: 'Transition_' + j.toString(),
             type: 'number',
             column: 't' + j.toString(),
-            'domain': [0, tran_score_max],
-            color: COLORS[COLORS.length-j-1]});
+            'domain': [0, 20],
+            color: '#' + colors[colors.length-j-1]});
     }
 
     /*
@@ -240,8 +248,6 @@ function visualise_score(response) {
                 rstack.push(p.create(desc[2+j]));
             }
             //rstack.setWeights([0.2, 0.8]);
-            //rstack.compressed = true;
-            rstack.collapsed = true;
             return rstack;
         })());
 
@@ -251,8 +257,6 @@ function visualise_score(response) {
             for (var j = 0; j < ntrans; j++) {
                 rstack.push(p.create(desc[2+npois+j]));
             }
-            rstack.compressed = true;
-            rstack.collapsed = true;
             return rstack;
         })());
 
