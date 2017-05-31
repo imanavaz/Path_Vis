@@ -145,8 +145,7 @@ This visualisation helps tourists who want to have diverse experiences by choosi
 % need problem definition
 % copied from nips paper
 Travel route recommendation problems involve a set of POIs in a city. 
-Given a trajectory query $\mathbf{x} = (s, l)$, comprising a start POI $s$ and trip length $l$, i.e. the number of POIs to be visited during the trip including $s$.
-The goal is to suggest one or more sequences of POIs that maximise some notion of utility.
+Given a trajectory query $\mathbf{x} = (s, l)$, comprising a start POI $s$ and trip length $l$, the goal is to suggest one or more sequences of POIs that maximise some notion of utility.
 
 We first cast travel recommendation as a structured prediction problem, which allows us to leverage the well-studied literature of structured SVMs (SSVM)~\cite{tsochantaridis2005large,joachims2009predicting}. 
 There are two obstacles that prevent us from applying SSVM directly to the sequence recommendation problem; first, there would be multiple ground-truth routes among a set of POIs, second, a naive application of SSVM would generate a loop during prediction time. 
