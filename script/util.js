@@ -13,7 +13,7 @@ function get_custom_pin(char, color) {
 
 function draw_map() {
     var latMelb = -37.815018
-    var lngMelb = 144.97
+    var lngMelb = 144.975
     map = new GMaps({
         div: '#map',
         lat: latMelb,
