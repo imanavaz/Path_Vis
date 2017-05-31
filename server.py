@@ -15,6 +15,7 @@ class dummyHandler(BaseHTTPRequestHandler):
     #    self.model = pkl.load(open(fmodel, 'rb'))['MODEL']  # trained model
     #    print('trained model loaded')
 
+
     def preprocess(self, recommendations): 
         # scale scores and convert arrays to lists
         score_max = recommendations[0]['TotalScore']
@@ -45,7 +46,31 @@ class dummyHandler(BaseHTTPRequestHandler):
             assert(score1 < 101)
             recommendations[j]['TotalScore'] = score1
 
-            # distribute score to POIs and Transitions
+            # Both recommendations[j]['POIFeatureScore'] and recommendations[j]['POIFeatureWeight'] are 24-dimention vectors,
+            # and the correspondence between POI features (and feature weights) and elements in these two vectors are:
+            # Index    Feature name
+            # 0-8      category
+            # 9-13     neighbourhood
+            # 14       popularity
+            # 15       nVisit
+            # 16       avgDuration
+            # 17       trajLen
+            # 18       sameCatStart
+            # 19       distStart
+            # 20       diffPopStart
+            # 21       diffNVisitStart
+            # 22       diffDurationStart
+            # 23       sameNeighbourhoodStart
+
+            # Both recommendations[j]['TransitionFeatureScore'] and recommendations[j]['TransitionFeatureWeight'] are 5-dimentional vectors,
+            # and the correspondence between transition features (and feature weights) and elements in these two vectors are:
+            # Index    Feature name
+            # 0        poiCat        (transition probability according to POI category)
+            # 1        popularity    (transition probability according to POI popularity)
+            # 2        nVisit        (transition probability according to the number of visit at POI)
+            # 3        avgDuration   (transition probability according to the average duration at POI)
+            # 4        neighbourhood (transition probability according to the neighbourhood of POI)
+            
             assert(abs(score0) > 1e-9)
             ratio = np.exp(np.log(score1) - np.log(score0))
             recommendations[j]['POIScore'] = (rec['POIScore'] * ratio).tolist()
