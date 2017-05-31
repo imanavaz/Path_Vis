@@ -326,4 +326,10 @@ function visualise_score(response) {
         });
         instance.update(); //comment this to hide table header
     }
+
+    // draw top1 route by default
+    p.select(0);
+    route_drawn[0] = true;
+    draw_route(trajdata[0]['Trajectory'], '#' + colors[0]);
+
 }
