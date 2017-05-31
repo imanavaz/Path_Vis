@@ -19,7 +19,7 @@ var RadarChart = {
 	 levels: 3,
 	 maxValue: 0,
 	 radians: 2 * Math.PI,
-	 opacityArea: 0.5,
+	 opacityArea: 0.2,
 	 ToRight: 5,
 	 TranslateX: 80,
 	 TranslateY: 30,
@@ -39,7 +39,7 @@ var RadarChart = {
 	var allAxis = (d[0].map(function(i, j){return i.axis}));
 	var total = allAxis.length;
 	var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
-	var Format = d3.format('%');
+	var Format = d3.format('');
 	d3.select(id).select("svg").remove();
 
 	var g = d3.select(id)

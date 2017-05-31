@@ -267,12 +267,15 @@ function visualise_score(response) {
         //console.log(sel.listeners.select);
         sel.listeners.select = function () {
             clear_POIs();
+            remove_chart();
             idx = this.args[0]['index'];
             flag = this.args[1];
             travel = document.getElementById("ID_select").value;
             if (flag == true) {
                 route_drawn[idx] = true;
                 draw_route(trajdata[idx]['Trajectory'], '#' + colors[idx], travel);
+                // send data to radarChart
+                draw_chart(idx, trajdata);
             } else {
                 route_drawn[idx] = false;
                 map.cleanRoute();
@@ -332,5 +335,6 @@ function visualise_score(response) {
     p.select(0);
     route_drawn[0] = true;
     draw_route(trajdata[0]['Trajectory'], '#' + colors[0]);
+    draw_chart(0, trajdata);
 
 }

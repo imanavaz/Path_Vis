@@ -30,18 +30,37 @@ var d = [
 		  ]
 		];
 
+var labels = ["City precincts", "Shopping", "Entertainment", "Public galleries",
+		"Institutions", "Structures", "Sports stadiums", "Parks and spaces", "Transport"];
+
+function draw_chart(ind, trajdata) {
+		data = [];
+		for (var k = 0; k < trajdata[ind]['POIPerFeatureScore'].length; k++) {
+				entry = [];
+				for (var j = 0; j < labels.length; j++) {
+						entry.push({ axis:labels[j], value:trajdata[ind]['POIPerFeatureScore'][k][j]+5 });
+				}
+				console.log(entry);
+				data.push(entry);
+		}
+		// console.log(data);
+		//Call function to draw the Radar chart
+		//Will expect that data is in %'s
+		RadarChart.draw("#chart", data, mycfg);
+}
+
+function remove_chart() {
+		d3.select("#chart").select("svg").remove();
+}
+
 //Options for the Radar chart, other than default
 var mycfg = {
   w: w,
   h: h,
-  maxValue: 0.8,
-  levels: 6,
-  ExtraWidthX: 100
+  maxValue: 10,
+  levels: 5,
+  ExtraWidthX: 160
 }
-
-//Call function to draw the Radar chart
-//Will expect that data is in %'s
-RadarChart.draw("#chart", d, mycfg);
 
 ////////////////////////////////////////////
 /////////// Initiate legend ////////////////
