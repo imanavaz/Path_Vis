@@ -91,10 +91,12 @@
             }).done(function(data) {
                 //console.log('ok');
                 //console.log(data);
+                clear_POIs();
                 map.cleanRoute();  // clean previous routes
                 //parse_draw(data);
                 visualise_score(data);
             }).fail(function(data) {
+                clear_POIs();
                 map.cleanRoute();  // clean previous routes
                 alert('No good recommendation');
                 console.log('error');

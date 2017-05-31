@@ -2,7 +2,7 @@ var map = undefined;
 var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
 var colors = ["3f51b5", "f44336","ff9800","ffc107","cddc39","8bc34a","009688","e91e63","9c27b0","03a9f4"]
 var selected_color = colors[0];
-var default_color = "ffffff";
+var default_color = "f0f0f0";
 var gmap_icons = "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld="
 var route_drawn = undefined;
 
@@ -95,6 +95,16 @@ function draw_POIs() {
     }
 }
 
+function clear_POIs() {
+    if (allMarkers.length == 0) {
+        init_POIs();
+    } else {
+        for (var i = 0; i < allMarkers.length; i++) {
+            allMarkers[i].icon.url = DEFAULT_POI;
+        }
+    }
+    draw_POIs();
+}
 
 function draw_route(traj, color, travel_mode="walking") {
     //travel_mode: driving, bicycling or walking
@@ -256,6 +266,7 @@ function visualise_score(response) {
         //console.log(sel);
         //console.log(sel.listeners.select);
         sel.listeners.select = function () {
+            clear_POIs();
             idx = this.args[0]['index'];
             flag = this.args[1];
             if (flag == true) {
