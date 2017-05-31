@@ -35,7 +35,7 @@ function init_POIs() {
                 "lng": d.poiLon,
                 "url": d.poiURL,
                 "popularity": d.poiPopularity
-           };
+            };
         });
         for (var pid in pois) {
             var pi = pois[pid];
@@ -50,7 +50,7 @@ function init_POIs() {
                     // set the start point
                     this.setIcon(gmap_icons + "red-dot.png");
                     if (selectedMarker != undefined) {
-                      selectedMarker.setIcon(gmap_icons + "yellow.png"); // set back to default
+                        selectedMarker.setIcon(gmap_icons + "yellow.png"); // set back to default
                     }
                     selectedMarker = this;
 
@@ -93,7 +93,7 @@ function draw_route(traj, color, travel_mode="walking") {
                 "lng": d.poiLon,
                 "url": d.poiURL,
                 "popularity": d.poiPopularity
-           };
+            };
         });
         var waypts = []; //way points
         for (var i = 1; i < traj.length-1; i++) {
@@ -161,28 +161,50 @@ function parse_draw(response) {
 function visualise_score(response) {
     var trajdata = JSON.parse(response);
     var arr = [];
-    var ncols = 0;
+    var npois = 0;
+    var ntrans = 0;
     for (var i = 0; i < trajdata.length; i++) {
-        var rowdata = trajdata[i]['POIScore'];
-        var row = {'name': 'Top' + (i+1).toString()};
-        ncols = rowdata.length;
-        for (var j = 1; j < ncols; j++) {
-            //var key = 'score_' + j.toString();
-            var key = 's' + j.toString();
-            row[key] = rowdata[j];
+        var row = {
+            'name': 'Top' + (i+1).toString(),
+            'total_score': trajdata[i]['TotalScore'],
+        };
+        var poi_scores = trajdata[i]['POIScore'];
+        var tran_scores = trajdata[i]['TransitionScore'];
+        if (npois == 0) {
+            npois = poi_scores.length;
+        }
+        if (ntrans == 0) {
+            ntrans = tran_scores.length;
+        }
+        for (var j = 0; j < poi_scores.length; j++) {
+            var key = 'p' + j.toString();
+            row[key] = poi_scores[j];
+        }
+        for (var j = 0; j < tran_scores.length; j++) {
+            var key = 't' + j.toString();
+            row[key] = tran_scores[j];
         }
         arr.push(row);
     }
-    var desc = [];
-    desc.push({label: 'Recommendation', type: 'string', column: 'name'});
-    for (var j = 1; j < ncols; j++) {
+    var desc = [
+        {label: 'Recommendation', type: 'string', column: 'name'},
+        {label: 'Total Score', type: 'number', column: 'total_score', 'domain': [0, 100], color: 'lime'}, //domain is required if type=number
+    ];
+    for (var j = 0; j < npois; j++) {  
         desc.push({
             //label: 'SCORE_' + j.toString(),
             type: 'number',
-            //column: 'score_' + j.toString(),
-            column: 's' + j.toString(),
+            column: 'p' + j.toString(),
             'domain': [0, 20],
             color: COLORS[j]});
+    }
+    for (var j = 0; j < ntrans; j++) {
+        desc.push({
+            //label: 'Transition_' + j.toString(),
+            type: 'number',
+            column: 't' + j.toString(),
+            'domain': [0, 20],
+            color: COLORS[COLORS.length-j-1]});
     }
 
     /*
@@ -198,31 +220,42 @@ function visualise_score(response) {
 
     const p = new LineUpJS.provider.LocalDataProvider(arr, desc);
     {
-      const r = p.pushRanking();
-      r.insert(p.create(LineUpJS.model.createSelectionDesc()), 0);
-      r.push(p.create(desc[0]));
+        const r = p.pushRanking();
+        r.insert(p.create(LineUpJS.model.createSelectionDesc()), 0);  //selection column
+        //r.push(p.create(desc[0]));  //name column
+        r.push(p.create(desc[1]));  //trajectory total score column
 
-      r.push((function () {
-        const rstack = p.create(LineUpJS.model.createStackDesc('Stack'));
-        for (var j = 1; j < desc.length; j++) {
-            rstack.push(p.create(desc[j]));
+        //poi scores stack
+        r.push((function () {
+            const rstack = p.create(LineUpJS.model.createStackDesc('POI Scores'));
+            for (var j = 1; j < npois; j++) { //ignore the first POI
+                rstack.push(p.create(desc[2+j]));
+            }
+            //rstack.setWeights([0.2, 0.8]);
+            return rstack;
+        })());
+
+        //transition scores stack
+        r.push((function () {
+            const rstack = p.create(LineUpJS.model.createStackDesc('Transition Scores'));
+            for (var j = 0; j < ntrans; j++) {
+                rstack.push(p.create(desc[2+npois+j]));
+            }
+            return rstack;
+        })());
+
+        var element = document.getElementById("bars");
+        while (element.firstChild) {
+            element.removeChild(element.firstChild);
         }
-        //rstack.setWeights([0.2, 0.8]);
-        return rstack;
-      })());
-    }
 
-    var element = document.getElementById("bars");
-    while (element.firstChild) {
-      element.removeChild(element.firstChild);
+        const instance = LineUpJS.create(p, document.getElementById("bars"), {
+            renderingOptions: {
+                animation: false,
+                histograms: false,
+                meanLine: false
+            }
+        });
+        instance.update(); //comment this to hide table header
     }
-
-    const instance = LineUpJS.create(p, document.getElementById("bars"), {
-      renderingOptions: {
-        animation: false,
-        histograms: false,
-        meanLine: false
-      }
-    });
-    instance.update(); //comment this to hide table header
 }
