@@ -19,8 +19,9 @@ function draw_map() {
     //}
 }
 
+var allMarkers = [];
 var selectedMarker = undefined;
-function draw_POIs() {
+function init_POIs() {
     if (map === undefined) {
         draw_map();
     }
@@ -37,7 +38,7 @@ function draw_POIs() {
            };
         });
         for (var pid in pois) {
-            var pi = pois[pid]
+            var pi = pois[pid];
             var marker = {
                 lat: pi["lat"],
                 lng: pi["lng"],
@@ -64,9 +65,16 @@ function draw_POIs() {
                     this.infoWindow.close();
                 }
             }
-            map.addMarker(marker);
+            allMarkers[pid] = marker;
         }
     });
+}
+
+function draw_POIs() {
+    map.removeMarkers();
+    for (var i = 0; i < allMarkers.length; i++) {
+        map.addMarker(allMarkers[i]);
+    }
 }
 
 
@@ -97,6 +105,16 @@ function draw_route(traj, color, travel_mode="walking") {
         }
         ps = pois[ traj[0] ];
         pt = pois[ traj[traj.length-1] ];
+
+        // set PIO colors on the route
+        allMarkers[traj[0]].icon = gmap_icons + "red-dot.png";
+        for (var i = 1; i <  traj.length-1; i++) {
+            console.log('change marker color: ' + i);
+            allMarkers[traj[i]].icon = gmap_icons + "green.png";
+        }
+        allMarkers[traj[traj.length-1]].icon = gmap_icons + "green-dot.png";
+        draw_POIs();
+
         map.drawRoute({
             origin: [ ps["lat"], ps["lng"] ],
             destination: [ pt["lat"], pt["lng"] ],
@@ -122,6 +140,7 @@ function parse_draw(response) {
     //trajs = response.split(";");
     //console.log(trajs);
     //console.log(trajs.length);
+    init_POIs();
     for (var i = 0; i < trajs.length; i++) {
         /*
         var trajstr = trajs[i].split(",");
@@ -135,7 +154,6 @@ function parse_draw(response) {
         color = colors[i]
         travel = document.getElementById("ID_select").value;
         draw_route(traj, color, travel);
-
     }
 }
 
