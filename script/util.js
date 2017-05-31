@@ -285,7 +285,7 @@ function visualise_score(response) {
             }
             //rstack.setWeights([0.2, 0.8]);
             //rstack.compressed = true;
-            //rstack.collapsed = true;
+            rstack.collapsed = true;
             return rstack;
         })());
 
@@ -296,7 +296,7 @@ function visualise_score(response) {
                 rstack.push(p.create(desc[2+npois+j]));
             }
             rstack.compressed = true;
-            //rstack.collapsed = true;
+            rstack.collapsed = true;
             return rstack;
         })());
 
