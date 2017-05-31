@@ -125,35 +125,36 @@ Based on a structured prediction algorithm tailored for the route recommendation
 \section{Introduction}
 %background
 Sequence ranking has emerged as an important tool for solving diverse problems such as travel route and music playlist recommendations. 
-Unlike the classical ranking algorithm where each item considers independently, the sequence ranking algorithm requires modelling a structure between items and suggests a set of items as a whole. 
-For example, let us consider recommending a trajectory of points of interest (POI) in a city to a visitor. 
-If the classical ranking algorithm learns a user's preference for each individual location while ignores the distances between them, the algorithm may create a long trajectory, which should be shorter in optimal routeing. 
-Several sequence ranking algorithms are proposed to solve the problem and achieve relative success to compare with the classical algorithms. 
-An important challenge remaining is to construct an interactive recommendation system so that a user can analyse the suggested sequences and plan a better trip.
+Unlike the classical ranking algorithm where items are considered independently, the sequence ranking algorithm requires modelling a structure between items and suggests a set of items as a whole. 
+For example, consider recommending a trajectory of points of interest (POI) in a city to a visitor. 
+While the classical ranking algorithm can learn a user's preference for each individual location, however, it may ignore the distances between them and could suggest a long trajectory, which should be shorter in optimal routing. 
+Several sequence ranking algorithms are proposed to solve this problem and achieve relative success when compared with the classical ranking algorithms. 
+Nonetheless, a remaining challenge is to construct an interactive recommendation system so that a user can analyse the suggested sequences and plan a better trip.
 
 %approach
-In this paper, we tackle the problem of sequence visualisation, especially, in the travel route recommendation. 
-We first define a travel route as a sequence of POIs and then formulate the sequence ranking algorithm as a structured prediction problem. 
-Based on hand-crafted features for each POI and pairs of POIs, we train the prediction model with trajectory data extracted from geo-tagged photos. 
-To visualise the suggested routes, we develop a novel tool that efficiently displays multiple suggested routes and helps users understand the process behind the recommendations.
+In this paper, we tackle the problem of sequence visualisation, in particular, for travel routes recommendation. 
+We define a travel route as a sequence of POIs and formulate the sequence ranking problem as a structured prediction problem. 
+Based on hand-crafted features for individual and pairs of POIs, we train the prediction model with trajectory data extracted from geo-tagged photos. 
+To visualise the suggested routes, we develop a novel tool that efficiently displays multiple suggested routes, which helps users understand the process behind the recommendations.
 Specifically, our system decompose a total score of each route into a set of features and their corresponding scores and show the total score as a stacked bar plot of the features.
-The system also visualise differences between POIs in a single route to show how POIs in the single route can diverse to each other. 
-This visualisation helps a tourist, who wants to have diverse experience, choose the best route among the set of recommended routes.
+The system also visualise the difference between POIs in a single route to show how POIs in that route can diverse to each other. 
+This visualisation helps tourists who want to have diverse experiences by choosing the best route among the set of recommendations.
 
 \section{Structured Prediction}
 % don't need very details of the algorithm
 % need problem definition
 % copied from nips paper
 Travel route recommendation problems involve a set of POIs in a city. 
-Given a trajectory query $\mathbf{x} = (s, l)$, comprising a start POI $s$ and trip length $l$, i.e. the number of POIs to be visited during the trip including $s$, the goal is to suggest one or more sequences of POIs that maximise some notion of utility.
+Given a trajectory query $\mathbf{x} = (s, l)$, comprising a start POI $s$ and trip length $l$, i.e. the number of POIs to be visited during the trip including $s$.
+The goal is to suggest one or more sequences of POIs that maximise some notion of utility.
 
-We first cast the travel recommendation as a structured prediction problem, which allows us to leverage the well-studied literature of structured SVMs (SSVM)~\cite{tsochantaridis2005large,joachims2009predicting}. 
-There are two obstacles to prevent us applying the SSVM directly to the sequence recommendation problem; first, there would be multiple ground-truth routes among a set of POIs, second, a naive application of SSVM would generate a loop in the prediction time. 
-To incorporate multiple ground-truth routes in learning time, we take an idea from the ranking objective so that the ground-truth routes do not compete to each others~\cite{rendle2009bpr}. 
-To eliminate possible loop in a prediction time, we adopt serial list Viterbi~\cite{seshadri1994list,nill1995list} algorithm.
-We finally trained our model on the trajectory data extracted from Flickr photos taken in Melbourne~\cite{chen2016learning}.
+We first cast travel recommendation as a structured prediction problem, which allows us to leverage the well-studied literature of structured SVMs (SSVM)~\cite{tsochantaridis2005large,joachims2009predicting}. 
+There are two obstacles that prevent us from applying SSVM directly to the sequence recommendation problem; first, there would be multiple ground-truth routes among a set of POIs, second, a naive application of SSVM would generate a loop during prediction time. 
+To incorporate multiple ground-truth routes in the learning phase, we take an idea from the ranking objective which prevents the ground-truth routes from competing with each others~\cite{rendle2009bpr}. 
+To eliminate possible loops in prediction, we adopt the serial list Viterbi algorithm~\cite{seshadri1994list,nill1995list,nilsson2001sequentially}.
+We finally trained our model on trajectory data extracted from Flickr photos taken in Melbourne~\cite{chen2016learning}.
 
-From a visualisation perspective, an important advantage of the SSVM is the explicit representation of feature score in its final decision process. Especially, in our case, we can disassemble the final score of a route into feature scores of each POI and each transition between two adjacency POIs. 
+From a visualisation perspective, an important advantage of the SSVM is the explicit representation of feature scores in its final decision process. Especially, in our case, we can disassemble the final score of a route into feature scores of each POI and each transition between two adjacency POIs. 
 We use hand-crafted POI features such as the category, popularity, and average visit duration of previous tourists and also crafted transition features such as the distance and neighbourhood of two POIs to maximise the interpretability of the outcome.
 
 \begin{figure}[t!]
@@ -166,19 +167,19 @@ We use hand-crafted POI features such as the category, popularity, and average v
 %what are the features we want to emphasis?
 %make a bullet list of something like that
 Our goal is to design an interactive visualisation system on top of the structured prediction framework.
-Figure \ref{fig:overview} shows the overview of live demo system, which consists of four major component: a map to display suggested routes, an input box for user query on the left side, a stacked score of routes on the upper right side, a radar chart to compare multiple  POIs on the lower right side. 
-The role and construction of three major component, except the main map, are as follow:
+Figure~\ref{fig:overview} shows the overview of a live demo system, which consists of four major components: a map to display suggested routes, an input box for user query on the left side, a stacked score of routes on the upper right side, and a radar chart to compare multiple POIs on the lower right side. 
+The role and the construction of three major components, except the main map, are as follow:
 \begin{itemize}
 \item \textbf{Query input} A query consists of a starting POI and a trip length. 
-Users can choose the starting POI on the map and adjust slide to set the trip length. 
-In addition, we support three different traveling modes: bicycling, walking, and driving.
+Users can choose the starting POI by clicking icons on the map and can adjust the slide to set the trip length. 
+In addition, we support three different travelling modes: bicycling, walking, and driving.
 Based on the different mode, we optimise suggested routes between POIs in a sequence.
-\item \textbf{Route score visualisation} Ranks of candidate routes are determined by the final score of the SSVM. 
-A score of each route can be decomposed into each POI and edge along the route. 
+\item \textbf{Route score visualisation} Ranks of candidate routes are determined by the total scores from the SSVM. 
+The score of each route can be decomposed into each POI and edge scores along the route. 
 We adopt the LineUp framework~\cite{gratzl2013lineup} designed to support the visualisation of multi-attribute ranking via stacked representation. 
-Figure \ref{fig:stack} shows the stacked representation of top ten route scores, where the proportion of each bar indicates the importance of each POI in the route.
-\item \textbf{POI feature visualisation} We further provide a tool to analyse a variation between POIs in a single route. 
-For example, in Figure \ref{fig:radar}, we compare the two POIs, the Queen Victoria Market and Melbourne Aquarium, in terms of POI features and their importance in the suggested route. 
+Figure~\ref{fig:stack} shows the stacked representation of the top ten scored routes, where the proportion of each bar indicates the importance of each POI in the route.
+\item \textbf{POI feature visualisation} We further provide a tool to analyse the variation between POIs in a single route. 
+For example, in Figure~\ref{fig:radar}, we compare two POIs, the Queen Victoria Market and Melbourne Aquarium, in terms of POI features and their importance in the suggested route. 
 \end{itemize}
 
 \begin{figure}[t!]
@@ -190,7 +191,7 @@ For example, in Figure \ref{fig:radar}, we compare the two POIs, the Queen Victo
 
 \section{Conclusion}
 %summary
-In this demonstration, we showcase an interactive route analyser which helps an interaction between users and route recommendation systems. 
+In this demonstration, we showcase an interactive route analyser which helps the interaction between users and route recommendation systems. 
 The system benefits the explicit feature construction of the structured prediction model and visualises recommended routes along with relevant information on both route level and POI level.
 
 \bibliographystyle{ACM-Reference-Format}
