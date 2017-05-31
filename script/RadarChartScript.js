@@ -1,5 +1,4 @@
-var w = 300,
-	h = 300;
+var w = 300, h = 300;
 
 var colorscale = d3.scale.category10();
 
@@ -23,14 +22,6 @@ var d = [
 			{axis:"App connected to TV program",value:0.03},
 			{axis:"Offline Gaming",value:0.12},
 			{axis:"Photo Video",value:0.4},
-			{axis:"Reading",value:0.03},
-			{axis:"Listen Music",value:0.22},
-			{axis:"Watch TV",value:0.03},
-			{axis:"TV Movies Streaming",value:0.03},
-			{axis:"Listen Radio",value:0.07},
-			{axis:"Sending Money",value:0.18},
-			{axis:"Other",value:0.07},
-			{axis:"Use less Once week",value:0.08}
 		  ],[
 			{axis:"Email",value:0.48},
 			{axis:"Social Networks",value:0.41},
@@ -46,14 +37,6 @@ var d = [
 			{axis:"App connected to TV program",value:0.06},
 			{axis:"Offline Gaming",value:0.24},
 			{axis:"Photo Video",value:0.17},
-			{axis:"Reading",value:0.15},
-			{axis:"Listen Music",value:0.12},
-			{axis:"Watch TV",value:0.1},
-			{axis:"TV Movies Streaming",value:0.14},
-			{axis:"Listen Radio",value:0.06},
-			{axis:"Sending Money",value:0.16},
-			{axis:"Other",value:0.07},
-			{axis:"Use less Once week",value:0.17}
 		  ]
 		];
 
@@ -63,7 +46,7 @@ var mycfg = {
   h: h,
   maxValue: 0.6,
   levels: 6,
-  ExtraWidthX: 300
+  ExtraWidthX: 100
 }
 
 //Call function to draw the Radar chart
@@ -88,7 +71,6 @@ var text = svg.append("text")
 	.attr("y", 10)
 	.attr("font-size", "12px")
 	.attr("fill", "#404040")
-	.text("What % of owners use a specific service in a week");
 
 //Initiate Legend
 var legend = svg.append("g")

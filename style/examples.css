@@ -12,14 +12,19 @@ body{
 .info {
     position: relative;
     float: right;
-    width: 28%;
+    margin-top: 80px;
+    margin-right: 10px;
 }
 .info > div {
     margin-bottom: 5px;
 }
 
-.page-header
-{
+.page-title {
+    position: absolute;
+    left: 50%;
+    text-align: center;
+    width: 600px;
+    margin-left:-300px;
     color: black;
     text-shadow:
     -2px -2px 0 #fff,
@@ -36,6 +41,7 @@ body{
 
 .input-form {
     position: absolute;
+    margin-top: 80px;
     margin-left: 10px;
     width: 240px;
 }
