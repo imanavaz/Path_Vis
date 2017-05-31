@@ -78,7 +78,7 @@
 
 
 \begin{abstract}
-We propose a novel travel route visualisation tool. 
+We propose a novel travel route visualisation tool to help an interaction between tourists and route recommendation system.  While the sequence ranking algorithm shows promising results in a laboratory setup on benchmark dataset, the process of recommendation is still invisible to end-users who would benefit the information used in the system. Based on a structured prediction algorithm tailored for the route recommendation, the proposed route visualisation reduces the gap between the end-users and recommendation system by visualising various scores on multiple attributes of the suggested routes.
 \end{abstract}
 
 %
@@ -111,7 +111,7 @@ We propose a novel travel route visualisation tool.
 % Used in some conference proceedings e.g. sigplan and sigchi
  \begin{teaserfigure}
  \centering
-   \includegraphics[width=0.8\textwidth]{figure/sample_map.png}
+   \includegraphics[width=0.9\textwidth]{figure/sample_map.png}
    \caption{Travel route recommendation visualisation system. Given a starting POI and a number of POI to be visited, the system suggests a set of routes from a history of previous tourists.}
    \label{fig:overview}
  \end{teaserfigure}
@@ -124,7 +124,7 @@ We propose a novel travel route visualisation tool.
 Sequence ranking has emerged as an important tool for solving diverse problems such as travel route and music playlist recommendations. Unlike the classical ranking algorithm where each item considers independently, the sequence ranking algorithm requires modelling a structure between items and suggests a set of items as a whole. For example, let us consider recommending a trajectory of points of interest (POI) in a city to a visitor. If the classical ranking algorithm learns a user's preference for each individual location while ignores the distances between them, the algorithm may create a long trajectory, which should be shorter in optimal routeing. Several sequence ranking algorithms are proposed to solve the problem and achieve relative success to compare with the classical algorithms. An important challenge remaining is to construct a visualisation of the recommendation system so that a user can analyse the suggested sequences and plan a better trip based on the interaction with the system.
 
 %approach
-In this paper, we tackle the problem of sequence visualisation, especially, in the context of a travel route recommendation. We first define a travel route as a sequence of points of interest (POIs) and then formulate the sequence ranking algorithm as a structured prediction problem. Based on hand-crafted features for each POI and pairs of POIs, we train the prediction model with trajectory data extracted from geo-tagged photos. To visualise the suggested routes, we develop a novel tool that efficiently displays multiple suggested routes and helps users understand the rational behind the recommendations. Specifically, we decompose a total score of each route into a set of features and their corresponding scores and show the total score as a stacked bar plot of features. We also visualise differences between POIs in a single route to show how POIs in the single route can diverse to each other. This feature helps a tourist who wants to have diverse experience to choose the best route among the set of recommended routes.
+In this paper, we tackle the problem of sequence visualisation, especially, in the context of a travel route recommendation. We first define a travel route as a sequence of POIs and then formulate the sequence ranking algorithm as a structured prediction problem. Based on hand-crafted features for each POI and pairs of POIs, we train the prediction model with trajectory data extracted from geo-tagged photos. To visualise the suggested routes, we develop a novel tool that efficiently displays multiple suggested routes and helps users understand the rational behind the recommendations. Specifically, we decompose a total score of each route into a set of features and their corresponding scores and show the total score as a stacked bar plot of features. We also visualise differences between POIs in a single route to show how POIs in the single route can diverse to each other. This feature helps a tourist who wants to have diverse experience to choose the best route among the set of recommended routes.
 
 \section{Structured Prediction}
 % don't need very details of the algorithm
@@ -138,10 +138,15 @@ We finally trained our model on the trajectory data extracted from Flickr photos
 
 From a visualisation perspective, an important advantage of the SSVM is the explicit representation of feature score in its final decision process. Especially, in our case, we can disassemble the final score of a route into feature scores of each POI and each transition between two adjacency POIs. We hand-crafted POI features such as the category, popularity, average visit duration of previous tourists, etc, and also crafted transition features such as the distance and neighbourhood of two POIs.
 
+\begin{figure}[t!]
+\includegraphics[width=0.9\linewidth]{figure/sample_stack.png}
+\caption{Visualisation of feature scores for each trajectory. From top to bottom, we represent top 10 recommended routes with their scores where each score is further decomposed into multiple features.}
+\end{figure}
+
 \section{Visualisation}
 %what are the features we want to emphasis?
 %make a bullet list of something like that
-Our goal is to design an interactive system where a user 
+Our goal is to design an interactive system on top of the structured prediction framework.
 The Figure \ref{fig:overview}
 Break total score into individual feature score, represent using stacked bar graph.
 
@@ -149,15 +154,10 @@ Comparison between two POIs in a single trajectory.
 Further comparison of POIs within a single trajectory, we use radar chart to show the score of each feature.
 
 We further provide a tool to analyse an internal variation between multiple POIs in a single route. 
-Figure \ref{fig:radar} shows the feature scores of two POIs in a single route via a radar plot. 
+Figure \ref{fig:radar} shows the feature scores of two POIs in a single route. 
 
 Stacked bar plot \cite{gratzl2013lineup}
 
-
-\begin{figure}[t!]
-\includegraphics[width=0.9\linewidth]{figure/sample_stack.png}
-\caption{Visualisation of feature scores for each trajectory. From top to bottom, we represent top 10 recommended routes with their scores where each score is further decomposed into multiple features.}
-\end{figure}
 
 \begin{figure}[t!]
 \includegraphics[width=0.9\linewidth]{figure/sample_radar.png}
