@@ -3,40 +3,30 @@ var w = 300, h = 300;
 var colorscale = d3.scale.category10();
 
 //Legend titles
-var LegendOptions = ['Smartphone','Tablet'];
+var LegendOptions = ['Queen Victoria Market','Melbourne Aquarium'];
 
 //Data
 var d = [
 		  [
-			{axis:"Email",value:0.59},
-			{axis:"Social Networks",value:0.56},
-			{axis:"Internet Banking",value:0.42},
-			{axis:"News Sportsites",value:0.34},
-			{axis:"Search Engine",value:0.48},
-			{axis:"View Shopping sites",value:0.14},
-			{axis:"Paying Online",value:0.11},
-			{axis:"Buy Online",value:0.05},
-			{axis:"Stream Music",value:0.07},
-			{axis:"Online Gaming",value:0.12},
-			{axis:"Navigation",value:0.27},
-			{axis:"App connected to TV program",value:0.03},
-			{axis:"Offline Gaming",value:0.12},
-			{axis:"Photo Video",value:0.4},
+			{axis:"City precincts",value:0.59},
+			{axis:"Shopping",value:0.81},
+			{axis:"Entertainment",value:0.42},
+			{axis:"Public galleries",value:0.34},
+			{axis:"Institutions",value:0.48},
+			{axis:"Structures",value:0.14},
+			{axis:"Sports stadiums",value:0.11},
+			{axis:"Parks and spaces",value:0.05},
+			{axis:"Transport",value:0.07},
 		  ],[
-			{axis:"Email",value:0.48},
-			{axis:"Social Networks",value:0.41},
-			{axis:"Internet Banking",value:0.27},
-			{axis:"News Sportsites",value:0.28},
-			{axis:"Search Engine",value:0.46},
-			{axis:"View Shopping sites",value:0.29},
-			{axis:"Paying Online",value:0.11},
-			{axis:"Buy Online",value:0.14},
-			{axis:"Stream Music",value:0.05},
-			{axis:"Online Gaming",value:0.19},
-			{axis:"Navigation",value:0.14},
-			{axis:"App connected to TV program",value:0.06},
-			{axis:"Offline Gaming",value:0.24},
-			{axis:"Photo Video",value:0.17},
+			{axis:"City precincts",value:0.27},
+  			{axis:"Shopping",value:0.41},
+  			{axis:"Entertainment",value:0.77},
+  			{axis:"Public galleries",value:0.28},
+  			{axis:"Institutions",value:0.16},
+  			{axis:"Structures",value:0.29},
+  			{axis:"Sports stadiums",value:0.11},
+  			{axis:"Parks and spaces",value:0.14},
+  			{axis:"Transport",value:0.55},
 		  ]
 		];
 
@@ -44,7 +34,7 @@ var d = [
 var mycfg = {
   w: w,
   h: h,
-  maxValue: 0.6,
+  maxValue: 0.8,
   levels: 6,
   ExtraWidthX: 100
 }
@@ -84,7 +74,7 @@ var legend = svg.append("g")
 	  .data(LegendOptions)
 	  .enter()
 	  .append("rect")
-	  .attr("x", w - 65)
+	  .attr("x", w - 125)
 	  .attr("y", function(d, i){ return i * 20;})
 	  .attr("width", 10)
 	  .attr("height", 10)
@@ -95,7 +85,7 @@ var legend = svg.append("g")
 	  .data(LegendOptions)
 	  .enter()
 	  .append("text")
-	  .attr("x", w - 52)
+	  .attr("x", w - 112)
 	  .attr("y", function(d, i){ return i * 20 + 9;})
 	  .attr("font-size", "11px")
 	  .attr("fill", "#737373")
