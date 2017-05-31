@@ -49,7 +49,8 @@ class dummyHandler(BaseHTTPRequestHandler):
             # Both recommendations[j]['POIFeatureScore'] and recommendations[j]['POIFeatureWeight'] are 24-dimention vectors,
             # and the correspondence between POI features (and feature weights) and elements in these two vectors are:
             # Index    Feature name
-            # 0-8      category
+            # 0-8      category (POI categories are: 
+            # [City precincts, Shopping, Entertainment, Public galleries, Institutions, Structures, Sports stadiums, Parks and spaces, Transport])
             # 9-13     neighbourhood
             # 14       popularity
             # 15       nVisit
