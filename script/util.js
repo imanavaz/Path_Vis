@@ -1,8 +1,9 @@
 var map = undefined;
 var fpoi = 'https://cdn.rawgit.com/cdawei/path_vis/master/data/poi-Melb-all.csv';
 const COLORS = ['black', 'green', 'purple', 'lime', 'red', 'silver', 'blue', 'gray', 'navy', 'olive', 'white', 'yellow', 'maroon', 'teal', 'fuchsia', 'aqua'];
-var colors = ["#345E9D","#7A2947","#47C29D","#78349D","#8BCF6E","#E1E2A7","#C4684F","#4787C2","#BFA640","#C79FDF"]
-var gmap_icons = 'http://maps.google.com/mapfiles/ms/icons/'
+var colors = ["#345E9D","#7A2947","#47C29D","#78349D","#8BCF6E","#E1E2A7","#C4684F","#4787C2","#BFA640","#C79FDF"];
+var gmap_icons = 'http://maps.google.com/mapfiles/ms/icons/';
+var route_drawn = undefined;
 
 function draw_map() {
     var latMelb = -37.815018
@@ -120,6 +121,7 @@ function draw_route(traj, color, travel_mode="walking") {
             destination: [ pt["lat"], pt["lng"] ],
             waypoints: waypts,
             optimizeWaypoints: false, //do NOT allow way points to be reordered
+            //optimizeWaypoints: true, //allow way points to be reordered: might be better visually.
             travelMode: travel_mode,
             strokeColor: color, //RRGGBB, e.g. '#1F5566', '#131540'
             strokeOpacity: 0.6,
@@ -165,9 +167,13 @@ function visualise_score(response) {
     var ntrans = 0;
     var poi_score_max = 0;
     var tran_score_max = 0;
+    if (route_drawn == undefined) {
+        route_drawn = [];
+    }
     for (var i = 0; i < trajdata.length; i++) {
         var row = {
-            'name': 'Top' + (i+1).toString(),
+            //'name': 'Top' + (i+1).toString(),
+            'index': i,
             'total_score': trajdata[i]['TotalScore'],
         };
         var poi_scores = trajdata[i]['POIScore'];
@@ -193,9 +199,12 @@ function visualise_score(response) {
             }
         }
         arr.push(row);
+        route_drawn.push(false);
     }
     var desc = [
-        {label: 'Recommendation', type: 'string', column: 'name'},
+        //{label: 'Recommendation', type: 'string', column: 'name'},
+        //{label: 'Total Score', type: 'string', column: 'total_score'}, //plain numbers (as strings)
+        {label: 'Index', type: 'number', column: 'index', 'domain': [0, trajdata.length-1]},
         {label: 'Total Score', type: 'number', column: 'total_score', 'domain': [0, 100], color: 'lime'}, //domain is required if type=number
     ];
     for (var j = 0; j < npois; j++) {
@@ -229,9 +238,34 @@ function visualise_score(response) {
     const p = new LineUpJS.provider.LocalDataProvider(arr, desc);
     {
         const r = p.pushRanking();
-        r.insert(p.create(LineUpJS.model.createSelectionDesc()), 0);  //selection column
+        //r.insert(p.create(LineUpJS.model.createSelectionDesc()), 0);  //selection column
         //r.push(p.create(desc[0]));  //name column
-        r.push(p.create(desc[1]));  //trajectory total score column
+        //r.push(p.create(desc[1]));  //trajectory total score column
+        var sel = p.create(LineUpJS.model.createSelectionDesc());  //selection column
+        console.log(sel);
+        console.log(sel.listeners.select);
+        sel.listeners.select = function () {
+            idx = this.args[0]['index'];
+            flag = this.args[1];
+            if (flag == true) {
+                route_drawn[idx] = true;
+                draw_route(trajdata[idx]['Trajectory'], colors[idx]);
+            } else {
+                route_drawn[idx] = false;
+                map.cleanRoute();
+                for (var j = 0; j < route_drawn.length; j++) {
+                    if (route_drawn[j] == true) {
+                        draw_route(trajdata[j]['Trajectory'], colors[j]);
+                    }
+                }
+            }
+            console.log(this);
+        }
+        r.insert(sel, 0);
+        var col = p.create(desc[1]);
+        col.compressed = true;
+        //col.collapsed = true;
+        r.push(col);
 
         //poi scores stack
         r.push((function () {
