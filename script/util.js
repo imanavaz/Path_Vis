@@ -145,6 +145,8 @@ function visualise_score(response) {
     var arr = [];
     var npois = 0;
     var ntrans = 0;
+    var poi_score_max = 0;
+    var tran_score_max = 0;
     for (var i = 0; i < trajdata.length; i++) {
         var row = {
             'name': 'Top' + (i+1).toString(),
@@ -161,10 +163,16 @@ function visualise_score(response) {
         for (var j = 0; j < poi_scores.length; j++) {
             var key = 'p' + j.toString();
             row[key] = poi_scores[j];
+            if (poi_score_max < poi_scores[j]) {
+                poi_score_max = poi_scores[j];
+            }
         }
         for (var j = 0; j < tran_scores.length; j++) {
             var key = 't' + j.toString();
             row[key] = tran_scores[j];
+            if (tran_score_max < tran_scores[j]) {
+                tran_score_max = tran_scores[j];
+            }
         }
         arr.push(row);
     }
@@ -177,7 +185,7 @@ function visualise_score(response) {
             //label: 'SCORE_' + j.toString(),
             type: 'number',
             column: 'p' + j.toString(),
-            'domain': [0, 20],
+            'domain': [0, poi_score_max],
             color: COLORS[j]});
     }
     for (var j = 0; j < ntrans; j++) {
@@ -185,7 +193,7 @@ function visualise_score(response) {
             //label: 'Transition_' + j.toString(),
             type: 'number',
             column: 't' + j.toString(),
-            'domain': [0, 20],
+            'domain': [0, tran_score_max],
             color: COLORS[COLORS.length-j-1]});
     }
 
