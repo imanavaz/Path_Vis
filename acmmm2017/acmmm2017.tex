@@ -11,6 +11,8 @@
 %%%% To use the SIGCHI extended abstract template, please visit
 % https://www.overleaf.com/read/zzzfqvkmrfzn
 
+\settopmatter{printacmref=false}
+
 \usepackage{booktabs} % For formal tables
 \usepackage{graphicx}
 
@@ -133,7 +135,7 @@ Travel route recommendation problems involve a set of POIs in a city. Given a tr
 
 We first cast the travel recommendation as a structured prediction problem, which allows us to leverage the well-studied literature of structured SVMs (SSVM)~\cite{tsochantaridis2005large,joachims2009predicting}. There are two obstacles to prevent us applying the SSVM directly to the sequence recommendation problem; first, there would be multiple possible routes among a set of POIs, second, a naive application of SSVM would generate repeating sequence in the prediction time. 
 To eliminate possible loop in a prediction time, we adopt serial list Viterbi~\cite{seshadri1994list,nill1995list} algorithm.
-We finally trained our model on the trajectory data extracted from Flickr photos~\cite{chen2016learning}.
+We finally trained our model on the trajectory data extracted from Flickr photos taken in Melbourne~\cite{chen2016learning}.
 
 From a visualisation perspective, an important advantage of the SSVM is the explicit representation of feature score in its final decision process. Especially, in our case, we can disassemble the final score of a route into feature scores of each POI and each transition between two adjacency POIs. We hand-crafted POI features such as the category, popularity, average visit duration of previous tourists, etc, and also crafted transition features such as the distance and neighbourhood of two POIs.
 
@@ -146,8 +148,8 @@ From a visualisation perspective, an important advantage of the SSVM is the expl
 \section{Visualisation}
 %what are the features we want to emphasis?
 %make a bullet list of something like that
-Our goal is to design an interactive system on top of the structured prediction framework.
-The Figure \ref{fig:overview} show the overview of live demo system, which consists of four major component: a map to display suggested routes, an input box for user query on the left side, a stacked score of routes on the upper right side, a radar chart to compare multiple features of POIs on lower right side. The role and construction of three major component are as follow:
+Our goal is to design an interactive visualisation system on top of the structured prediction framework.
+Figure \ref{fig:overview} show the overview of live demo system, which consists of four major component: a map to display suggested routes, an input box for user query on the left side, a stacked score of routes on the upper right side, a radar chart to compare multiple features of POIs on lower right side. The role and construction of three major component are as follow:
 \begin{itemize}
 \item \textbf{User query} A query consists of a starting POI and a trip length. Users can choose the starting POI on the map and adjust slide to set the trip length. In addition, we support three different traveling modes: bicycling, walking, and driving. Based on the different mode, we optimise suggested routes between POIs in a sequence.
 \item \textbf{Route score visualisation} A score of each route consists of different contributions of multiple attributes. While the visualisation of a proposed route is straightforward, its interpretation is not, because the rank of the route consists of multiple attributes. We adopt the LineUp framework~\cite{gratzl2013lineup} devised to support the visualisation of multi-attribute ranking via stacked representation. Figure \ref{fig:stack} shows the stacked scores of top ten recommended routes.
@@ -155,8 +157,8 @@ The Figure \ref{fig:overview} show the overview of live demo system, which consi
 \end{itemize}
 
 \begin{figure}[t!]
-\includegraphics[width=0.9\linewidth]{figure/sample_radar.png}
-\caption{Comparison between two POIs with respect to multiple features.}
+\includegraphics[width=0.8\linewidth]{figure/sample_radar.png}
+\caption{Comparison between two POIs with respect to multiple features. We compare the Queen Victoria Market and Melbourne Aquarium. The Queen Victoria Market has a high score on \textit{shopping} and \textit{city precincts} features whereas the Melbourne aquarium has a high score on \textit{Entertainment} feature.}
 \label{fig:radar}
 \end{figure}
 
