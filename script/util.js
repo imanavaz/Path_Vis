@@ -269,15 +269,16 @@ function visualise_score(response) {
             clear_POIs();
             idx = this.args[0]['index'];
             flag = this.args[1];
+            travel = document.getElementById("ID_select").value;
             if (flag == true) {
                 route_drawn[idx] = true;
-                draw_route(trajdata[idx]['Trajectory'], '#' + colors[idx]);
+                draw_route(trajdata[idx]['Trajectory'], '#' + colors[idx], travel);
             } else {
                 route_drawn[idx] = false;
                 map.cleanRoute();
                 for (var j = 0; j < route_drawn.length; j++) {
                     if (route_drawn[j] == true) {
-                        draw_route(trajdata[j]['Trajectory'], '#' + colors[j]);
+                        draw_route(trajdata[j]['Trajectory'], '#' + colors[j], travel);
                     }
                 }
             }
