@@ -82,6 +82,8 @@ class dummyHandler(BaseHTTPRequestHandler):
             if 'POIFeatureWeight' in rec:
                 recommendations[j]['POIFeatureWeight'] = rec['POIFeatureWeight'].tolist()
                 recommendations[j]['TransitionFeatureWeight'] = rec['TransitionFeatureWeight'].tolist()
+                for k in range(len(rec['Trajectory'])):
+                    recommendations[j]['POIPerFeatureScore'][k] = [x * ratio for x in rec['POIPerFeatureScore'][k]]
 
         return recommendations
 

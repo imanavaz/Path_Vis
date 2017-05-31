@@ -138,12 +138,15 @@ class SSVM:
             trans_score = np.zeros(len(y_hat)-1, dtype=np.float)
             poi_score[0] = np.dot(X_node_test[y_hat[0]], unary_params[y_hat[0]])
             poi_feature_score = np.multiply(X_node_test[y_hat[0]], unary_params[y_hat[0]])
+            poi_perfeature_score = [poi_feature_score.tolist()]
             trans_feature_score = np.zeros(self.edge_features.shape[2], dtype=np.float)
             for j in range(len(y_hat)-1):
                 ss = y_hat[j]
                 tt = y_hat[j+1]
                 poi_score[j+1] = np.dot(X_node_test[tt], unary_params[tt])
-                poi_feature_score += np.multiply(X_node_test[tt], unary_params[tt])
+                score_tt = np.multiply(X_node_test[tt], unary_params[tt])
+                poi_feature_score += score_tt
+                poi_perfeature_score.append(score_tt.tolist())
                 trans_score[j] = np.dot(self.edge_features[ss, tt], pw_params[ss, tt])
                 trans_feature_score += np.multiply(self.edge_features[ss, tt], pw_params[ss, tt])
 
@@ -153,6 +156,7 @@ class SSVM:
             item['TransitionScore'] = trans_score
             item['POIFeatureScore'] = poi_feature_score
             item['TransitionFeatureScore'] = trans_feature_score
+            item['POIPerFeatureScore'] = poi_perfeature_score
             
             if self.share_params is True:
                 item['POIFeatureWeight'] = unary_params[y_hat[0]]
