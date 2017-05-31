@@ -1,6 +1,6 @@
 var w = 300, h = 300;
 
-var colorscale = d3.scale.category10();
+// var colorscale = d3.scale.category10();
 
 //Legend titles
 var LegendOptions = ['Queen Victoria Market','Melbourne Aquarium'];
@@ -78,7 +78,7 @@ var legend = svg.append("g")
 	  .attr("y", function(d, i){ return i * 20;})
 	  .attr("width", 10)
 	  .attr("height", 10)
-	  .style("fill", function(d, i){ return colorscale(i);})
+	  .style("fill", function(d, i){ return colors[i];})
 	  ;
 	//Create text next to squares
 	legend.selectAll('text')
