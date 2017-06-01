@@ -9,7 +9,7 @@
 //http://nbremer.blogspot.nl/2013/09/making-d3-radar-chart-look-bit-better.html
 
 var RadarChart = {
-  draw: function(id, d, options){
+  draw: function(id, d, options, legends){
   var cfg = {
 	 radius: 5,
 	 w: 600,
@@ -40,7 +40,28 @@ var RadarChart = {
 	var total = allAxis.length;
 	var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
 	var Format = d3.format('');
-	d3.select(id).select("svg").remove();
+
+  d3.select(id).select("svg").remove();
+  var svg = d3.select(id)
+    .selectAll('svg')
+    .append('svg')
+    .attr("width", cfg.w)
+    .attr("height", cfg.h);
+
+  //Create field for legends
+  d3.select(id).select("div").remove();
+  var legends_field = d3.select(id)
+    .append('div')
+
+  for (var i = 0; i < legends.length; i++) {
+      var rect = legends_field.append('div')
+        .attr("class", "rect")
+        .style("background-color", "#" + colors[i]);
+
+      var legend = legends_field.append('div')
+        .attr("class", "field")
+        .text(legends[i]);
+  }
 
 	var g = d3.select(id)
 			.append("svg")
