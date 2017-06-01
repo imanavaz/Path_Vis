@@ -43,7 +43,7 @@
 
 
 \begin{document}
-\title{TBD: Visual Analysis of Travel Route Recommendation}
+\title{PathRec: Visual Analysis of Travel Route Recommendations}
 
 \author{Anonymous Authors}
 % \author{Dawei Chen*$\ddagger$, Dongwoo Kim*, Lexing Xie*$\ddagger$,  Minjeong Shin*, Aditya Menon*$\ddagger$, Cheng Soon Ong*$\ddagger$, Iman Avazpour$\dagger$, John Grundy$\dagger$}
@@ -53,34 +53,19 @@
 % \email{{u5708856,dongwoo.kim,lexing.xie,u1033719}@anu.edu.au, {aditya.menon, chengsoon.ong}@data61.csiro.au, {iman.avazpour,j.grundy}@deakin.edu.au}
 
 
-%\authornote{The secretary disavows any knowledge of this author's actions.}
-%\affiliation{%
-%  \institution{Institute for Clarity in Documentation}
-%  \streetaddress{P.O. Box 1212}
-%  \city{Dublin} 
-%  \state{Ohio} 
-%  \postcode{43017-6221}
-%}
-%\email{webmaster@marysville-ohio.com}
-%
-%\author{Lars Th{\o}rv{\"a}ld}
-%\affiliation{%
-%  \institution{The Th{\o}rv{\"a}ld Group}
-%  \streetaddress{1 Th{\o}rv{\"a}ld Circle}
-%  \city{Hekla} 
-%  \country{Iceland}}
-%\email{larst@affiliation.org}
-
 % The default list of authors is too long for headers}
 %\renewcommand{\shortauthors}{D. Chen et al.}
 \renewcommand{\shortauthors}{A. A}
 
 
 \begin{abstract}
-We propose a novel travel route visualisation tool to help an interaction between tourists and route recommendation system
-\footnote{Presentation slides that describe the system in action are available at \url{https://cdn.rawgit.com/cdawei/path\_vis/master/acmmm2017/presentation/slides.pdf}}.
-While the route recommendation algorithm shows promising results in a laboratory setup on benchmark dataset, the process of recommendation is still invisible to end-users who would benefit the information used to recommend the routes. 
-Based on a structured prediction algorithm tailored for the route recommendation, we propose a route visualisation which aims to reduce the gap between the end-users and recommendation system by visualising recommendation scores on various attributes of the suggested routes.
+We present an interactive visualisation tool for recommending travel trajectories. 
+This is a special application for the more general problem of making structured prediction results more transparent to end users. 
+This system is based on new machine learning formulations and algorithms for the trajectory recommendation problem~\cite{chen2016learning,chen2017SR}. 
+%It is designed to explain structured predictions made by several new algorithms, and to assist comparative visual analysis of different candidate trajectories. 
+%One challenge for visualizing the properties of a structured object such as a trajectory is to present and compare information from a large number of modalities. 
+The system starts from a map-based overview, taking an interactive query as starting point.  It then breaks down contributions from different geographical and user behavior features, and those from individual points-of-interest versus pairs of consecutive points on a route. The system also supports detailed quantitative interrogation by comparing a large number of features for two or more points. 
+Effective trajectory visualisations can potentially benefit a large cohort of online map users and assist their decision-making.  More broadly, the design of this system can inform visualisations of other structured prediction tasks, such as for sequences or trees. 
 \end{abstract}
 
 %
