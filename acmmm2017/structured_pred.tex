@@ -7,7 +7,7 @@ Given a trajectory query $\mathbf{x} = (s, l)$, comprising a start POI $s$ and t
 
 We first cast travel recommendation as a structured prediction problem, which allows us to leverage the well-studied literature of structured SVMs (SSVM)~\cite{tsochantaridis2005large,joachims2009predicting}. 
 There are two obstacles that prevent us from applying SSVM directly to the sequence recommendation problem; first, there would be multiple ground-truth routes among a set of POIs, second, a naive application of SSVM would generate a loop during prediction time. 
-To incorporate multiple ground-truth routes in the learning phase, we take an idea from the ranking objective which prevents the ground-truth routes from competing with each others~\cite{rendle2009bpr}. 
+To incorporate multiple ground-truth routes in the learning phase, we take an idea from the ranking objective which prevents the ground-truth routes from competing with each other~\cite{rendle2009bpr}. 
 To eliminate possible loops in prediction, we adopt the serial list Viterbi algorithm~\cite{seshadri1994list,nill1995list,nilsson2001sequentially}.
 We finally trained our model on trajectory data extracted from Flickr photos taken in Melbourne~\cite{chen2016learning}.
 
