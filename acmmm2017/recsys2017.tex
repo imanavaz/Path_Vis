@@ -107,20 +107,20 @@ Based on a structured prediction algorithm tailored for the route recommendation
 % We no longer use \terms command
 %\terms{Theory}
 
-\keywords{Visualisation, Recommendation}
+\keywords{Route Visualisation, Travel Recommendation}
 
 % Used in some conference proceedings e.g. sigplan and sigchi
- \begin{teaserfigure}
+\maketitle
+ 
+\input{intro}
+
+ \begin{figure}
  \centering
-   \includegraphics[width=0.9\textwidth]{figure/sample_map.png}
+   \includegraphics[width=\linewidth]{figure/sample_map2.png}
    \caption{Travel route visualisation system. Given a starting POI and a number of POI to be visited, the system recommends a set of routes from a history of previous tourists.}
    \label{fig:overview}
- \end{teaserfigure}
-
-\maketitle
-
-
-\input{intro}
+ \end{figure}
+ 
 \input{structured_pred}
 \input{vis}
 \input{conclusion}
