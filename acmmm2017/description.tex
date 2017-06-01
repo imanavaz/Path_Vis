@@ -14,9 +14,9 @@
 % description of the demo system
 \section{System overview}
 \label{sec:overview}
-The demonstrated system comprises two components, i.e. the server side and client side.
-At the server side, a set of travel routes are generated from a trained structured SVMs with respect to
-a query sent by the client. 
+The demonstrated system comprises two components, i.e. the server side and the client side.
+At the server side, a set of travel routes are generated from a trained structured SVM with respect to
+a query sent from the client. 
 The generated routes are then sent to the client, which runs in a web browser, to visualise.
 The server side was implemented in the Python programming language using \textit{pystruct}~\cite{JMLR:v15:mueller14a},
 a Python library for structured learning and prediction,
@@ -30,7 +30,7 @@ The client side was implemented in HTML, JavaScript and CSS with the help of \te
 \label{sec:setup}
 We created a website for users to try this system, it can be accessed at \url{http://115.146.87.43:8080/}.
 The source code of this system is hosted in a public GitHub repository, 
-so anyone interested in it can also run the system locally, by following the steps below:
+and anyone interested in it can also run the system locally, by following the steps below:
 \begin{enumerate}
 \item Download the source code of the system from \url{https://github.com/cdawei/path_vis} 
 % DW: move this to https://github.com/computationalmedia if it gets accepted?
