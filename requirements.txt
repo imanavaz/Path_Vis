@@ -1,0 +1,8 @@
+numpy
+pandas==0.19.2
+joblib
+sklearn
+scipy
+pystruct
+cvxopt
+

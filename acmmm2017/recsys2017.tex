@@ -77,7 +77,8 @@
 
 
 \begin{abstract}
-We propose a novel travel route visualisation tool to help an interaction between tourists and route recommendation system. 
+We propose a novel travel route visualisation tool to help an interaction between tourists and route recommendation system
+\footnote{Presentation slides that describe the system in action are available at \url{https://cdn.rawgit.com/cdawei/path\_vis/master/acmmm2017/presentation/slides.pdf}}.
 While the route recommendation algorithm shows promising results in a laboratory setup on benchmark dataset, the process of recommendation is still invisible to end-users who would benefit the information used to recommend the routes. 
 Based on a structured prediction algorithm tailored for the route recommendation, we propose a route visualisation which aims to reduce the gap between the end-users and recommendation system by visualising recommendation scores on various attributes of the suggested routes.
 \end{abstract}
@@ -107,20 +108,20 @@ Based on a structured prediction algorithm tailored for the route recommendation
 % We no longer use \terms command
 %\terms{Theory}
 
-\keywords{Visualisation, Recommendation}
+\keywords{Route Visualisation, Travel Recommendation}
 
 % Used in some conference proceedings e.g. sigplan and sigchi
- \begin{teaserfigure}
- \centering
-   \includegraphics[width=0.9\textwidth]{figure/sample_map.png}
-   \caption{Travel route visualisation system. Given a starting POI and a number of POI to be visited, the system recommends a set of routes from a history of previous tourists.}
-   \label{fig:overview}
- \end{teaserfigure}
-
 \maketitle
-
-
+ 
 \input{intro}
+
+ \begin{figure}
+ \centering
+   \includegraphics[width=\linewidth]{figure/sample_map2.png}
+     \caption{Travel route visualisation system. Given a starting POI and a number of POI to be visited, the system recommends a set of routes from a history of previous tourists.}
+   \label{fig:overview}
+ \end{figure}
+ 
 \input{structured_pred}
 \input{vis}
 \input{conclusion}
@@ -129,5 +130,7 @@ Based on a structured prediction algorithm tailored for the route recommendation
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{sigproc} 
+
+\input{description}
 
 \end{document}
