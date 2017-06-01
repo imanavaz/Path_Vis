@@ -1,0 +1,17 @@
+\section{Introduction}
+%background
+Sequence ranking has emerged as an important tool for solving diverse problems such as travel route and music playlist recommendations. 
+Unlike the classical ranking algorithm where items are considered independently, the sequence ranking algorithm requires modelling a structure between items and suggests a set of items as a whole. 
+For example, consider recommending a trajectory of points of interest (POI) in a city to a visitor. 
+While the classical ranking algorithm can learn a user's preference for each individual location, however, it may ignore the distances between them and could suggest a long trajectory, which should be shorter in optimal routing. 
+Several sequence ranking algorithms are proposed to solve this problem and achieve relative success when compared with the classical ranking algorithms. 
+Nonetheless, a remaining challenge is to construct an interactive recommendation system so that a user can analyse the suggested sequences and plan a better trip.
+
+%approach
+In this paper, we tackle the problem of sequence visualisation, in particular, for travel routes recommendation. 
+We define a travel route as a sequence of POIs and formulate the sequence ranking problem as a structured prediction problem. 
+Based on hand-crafted features for individual and pairs of POIs, we train the prediction model with trajectory data extracted from geo-tagged photos. 
+To visualise the suggested routes, we develop a novel tool that efficiently displays multiple suggested routes, which helps users understand the process behind the recommendations.
+Specifically, our system decompose a total score of each route into a set of features and their corresponding scores and show the total score as a stacked bar plot of the features.
+The system also visualise the difference between POIs in a single route to show how POIs in that route can diverse to each other. 
+This visualisation helps tourists who want to have diverse experiences by choosing the best route among the set of recommendations.
