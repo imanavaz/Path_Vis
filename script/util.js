@@ -282,6 +282,7 @@ function visualise_score(response) {
                 for (var j = 0; j < route_drawn.length; j++) {
                     if (route_drawn[j] == true) {
                         draw_route(trajdata[j]['Trajectory'], '#' + colors[j], travel);
+                        draw_chart(j, trajdata);
                     }
                 }
             }
