@@ -1,0 +1,129 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <title>Visualising Travel Route via Structured Prediction</title>
+
+  <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUU7zRNc-lIjaUnf3PrNSUJ4gkVZ-44f4" type="text/javascript"></script> -->
+  <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+  <script type="text/javascript" src="{% static 'script/gmaps.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'script/d3-3.5.17.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'script/jquery-3.2.0.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'script/LineUpJS.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'script/util.js' %}"></script>
+  <script type="text/javascript" src="{% static 'script/RadarChart.js' %}"></script>
+  <script type="text/javascript" src="{% static 'script/RadarChartScript.js' %}"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="{% static 'style/examples.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'style/style.css' %}" />
+  <!-- <link rel="stylesheet" type="text/css" href="style/font-awesome.min.css" /> -->
+  <link rel="stylesheet" type="text/css" href="{% static 'font-awesome/css/font-awesome.css' %}" />
+  <script type="text/javascript">
+    $(document).ready(function(){
+     init_POIs();
+     draw_map();
+     traj = [69,70,81,68,2]; // example trajectory
+     draw_route(traj, "#3f51b5");
+    });
+  </script>
+</head>
+<body>
+  <div id="page-wrapper">
+    <div id="map" class="map"></div>
+    <div class="page-title">
+      <h3 class="page-header"><b>Visualising Travel Route via Structured Prediction</b></h3>
+    </div>
+    <div class="panel panel-default input-form">
+      <div class="panel-heading bg-white">
+        Trajectory Recommender
+      </div>
+      <div class="panel-body">
+        <form id="ID_form" action="/recommend" method="post">
+          {% csrf_token %}
+          <input id="ID_start" type="hidden" name="START" value="69">
+          <input id="ID_length" type="hidden" name="LENGTH" value="5">
+
+          <div class="form-group">
+            <label>Start point:
+              <span id="ID_marker" style="color: red">POI 69
+              <br/>Carlton Gardens</span>
+              <br/><small class="text-muted" style="font-weight: normal;">(click map to change)</small>
+            </label><br/>
+          </div>
+          <div class="form-group">
+            <label>Number of POIs:
+              <span id="ID_sliderValue"><font color="red">5</font></span>
+              <br/><small class="text-muted" style="font-weight: normal;">(slide to change)</small>
+            </label><br/>
+            <div class="slider">
+              <span class="badge">2</span>
+              <input type="range" min="2" max="10" value="5" onchange="changeValue(this.value)"/>
+              <span class="badge">10</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Travel mode</label>
+            <select id="ID_select" class="form-control">
+              <option value="bicycling">Bicycling</option>
+              <option value="driving">Driving</option>
+              <option value="walking" selected>Walking</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button id="ID_button" type="submit" class="btn btn-info" name="recommend">Recommend</button>
+          </div>
+        </form>
+        <script type="text/javascript">
+        function changeValue(newValue) {
+            document.getElementById("ID_sliderValue").innerHTML = "<font color=\"red\">" + newValue + "</font>";
+            document.getElementById("ID_length").value = newValue;
+        }
+        </script>
+        <script>
+        $( "#ID_form" ).submit(function(event) {
+            //console.log('submit form');
+            $.ajax({
+                type: $( "#ID_form" ).attr("method"),
+                url:  $( "#ID_form" ).attr("action"),
+                data: $( "#ID_form" ).serialize(),
+            }).done(function(data) {
+                //console.log('ok');
+                //console.log(data);
+                clear_POIs();
+                map.cleanRoute();  // clean previous routes
+                //parse_draw(data);
+                visualise_score(data);
+            }).fail(function(data) {
+                clear_POIs();
+                map.cleanRoute();  // clean previous routes
+                alert('No good recommendation');
+                console.log('error');
+            });
+            //alert('submit');
+            event.preventDefault();
+        });
+
+        $( "#ID_button" ).click(function() {
+            $( "#ID_form" ).submit();
+        });
+        </script>
+      </div>
+    </div>
+    <div class="row">
+      <div class="info">
+        <div class="panel panel-default">
+            <div class="panel-heading">Top 10 Recommended Routes</div>
+            <div id="bars" class="panel-body"></div>
+        </div>
+        <div id="body" class="panel panel-default">
+            <div class="panel-heading">POI Comparison Chart</div>
+            <div id="chart" style="padding-top: 15px;" align="center"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

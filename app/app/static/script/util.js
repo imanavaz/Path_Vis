@@ -188,7 +188,7 @@ function parse_draw(response) {
 
 function visualise_score(response) {
     var trajdata = JSON.parse(response);
-    console.log(trajdata);
+    // console.log(trajdata);
     var arr = [];
     var npois = 0;
     var ntrans = 0;
