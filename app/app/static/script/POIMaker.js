@@ -24,8 +24,8 @@ function makePOIMarkerFlag(valueCount, values, maxScale, markerImageURL) {
     //The SVG Container
     var svgContainer = d3.select("body").append("svg")
         .remove()
-        .attr("xmlns", "http://www.w3.org/2000/svg")
-        .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
+        .attr("xmlns", "https://www.w3.org/2000/svg")
+        .attr("xmlns:xlink", "https://www.w3.org/1999/xlink")
         .attr("width", shapeWidth)
         .attr("height", shapeHeight + flagWidth); //flag width for image marker
 
